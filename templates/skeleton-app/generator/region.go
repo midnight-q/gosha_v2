@@ -12,7 +12,6 @@ func GenRegion() types.Region {
 		Id:   rand.Intn(100500),
 		Name: rand.Intn(100500),
 		Code: strings.Title(Babbler2.Babble()),
-		//Region remove this line for disable generator functionality
 	}
 }
 

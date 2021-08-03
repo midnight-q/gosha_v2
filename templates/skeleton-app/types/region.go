@@ -9,19 +9,16 @@ type Region struct {
     Id   int
     Name int
 	Code string
-	//Region remove this line for disable generator functionality
     
     validator
 }
 
 func (region *Region) Validate()  {
-    //Validate remove this line for disable generator functionality
 }
 
 type RegionFilter struct {
     model Region
     list []Region
-    //RegionFilter remove this line for disable generator functionality
 
     AbstractFilter
 }
@@ -33,9 +30,6 @@ func GetRegionFilter(request *http.Request, functionType string) (filter RegionF
     if err != nil {
         return filter, err
     }
-    //filter.TestFilter, _ = strconv.Atoi(request.FormValue("TestFilter"))
-
-    //GetRegionFilter remove this line for disable generator functionality
 
     switch functionType {
     case settings.FunctionTypeMultiCreate, settings.FunctionTypeMultiUpdate, settings.FunctionTypeMultiDelete, settings.FunctionTypeMultiFindOrCreate:

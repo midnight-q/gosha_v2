@@ -9,7 +9,6 @@ func GenUser() types.User {
 
 	return types.User{
 		Id:   rand.Intn(100500),
-		//User remove this line for disable generator functionality
 	}
 }
 

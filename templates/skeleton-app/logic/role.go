@@ -28,8 +28,6 @@ func RoleFind(filter types.RoleFilter)  (result []types.Role, totalRecords int, 
 
     criteria := core.Db.Where(dbmodels.Role{})
 
-	//Role.FindFilterCode remove this line for disable generator functionality
-
     if len(filterIds) > 0 {
         criteria = criteria.Where("id in (?)", filterIds)
     }
@@ -230,7 +228,6 @@ func RoleUpdate(filter types.RoleFilter, query *gorm.DB)  (data types.Role, err 
 
     updateModel.Name = newModel.Name
 	updateModel.Description = newModel.Description
-	//updateModel.Field remove this line for disable generator functionality
 
     updateModel.Validate()
 
@@ -320,7 +317,6 @@ func RoleFindOrCreate(filter types.RoleFilter)  (data types.Role, err error) {
     filter.Pagination.PerPage = 1
 
     findOrCreateModel := AssignRoleDbFromType(filter.GetRoleModel())
-	//findOrCreateModel.Field remove this line for disable generator functionality
 
     findOrCreateModel.Validate()
 
@@ -347,7 +343,6 @@ func RoleUpdateOrCreate(filter types.RoleFilter)  (data types.Role, err error) {
     filter.Pagination.PerPage = 1
 
     updateOrCreateModel := AssignRoleDbFromType(filter.GetRoleModel())
-	//updateOrCreateModel.Field remove this line for disable generator functionality
 
     updateOrCreateModel.Validate()
 
@@ -373,25 +368,19 @@ func RoleUpdateOrCreate(filter types.RoleFilter)  (data types.Role, err error) {
 
 func AssignRoleTypeFromDb(dbRole dbmodels.Role) types.Role {
 
-    //AssignRoleTypeFromDb predefine remove this line for disable generator functionality
-
     return types.Role{
         Id: dbRole.ID,
         Name: dbRole.Name,
 		Description: dbRole.Description,
-		//AssignRoleTypeFromDb.Field remove this line for disable generator functionality
     }
 }
 
 func AssignRoleDbFromType(typeModel types.Role) dbmodels.Role {
-
-    //AssignRoleDbFromType predefine remove this line for disable generator functionality
     
     return dbmodels.Role{
         ID: typeModel.Id,
         Name: typeModel.Name,
 		Description: typeModel.Description,
-		//AssignRoleDbFromType.Field remove this line for disable generator functionality
     }
 }
 

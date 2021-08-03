@@ -123,20 +123,15 @@ func AuthUpdateOrCreate(filter types.AuthFilter)  (data types.Auth, err error) {
 
 func AssignAuthTypeFromDb(dbAuth dbmodels.Auth) types.Auth {
 
-    //AssignAuthTypeFromDb predefine remove this line for disable generator functionality
-
     return types.Auth{
         Email:     dbAuth.Email,
         Password:  "*******",
         Token:     dbAuth.Token,
         UserId:    dbAuth.UserId,
-        //AssignAuthTypeFromDb.Field remove this line for disable generator functionality
     }
 }
 
 func AssignAuthDbFromType(typeModel types.Auth) dbmodels.Auth {
-
-    //AssignAuthDbFromType predefine remove this line for disable generator functionality
     token := common.RandomString(32)
 
     return dbmodels.Auth{
@@ -144,7 +139,6 @@ func AssignAuthDbFromType(typeModel types.Auth) dbmodels.Auth {
         UserId:    typeModel.UserId,
         Email: typeModel.Email,
         Password: typeModel.Password,
-		//AssignAuthDbFromType.Field remove this line for disable generator functionality
     }
 }
 

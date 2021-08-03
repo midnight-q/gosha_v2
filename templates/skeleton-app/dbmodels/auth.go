@@ -15,7 +15,6 @@ type Auth struct {
     Token     string
     IsActive bool
     UserId   int
-    //Auth remove this line for disable generator functionality
 
     CreatedAt time.Time
     UpdatedAt time.Time
@@ -32,7 +31,5 @@ func (auth *Auth) Validate() {
     if len(auth.Password) < 1 {
         auth.AddValidationError("User password is empty", errors.ErrorCodeNotEmpty, "Password")
     }
-
-    //Validate remove this line for disable generator functionality
 }
 

@@ -12,7 +12,6 @@ func GenRole() types.Role {
 		Id:   rand.Intn(100500),
 		Name: strings.Title(Babbler2.Babble()),
 		Description: strings.Title(Babbler2.Babble()),
-		//Role remove this line for disable generator functionality
 	}
 }
 

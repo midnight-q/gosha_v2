@@ -31,7 +31,6 @@ func TranslateErrorFind(filter types.TranslateErrorFilter)  (result []types.Tran
 	if len(filter.ErrorCodes) > 0 {
         criteria = criteria.Where("code in (?)", filter.ErrorCodes)
     }
-	//TranslateError.FindFilterCode remove this line for disable generator functionality
 
     if len(filterIds) > 0 {
         criteria = criteria.Where("id in (?)", filterIds)
@@ -234,7 +233,6 @@ func TranslateErrorUpdate(filter types.TranslateErrorFilter, query *gorm.DB)  (d
     updateModel.Code = newModel.Code
 	updateModel.LanguageCode = newModel.LanguageCode
 	updateModel.Translate = newModel.Translate
-	//updateModel.Field remove this line for disable generator functionality
 
     updateModel.Validate()
 
@@ -324,7 +322,6 @@ func TranslateErrorFindOrCreate(filter types.TranslateErrorFilter)  (data types.
     filter.Pagination.PerPage = 1
 
     findOrCreateModel := AssignTranslateErrorDbFromType(filter.GetTranslateErrorModel())
-	//findOrCreateModel.Field remove this line for disable generator functionality
 
     findOrCreateModel.Validate()
 
@@ -351,7 +348,6 @@ func TranslateErrorUpdateOrCreate(filter types.TranslateErrorFilter)  (data type
     filter.Pagination.PerPage = 1
 
     updateOrCreateModel := AssignTranslateErrorDbFromType(filter.GetTranslateErrorModel())
-	//updateOrCreateModel.Field remove this line for disable generator functionality
 
     updateOrCreateModel.Validate()
 
@@ -377,27 +373,21 @@ func TranslateErrorUpdateOrCreate(filter types.TranslateErrorFilter)  (data type
 
 func AssignTranslateErrorTypeFromDb(dbTranslateError dbmodels.TranslateError) types.TranslateError {
 
-    //AssignTranslateErrorTypeFromDb predefine remove this line for disable generator functionality
-
     return types.TranslateError{
         Id: dbTranslateError.ID,
         Code: dbTranslateError.Code,
 		LanguageCode: dbTranslateError.LanguageCode,
 		Translate: dbTranslateError.Translate,
-		//AssignTranslateErrorTypeFromDb.Field remove this line for disable generator functionality
     }
 }
 
 func AssignTranslateErrorDbFromType(typeModel types.TranslateError) dbmodels.TranslateError {
-
-    //AssignTranslateErrorDbFromType predefine remove this line for disable generator functionality
     
     return dbmodels.TranslateError{
         ID: typeModel.Id,
         Code: typeModel.Code,
 		LanguageCode: typeModel.LanguageCode,
 		Translate: typeModel.Translate,
-		//AssignTranslateErrorDbFromType.Field remove this line for disable generator functionality
     }
 }
 

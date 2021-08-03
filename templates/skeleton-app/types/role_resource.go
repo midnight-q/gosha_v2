@@ -16,19 +16,16 @@ type RoleResource struct {
 	Delete bool
 	FindOrCreate bool
 	UpdateOrCreate bool
-	//RoleResource remove this line for disable generator functionality
     
     validator
 }
 
 func (roleResource *RoleResource) Validate()  {
-    //Validate remove this line for disable generator functionality
 }
 
 type RoleResourceFilter struct {
     model RoleResource
     list []RoleResource
-    //RoleResourceFilter remove this line for disable generator functionality
 
     AbstractFilter
 }
@@ -40,9 +37,6 @@ func GetRoleResourceFilter(request *http.Request, functionType string) (filter R
     if err != nil {
         return filter, err
     }
-    //filter.TestFilter, _ = strconv.Atoi(request.FormValue("TestFilter"))
-
-    //GetRoleResourceFilter remove this line for disable generator functionality
 
     switch functionType {
     case settings.FunctionTypeMultiCreate, settings.FunctionTypeMultiUpdate, settings.FunctionTypeMultiDelete, settings.FunctionTypeMultiFindOrCreate:

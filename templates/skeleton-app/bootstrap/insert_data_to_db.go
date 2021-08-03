@@ -29,7 +29,7 @@ func FillDBTestData()  {
 	if isDropTables == true {
 
 		core.Db.Migrator().DropTable(
-          //generator insert entity
+
           &dbmodels.Language{},
           &dbmodels.Region{},
           &dbmodels.TranslateError{},
@@ -48,7 +48,7 @@ func FillDBTestData()  {
 	}
 
 	_ = core.Db.Migrator().AutoMigrate(
-        //generator insert entity
+
           &dbmodels.Language{},
           &dbmodels.Region{},
           &dbmodels.TranslateError{},

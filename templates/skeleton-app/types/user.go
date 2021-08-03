@@ -13,19 +13,16 @@ type User struct {
     LastName    string
     MobilePhone string
     Password    string
-    //User remove this line for disable generator functionality
     
     validator
 }
 
 func (user *User) Validate()  {
-    //Validate remove this line for disable generator functionality
 }
 
 type UserFilter struct {
     model User
     list []User
-    //UserFilter remove this line for disable generator functionality
 
     AbstractFilter
 }
@@ -37,9 +34,6 @@ func GetUserFilter(request *http.Request, functionType string) (filter UserFilte
     if err != nil {
         return filter, err
     }
-    //filter.TestFilter, _ = strconv.Atoi(request.FormValue("TestFilter"))
-
-    //GetUserFilter remove this line for disable generator functionality
 
     switch functionType {
     case settings.FunctionTypeMultiCreate, settings.FunctionTypeMultiUpdate, settings.FunctionTypeMultiDelete, settings.FunctionTypeMultiFindOrCreate:

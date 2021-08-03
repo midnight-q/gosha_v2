@@ -13,7 +13,6 @@ func GenTranslateError() types.TranslateError {
 		Code: rand.Intn(100500),
 		LanguageCode: strings.Title(Babbler2.Babble()),
 		Translate: strings.Title(Babbler2.Babble()),
-		//TranslateError remove this line for disable generator functionality
 	}
 }
 

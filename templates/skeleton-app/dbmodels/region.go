@@ -11,7 +11,6 @@ type Region struct {
     ID        int       `gorm:"primary_key"`
     Name int
 	Code string
-	//Region remove this line for disable generator functionality
 
     CreatedAt time.Time
     UpdatedAt time.Time
@@ -21,6 +20,5 @@ type Region struct {
 }
 
 func (region *Region) Validate() {
-    //Validate remove this line for disable generator functionality
 }
 

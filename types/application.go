@@ -6,21 +6,22 @@ import (
 )
 
 type Application struct {
-	Id   int
-	Name string
-	//Application remove this line for disable generator functionality
+	Id           int
+	Name         string
+	Email        string
+	Password     string
+	UseUuidPk    bool
+	DatabaseType int
 
 	validator
 }
 
 func (application *Application) Validate() {
-	//Validate remove this line for disable generator functionality
 }
 
 type ApplicationFilter struct {
 	model Application
 	list  []Application
-	//ApplicationFilter remove this line for disable generator functionality
 
 	AbstractFilter
 }
@@ -32,9 +33,6 @@ func GetApplicationFilter(request *http.Request, functionType string) (filter Ap
 	if err != nil {
 		return filter, err
 	}
-	//filter.TestFilter, _ = strconv.Atoi(request.FormValue("TestFilter"))
-
-	//GetApplicationFilter remove this line for disable generator functionality
 
 	switch functionType {
 	case settings.FunctionTypeMultiCreate, settings.FunctionTypeMultiUpdate, settings.FunctionTypeMultiDelete, settings.FunctionTypeMultiFindOrCreate:

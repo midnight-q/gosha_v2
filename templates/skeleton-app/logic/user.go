@@ -28,8 +28,6 @@ func UserFind(filter types.UserFilter)  (result []types.User, totalRecords int, 
 
     criteria := core.Db.Where(dbmodels.User{})
 
-	//User.FindFilterCode remove this line for disable generator functionality
-
     if len(filterIds) > 0 {
         criteria = criteria.Where("id in (?)", filterIds)
     }
@@ -228,8 +226,6 @@ func UserUpdate(filter types.UserFilter, query *gorm.DB)  (data types.User, err 
 
     //updateModel.Some = newModel.Some
 
-    //updateModel.Field remove this line for disable generator functionality
-
     updateModel.Validate()
 
     if !updateModel.IsValid() {
@@ -318,7 +314,6 @@ func UserFindOrCreate(filter types.UserFilter)  (data types.User, err error) {
     filter.Pagination.PerPage = 1
 
     findOrCreateModel := AssignUserDbFromType(filter.GetUserModel())
-	//findOrCreateModel.Field remove this line for disable generator functionality
 
     findOrCreateModel.Validate()
 
@@ -345,7 +340,6 @@ func UserUpdateOrCreate(filter types.UserFilter)  (data types.User, err error) {
     filter.Pagination.PerPage = 1
 
     updateOrCreateModel := AssignUserDbFromType(filter.GetUserModel())
-	//updateOrCreateModel.Field remove this line for disable generator functionality
 
     updateOrCreateModel.Validate()
 
@@ -371,8 +365,6 @@ func UserUpdateOrCreate(filter types.UserFilter)  (data types.User, err error) {
 
 func AssignUserTypeFromDb(dbUser dbmodels.User) types.User {
 
-    //AssignUserTypeFromDb predefine remove this line for disable generator functionality
-
     return types.User{
         Id: dbUser.ID,
         Email:       dbUser.Email,
@@ -381,7 +373,6 @@ func AssignUserTypeFromDb(dbUser dbmodels.User) types.User {
         LastName:    dbUser.LastName,
         MobilePhone: dbUser.MobilePhone,
         Password:    "******",
-    //AssignUserTypeFromDb.Field remove this line for disable generator functionality
     }
 }
 
@@ -389,7 +380,6 @@ func AssignUserDbFromType(typeModel types.User) dbmodels.User {
 
     password := []byte(typeModel.Password + settings.PASSWORD_SALT)
     hashedPassword, _ := bcrypt.GenerateFromPassword(password, bcrypt.DefaultCost)
-    //AssignUserTypeFromDb predefine remove this line for disable generator functionality
     
     return dbmodels.User{
         ID: typeModel.Id,
@@ -399,7 +389,6 @@ func AssignUserDbFromType(typeModel types.User) dbmodels.User {
         LastName:    typeModel.LastName,
         MobilePhone: typeModel.MobilePhone,
 		Password:    string(hashedPassword),
-    //AssignUserDbFromType.Field remove this line for disable generator functionality
     }
 }
 

@@ -28,8 +28,6 @@ func CurrentUserFind(filter types.CurrentUserFilter)  (result []types.CurrentUse
 
     criteria := core.Db.Where(dbmodels.CurrentUser{})
 
-	//CurrentUser.FindFilterCode remove this line for disable generator functionality
-
     if len(filterIds) > 0 {
         criteria = criteria.Where("id in (?)", filterIds)
     }
@@ -228,8 +226,6 @@ func CurrentUserUpdate(filter types.CurrentUserFilter, query *gorm.DB)  (data ty
 
     //updateModel.Some = newModel.Some
 
-    //updateModel.Field remove this line for disable generator functionality
-
     updateModel.Validate()
 
     if !updateModel.IsValid() {
@@ -318,7 +314,6 @@ func CurrentUserFindOrCreate(filter types.CurrentUserFilter)  (data types.Curren
     filter.Pagination.PerPage = 1
 
     findOrCreateModel := AssignCurrentUserDbFromType(filter.GetCurrentUserModel())
-	//findOrCreateModel.Field remove this line for disable generator functionality
 
     findOrCreateModel.Validate()
 
@@ -345,7 +340,6 @@ func CurrentUserUpdateOrCreate(filter types.CurrentUserFilter)  (data types.Curr
     filter.Pagination.PerPage = 1
 
     updateOrCreateModel := AssignCurrentUserDbFromType(filter.GetCurrentUserModel())
-	//updateOrCreateModel.Field remove this line for disable generator functionality
 
     updateOrCreateModel.Validate()
 
@@ -371,21 +365,15 @@ func CurrentUserUpdateOrCreate(filter types.CurrentUserFilter)  (data types.Curr
 
 func AssignCurrentUserTypeFromDb(dbCurrentUser dbmodels.CurrentUser) types.CurrentUser {
 
-    //AssignCurrentUserTypeFromDb predefine remove this line for disable generator functionality
-
     return types.CurrentUser{
         Id: dbCurrentUser.ID,
-        //AssignCurrentUserTypeFromDb.Field remove this line for disable generator functionality
     }
 }
 
 func AssignCurrentUserDbFromType(typeModel types.CurrentUser) dbmodels.CurrentUser {
-
-    //AssignCurrentUserDbFromType predefine remove this line for disable generator functionality
     
     return dbmodels.CurrentUser{
         ID: typeModel.Id,
-        //AssignCurrentUserDbFromType.Field remove this line for disable generator functionality
     }
 }
 

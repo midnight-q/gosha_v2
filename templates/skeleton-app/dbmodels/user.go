@@ -16,7 +16,6 @@ type User struct {
     LastName    string
     MobilePhone string
     Password    string
-    //User remove this line for disable generator functionality
 
     CreatedAt time.Time
     UpdatedAt time.Time
@@ -43,8 +42,6 @@ func (user *User) Validate() {
     if len(user.MobilePhone) > 3 &&  ! common.ValidateMobile(user.MobilePhone)  {
         user.AddValidationError("User mobile phone should be valid or empty. Format +0123456789... ", errors.ErrorCodeNotValid, "MobilePhone")
     }
-
-    //Validate remove this line for disable generator functionality
 
 }
 

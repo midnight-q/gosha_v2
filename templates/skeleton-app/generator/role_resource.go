@@ -18,7 +18,6 @@ func GenRoleResource() types.RoleResource {
 		Delete: (rand.Intn(100500) % 2 > 0),
 		FindOrCreate: (rand.Intn(100500) % 2 > 0),
 		UpdateOrCreate: (rand.Intn(100500) % 2 > 0),
-		//RoleResource remove this line for disable generator functionality
 	}
 }
 

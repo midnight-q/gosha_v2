@@ -10,7 +10,6 @@ type ResourceType struct {
 
     ID        int       `gorm:"primary_key"`
     Name string
-	//ResourceType remove this line for disable generator functionality
 
     CreatedAt time.Time
     UpdatedAt time.Time
@@ -20,6 +19,5 @@ type ResourceType struct {
 }
 
 func (resourceType *ResourceType) Validate() {
-    //Validate remove this line for disable generator functionality
 }
 

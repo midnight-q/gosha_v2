@@ -28,8 +28,6 @@ func RoleResourceFind(filter types.RoleResourceFilter)  (result []types.RoleReso
 
     criteria := core.Db.Where(dbmodels.RoleResource{})
 
-	//RoleResource.FindFilterCode remove this line for disable generator functionality
-
     if len(filterIds) > 0 {
         criteria = criteria.Where("id in (?)", filterIds)
     }
@@ -237,7 +235,6 @@ func RoleResourceUpdate(filter types.RoleResourceFilter, query *gorm.DB)  (data 
 	updateModel.Delete = newModel.Delete
 	updateModel.FindOrCreate = newModel.FindOrCreate
 	updateModel.UpdateOrCreate = newModel.UpdateOrCreate
-	//updateModel.Field remove this line for disable generator functionality
 
     updateModel.Validate()
 
@@ -327,7 +324,6 @@ func RoleResourceFindOrCreate(filter types.RoleResourceFilter)  (data types.Role
     filter.Pagination.PerPage = 1
 
     findOrCreateModel := AssignRoleResourceDbFromType(filter.GetRoleResourceModel())
-	//findOrCreateModel.Field remove this line for disable generator functionality
 
     findOrCreateModel.Validate()
 
@@ -354,7 +350,6 @@ func RoleResourceUpdateOrCreate(filter types.RoleResourceFilter)  (data types.Ro
     filter.Pagination.PerPage = 1
 
     updateOrCreateModel := AssignRoleResourceDbFromType(filter.GetRoleResourceModel())
-	//updateOrCreateModel.Field remove this line for disable generator functionality
 
     updateOrCreateModel.Validate()
 
@@ -380,8 +375,6 @@ func RoleResourceUpdateOrCreate(filter types.RoleResourceFilter)  (data types.Ro
 
 func AssignRoleResourceTypeFromDb(dbRoleResource dbmodels.RoleResource) types.RoleResource {
 
-    //AssignRoleResourceTypeFromDb predefine remove this line for disable generator functionality
-
     return types.RoleResource{
         Id: dbRoleResource.ID,
         RoleId: dbRoleResource.RoleId,
@@ -393,13 +386,10 @@ func AssignRoleResourceTypeFromDb(dbRoleResource dbmodels.RoleResource) types.Ro
 		Delete: dbRoleResource.Delete,
 		FindOrCreate: dbRoleResource.FindOrCreate,
 		UpdateOrCreate: dbRoleResource.UpdateOrCreate,
-		//AssignRoleResourceTypeFromDb.Field remove this line for disable generator functionality
     }
 }
 
 func AssignRoleResourceDbFromType(typeModel types.RoleResource) dbmodels.RoleResource {
-
-    //AssignRoleResourceDbFromType predefine remove this line for disable generator functionality
     
     return dbmodels.RoleResource{
         ID: typeModel.Id,
@@ -412,7 +402,6 @@ func AssignRoleResourceDbFromType(typeModel types.RoleResource) dbmodels.RoleRes
 		Delete: typeModel.Delete,
 		FindOrCreate: typeModel.FindOrCreate,
 		UpdateOrCreate: typeModel.UpdateOrCreate,
-		//AssignRoleResourceDbFromType.Field remove this line for disable generator functionality
     }
 }
 

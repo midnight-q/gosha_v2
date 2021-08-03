@@ -8,19 +8,16 @@ import (
 type Field struct {
 	Id   int
 	Name string
-	//Field remove this line for disable generator functionality
 
 	validator
 }
 
 func (field *Field) Validate() {
-	//Validate remove this line for disable generator functionality
 }
 
 type FieldFilter struct {
 	model Field
 	list  []Field
-	//FieldFilter remove this line for disable generator functionality
 
 	AbstractFilter
 }
@@ -32,9 +29,6 @@ func GetFieldFilter(request *http.Request, functionType string) (filter FieldFil
 	if err != nil {
 		return filter, err
 	}
-	//filter.TestFilter, _ = strconv.Atoi(request.FormValue("TestFilter"))
-
-	//GetFieldFilter remove this line for disable generator functionality
 
 	switch functionType {
 	case settings.FunctionTypeMultiCreate, settings.FunctionTypeMultiUpdate, settings.FunctionTypeMultiDelete, settings.FunctionTypeMultiFindOrCreate:

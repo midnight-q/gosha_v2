@@ -12,19 +12,16 @@ type Auth struct {
     Token     string
     UserId   int
     Id   int
-    //Auth remove this line for disable generator functionality
     
     validator
 }
 
 func (auth *Auth) Validate()  {
-    //Validate remove this line for disable generator functionality
 }
 
 type AuthFilter struct {
     model Auth
     list []Auth
-    //AuthFilter remove this line for disable generator functionality
 
     AbstractFilter
 }
@@ -36,9 +33,6 @@ func GetAuthFilter(request *http.Request, functionType string) (filter AuthFilte
     if err != nil {
         return filter, err
     }
-    //filter.TestFilter, _ = strconv.Atoi(request.FormValue("TestFilter"))
-
-    //GetAuthFilter remove this line for disable generator functionality
 
     switch functionType {
     case settings.FunctionTypeMultiCreate, settings.FunctionTypeMultiUpdate, settings.FunctionTypeMultiDelete, settings.FunctionTypeMultiFindOrCreate:

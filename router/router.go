@@ -44,7 +44,7 @@ func Router() http.Handler {
 	router.HandleFunc(settings.ApplicationRoute+"/list", webapp.ApplicationMultiUpdate).Methods("PUT")
 	router.HandleFunc(settings.ApplicationRoute+"/{id}", webapp.ApplicationUpdate).Methods("PUT")
 
-	//router-generator here dont touch this line
+
 
 	handler := cors.New(cors.Options{
 		AllowedMethods: []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},

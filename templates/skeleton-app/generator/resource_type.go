@@ -11,7 +11,6 @@ func GenResourceType() types.ResourceType {
 	return types.ResourceType{
 		Id:   rand.Intn(100500),
 		Name: strings.Title(Babbler2.Babble()),
-		//ResourceType remove this line for disable generator functionality
 	}
 }
 

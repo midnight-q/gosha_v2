@@ -9,7 +9,6 @@ func GenAuth() types.Auth {
 
 	return types.Auth{
 		Id:   rand.Intn(100500),
-		//Auth remove this line for disable generator functionality
 	}
 }
 

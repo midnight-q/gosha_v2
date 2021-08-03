@@ -9,19 +9,16 @@ type Language struct {
     Id   int
     Name int
 	Code string
-	//Language remove this line for disable generator functionality
     
     validator
 }
 
 func (language *Language) Validate()  {
-    //Validate remove this line for disable generator functionality
 }
 
 type LanguageFilter struct {
     model Language
     list []Language
-    //LanguageFilter remove this line for disable generator functionality
 
     AbstractFilter
 }
@@ -33,9 +30,6 @@ func GetLanguageFilter(request *http.Request, functionType string) (filter Langu
     if err != nil {
         return filter, err
     }
-    //filter.TestFilter, _ = strconv.Atoi(request.FormValue("TestFilter"))
-
-    //GetLanguageFilter remove this line for disable generator functionality
 
     switch functionType {
     case settings.FunctionTypeMultiCreate, settings.FunctionTypeMultiUpdate, settings.FunctionTypeMultiDelete, settings.FunctionTypeMultiFindOrCreate:

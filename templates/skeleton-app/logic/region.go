@@ -28,8 +28,6 @@ func RegionFind(filter types.RegionFilter)  (result []types.Region, totalRecords
 
     criteria := core.Db.Where(dbmodels.Region{})
 
-	//Region.FindFilterCode remove this line for disable generator functionality
-
     if len(filterIds) > 0 {
         criteria = criteria.Where("id in (?)", filterIds)
     }
@@ -230,7 +228,6 @@ func RegionUpdate(filter types.RegionFilter, query *gorm.DB)  (data types.Region
 
     updateModel.Name = newModel.Name
 	updateModel.Code = newModel.Code
-	//updateModel.Field remove this line for disable generator functionality
 
     updateModel.Validate()
 
@@ -320,7 +317,6 @@ func RegionFindOrCreate(filter types.RegionFilter)  (data types.Region, err erro
     filter.Pagination.PerPage = 1
 
     findOrCreateModel := AssignRegionDbFromType(filter.GetRegionModel())
-	//findOrCreateModel.Field remove this line for disable generator functionality
 
     findOrCreateModel.Validate()
 
@@ -347,7 +343,6 @@ func RegionUpdateOrCreate(filter types.RegionFilter)  (data types.Region, err er
     filter.Pagination.PerPage = 1
 
     updateOrCreateModel := AssignRegionDbFromType(filter.GetRegionModel())
-	//updateOrCreateModel.Field remove this line for disable generator functionality
 
     updateOrCreateModel.Validate()
 
@@ -373,25 +368,19 @@ func RegionUpdateOrCreate(filter types.RegionFilter)  (data types.Region, err er
 
 func AssignRegionTypeFromDb(dbRegion dbmodels.Region) types.Region {
 
-    //AssignRegionTypeFromDb predefine remove this line for disable generator functionality
-
     return types.Region{
         Id: dbRegion.ID,
         Name: dbRegion.Name,
 		Code: dbRegion.Code,
-		//AssignRegionTypeFromDb.Field remove this line for disable generator functionality
     }
 }
 
 func AssignRegionDbFromType(typeModel types.Region) dbmodels.Region {
-
-    //AssignRegionDbFromType predefine remove this line for disable generator functionality
     
     return dbmodels.Region{
         ID: typeModel.Id,
         Name: typeModel.Name,
 		Code: typeModel.Code,
-		//AssignRegionDbFromType.Field remove this line for disable generator functionality
     }
 }
 

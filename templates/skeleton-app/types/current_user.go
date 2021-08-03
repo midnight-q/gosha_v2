@@ -7,19 +7,16 @@ import (
 
 type CurrentUser struct {
     Id   int
-    //CurrentUser remove this line for disable generator functionality
     
     validator
 }
 
 func (currentUser *CurrentUser) Validate()  {
-    //Validate remove this line for disable generator functionality
 }
 
 type CurrentUserFilter struct {
     model CurrentUser
     list []CurrentUser
-    //CurrentUserFilter remove this line for disable generator functionality
 
     AbstractFilter
 }
@@ -31,9 +28,6 @@ func GetCurrentUserFilter(request *http.Request, functionType string) (filter Cu
     if err != nil {
         return filter, err
     }
-    //filter.TestFilter, _ = strconv.Atoi(request.FormValue("TestFilter"))
-
-    //GetCurrentUserFilter remove this line for disable generator functionality
 
     switch functionType {
     case settings.FunctionTypeMultiCreate, settings.FunctionTypeMultiUpdate, settings.FunctionTypeMultiDelete, settings.FunctionTypeMultiFindOrCreate:

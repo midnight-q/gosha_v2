@@ -18,7 +18,6 @@ type RoleResource struct {
 	Delete bool
 	FindOrCreate bool
 	UpdateOrCreate bool
-	//RoleResource remove this line for disable generator functionality
 
     CreatedAt time.Time
     UpdatedAt time.Time
@@ -28,6 +27,5 @@ type RoleResource struct {
 }
 
 func (roleResource *RoleResource) Validate() {
-    //Validate remove this line for disable generator functionality
 }
 

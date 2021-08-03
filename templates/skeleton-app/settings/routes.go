@@ -31,7 +31,7 @@ const RegionRoute = "/api/v1/region"
 
 const LanguageRoute = "/api/v1/language"
 
-// route-constant-generator here dont touch this line
+
 
 var RoutesArray = []string{
 
@@ -46,5 +46,5 @@ var RoutesArray = []string{
 	TranslateErrorRoute,
 	RegionRoute,
 	LanguageRoute,
-// router-list-generator here dont touch this line
+
 }

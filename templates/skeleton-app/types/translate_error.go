@@ -12,20 +12,17 @@ type TranslateError struct {
     Code int
 	LanguageCode string
 	Translate string
-	//TranslateError remove this line for disable generator functionality
     
     validator
 }
 
 func (translateError *TranslateError) Validate()  {
-    //Validate remove this line for disable generator functionality
 }
 
 type TranslateErrorFilter struct {
     model TranslateError
     list []TranslateError
     ErrorCodes []int
-	//TranslateErrorFilter remove this line for disable generator functionality
 
     AbstractFilter
 }
@@ -37,7 +34,6 @@ func GetTranslateErrorFilter(request *http.Request, functionType string) (filter
     if err != nil {
         return filter, err
     }
-    //filter.TestFilter, _ = strconv.Atoi(request.FormValue("TestFilter"))
 
     
     arrErrorCodes, _ := url.ParseQuery(request.URL.RawQuery)
@@ -45,8 +41,6 @@ func GetTranslateErrorFilter(request *http.Request, functionType string) (filter
         v, _ := strconv.Atoi(f)
         filter.ErrorCodes = append(filter.ErrorCodes, v)
     }
-    
-	//GetTranslateErrorFilter remove this line for disable generator functionality
 
     switch functionType {
     case settings.FunctionTypeMultiCreate, settings.FunctionTypeMultiUpdate, settings.FunctionTypeMultiDelete, settings.FunctionTypeMultiFindOrCreate:

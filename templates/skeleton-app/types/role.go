@@ -9,19 +9,16 @@ type Role struct {
     Id   int
     Name string
 	Description string
-	//Role remove this line for disable generator functionality
     
     validator
 }
 
 func (role *Role) Validate()  {
-    //Validate remove this line for disable generator functionality
 }
 
 type RoleFilter struct {
     model Role
     list []Role
-    //RoleFilter remove this line for disable generator functionality
 
     AbstractFilter
 }
@@ -33,9 +30,6 @@ func GetRoleFilter(request *http.Request, functionType string) (filter RoleFilte
     if err != nil {
         return filter, err
     }
-    //filter.TestFilter, _ = strconv.Atoi(request.FormValue("TestFilter"))
-
-    //GetRoleFilter remove this line for disable generator functionality
 
     switch functionType {
     case settings.FunctionTypeMultiCreate, settings.FunctionTypeMultiUpdate, settings.FunctionTypeMultiDelete, settings.FunctionTypeMultiFindOrCreate:

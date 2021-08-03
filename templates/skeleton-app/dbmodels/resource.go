@@ -12,7 +12,6 @@ type Resource struct {
     Name string
 	Code string
 	TypeId int
-	//Resource remove this line for disable generator functionality
 
     CreatedAt time.Time
     UpdatedAt time.Time
@@ -22,6 +21,5 @@ type Resource struct {
 }
 
 func (resource *Resource) Validate() {
-    //Validate remove this line for disable generator functionality
 }
 

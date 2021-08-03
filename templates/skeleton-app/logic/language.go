@@ -28,8 +28,6 @@ func LanguageFind(filter types.LanguageFilter)  (result []types.Language, totalR
 
     criteria := core.Db.Where(dbmodels.Language{})
 
-	//Language.FindFilterCode remove this line for disable generator functionality
-
     if len(filterIds) > 0 {
         criteria = criteria.Where("id in (?)", filterIds)
     }
@@ -230,7 +228,6 @@ func LanguageUpdate(filter types.LanguageFilter, query *gorm.DB)  (data types.La
 
     updateModel.Name = newModel.Name
 	updateModel.Code = newModel.Code
-	//updateModel.Field remove this line for disable generator functionality
 
     updateModel.Validate()
 
@@ -320,7 +317,6 @@ func LanguageFindOrCreate(filter types.LanguageFilter)  (data types.Language, er
     filter.Pagination.PerPage = 1
 
     findOrCreateModel := AssignLanguageDbFromType(filter.GetLanguageModel())
-	//findOrCreateModel.Field remove this line for disable generator functionality
 
     findOrCreateModel.Validate()
 
@@ -347,7 +343,6 @@ func LanguageUpdateOrCreate(filter types.LanguageFilter)  (data types.Language, 
     filter.Pagination.PerPage = 1
 
     updateOrCreateModel := AssignLanguageDbFromType(filter.GetLanguageModel())
-	//updateOrCreateModel.Field remove this line for disable generator functionality
 
     updateOrCreateModel.Validate()
 
@@ -373,25 +368,19 @@ func LanguageUpdateOrCreate(filter types.LanguageFilter)  (data types.Language, 
 
 func AssignLanguageTypeFromDb(dbLanguage dbmodels.Language) types.Language {
 
-    //AssignLanguageTypeFromDb predefine remove this line for disable generator functionality
-
     return types.Language{
         Id: dbLanguage.ID,
         Name: dbLanguage.Name,
 		Code: dbLanguage.Code,
-		//AssignLanguageTypeFromDb.Field remove this line for disable generator functionality
     }
 }
 
 func AssignLanguageDbFromType(typeModel types.Language) dbmodels.Language {
-
-    //AssignLanguageDbFromType predefine remove this line for disable generator functionality
     
     return dbmodels.Language{
         ID: typeModel.Id,
         Name: typeModel.Name,
 		Code: typeModel.Code,
-		//AssignLanguageDbFromType.Field remove this line for disable generator functionality
     }
 }
 

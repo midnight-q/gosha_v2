@@ -17,6 +17,7 @@ const (
 	ErrorCodeNotEmpty                ErrorCode = 900
 	ErrorCodeAgeToSmall              ErrorCode = 1000
 	ErrorCodeFieldLengthTooShort     ErrorCode = 1100
+	ErrorCodeAlreadyExist            ErrorCode = 1200
 )
 
 // Error messages EN
@@ -34,4 +35,5 @@ const (
 	ErrorEnMessageNotEmpty                = "Field in not empty"
 	ErrorEnMessageAgeToSmall              = "You must be over 14 years old"
 	ErrorEnMessageFieldLengthTooShort     = "Field value has too short length"
+	ErrorEnMessageAlreadyExist            = "Already exist"
 )

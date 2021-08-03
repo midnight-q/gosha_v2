@@ -147,7 +147,7 @@ func Router() http.Handler {
     router.HandleFunc(settings.LanguageRoute,         webapp.LanguageFindOrCreate).Methods("PUT")
     router.HandleFunc(settings.LanguageRoute,         webapp.LanguageUpdateOrCreate).Methods("PATCH")
 
-    //router-generator here dont touch this line
+
 
     handler := cors.New(cors.Options{
         AllowedMethods: []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},

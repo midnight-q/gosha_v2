@@ -11,7 +11,6 @@ func GenUserRole() types.UserRole {
 		Id:   rand.Intn(100500),
 		UserId: rand.Intn(100500),
 		RoleId: rand.Intn(100500),
-		//UserRole remove this line for disable generator functionality
 	}
 }
 

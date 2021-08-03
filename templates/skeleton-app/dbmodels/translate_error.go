@@ -12,7 +12,6 @@ type TranslateError struct {
     Code int
 	LanguageCode string
 	Translate string
-	//TranslateError remove this line for disable generator functionality
 
     CreatedAt time.Time
     UpdatedAt time.Time
@@ -22,6 +21,5 @@ type TranslateError struct {
 }
 
 func (translateError *TranslateError) Validate() {
-    //Validate remove this line for disable generator functionality
 }
 

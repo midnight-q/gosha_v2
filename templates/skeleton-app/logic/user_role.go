@@ -28,8 +28,6 @@ func UserRoleFind(filter types.UserRoleFilter)  (result []types.UserRole, totalR
 
     criteria := core.Db.Where(dbmodels.UserRole{})
 
-	//UserRole.FindFilterCode remove this line for disable generator functionality
-
     if len(filterIds) > 0 {
         criteria = criteria.Where("id in (?)", filterIds)
     }
@@ -230,7 +228,6 @@ func UserRoleUpdate(filter types.UserRoleFilter, query *gorm.DB)  (data types.Us
 
     updateModel.UserId = newModel.UserId
 	updateModel.RoleId = newModel.RoleId
-	//updateModel.Field remove this line for disable generator functionality
 
     updateModel.Validate()
 
@@ -320,7 +317,6 @@ func UserRoleFindOrCreate(filter types.UserRoleFilter)  (data types.UserRole, er
     filter.Pagination.PerPage = 1
 
     findOrCreateModel := AssignUserRoleDbFromType(filter.GetUserRoleModel())
-	//findOrCreateModel.Field remove this line for disable generator functionality
 
     findOrCreateModel.Validate()
 
@@ -347,7 +343,6 @@ func UserRoleUpdateOrCreate(filter types.UserRoleFilter)  (data types.UserRole, 
     filter.Pagination.PerPage = 1
 
     updateOrCreateModel := AssignUserRoleDbFromType(filter.GetUserRoleModel())
-	//updateOrCreateModel.Field remove this line for disable generator functionality
 
     updateOrCreateModel.Validate()
 
@@ -373,25 +368,19 @@ func UserRoleUpdateOrCreate(filter types.UserRoleFilter)  (data types.UserRole, 
 
 func AssignUserRoleTypeFromDb(dbUserRole dbmodels.UserRole) types.UserRole {
 
-    //AssignUserRoleTypeFromDb predefine remove this line for disable generator functionality
-
     return types.UserRole{
         Id: dbUserRole.ID,
         UserId: dbUserRole.UserId,
 		RoleId: dbUserRole.RoleId,
-		//AssignUserRoleTypeFromDb.Field remove this line for disable generator functionality
     }
 }
 
 func AssignUserRoleDbFromType(typeModel types.UserRole) dbmodels.UserRole {
-
-    //AssignUserRoleDbFromType predefine remove this line for disable generator functionality
     
     return dbmodels.UserRole{
         ID: typeModel.Id,
         UserId: typeModel.UserId,
 		RoleId: typeModel.RoleId,
-		//AssignUserRoleDbFromType.Field remove this line for disable generator functionality
     }
 }
 

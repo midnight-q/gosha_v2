@@ -28,8 +28,6 @@ func ResourceTypeFind(filter types.ResourceTypeFilter)  (result []types.Resource
 
     criteria := core.Db.Where(dbmodels.ResourceType{})
 
-	//ResourceType.FindFilterCode remove this line for disable generator functionality
-
     if len(filterIds) > 0 {
         criteria = criteria.Where("id in (?)", filterIds)
     }
@@ -229,7 +227,6 @@ func ResourceTypeUpdate(filter types.ResourceTypeFilter, query *gorm.DB)  (data 
     //updateModel.Some = newModel.Some
 
     updateModel.Name = newModel.Name
-	//updateModel.Field remove this line for disable generator functionality
 
     updateModel.Validate()
 
@@ -319,7 +316,6 @@ func ResourceTypeFindOrCreate(filter types.ResourceTypeFilter)  (data types.Reso
     filter.Pagination.PerPage = 1
 
     findOrCreateModel := AssignResourceTypeDbFromType(filter.GetResourceTypeModel())
-	//findOrCreateModel.Field remove this line for disable generator functionality
 
     findOrCreateModel.Validate()
 
@@ -346,7 +342,6 @@ func ResourceTypeUpdateOrCreate(filter types.ResourceTypeFilter)  (data types.Re
     filter.Pagination.PerPage = 1
 
     updateOrCreateModel := AssignResourceTypeDbFromType(filter.GetResourceTypeModel())
-	//updateOrCreateModel.Field remove this line for disable generator functionality
 
     updateOrCreateModel.Validate()
 
@@ -372,23 +367,17 @@ func ResourceTypeUpdateOrCreate(filter types.ResourceTypeFilter)  (data types.Re
 
 func AssignResourceTypeTypeFromDb(dbResourceType dbmodels.ResourceType) types.ResourceType {
 
-    //AssignResourceTypeTypeFromDb predefine remove this line for disable generator functionality
-
     return types.ResourceType{
         Id: dbResourceType.ID,
         Name: dbResourceType.Name,
-		//AssignResourceTypeTypeFromDb.Field remove this line for disable generator functionality
     }
 }
 
 func AssignResourceTypeDbFromType(typeModel types.ResourceType) dbmodels.ResourceType {
-
-    //AssignResourceTypeDbFromType predefine remove this line for disable generator functionality
     
     return dbmodels.ResourceType{
         ID: typeModel.Id,
         Name: typeModel.Name,
-		//AssignResourceTypeDbFromType.Field remove this line for disable generator functionality
     }
 }
 

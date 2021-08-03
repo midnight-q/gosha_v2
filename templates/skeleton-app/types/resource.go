@@ -10,19 +10,16 @@ type Resource struct {
     Name string
 	Code string
 	TypeId int
-	//Resource remove this line for disable generator functionality
     
     validator
 }
 
 func (resource *Resource) Validate()  {
-    //Validate remove this line for disable generator functionality
 }
 
 type ResourceFilter struct {
     model Resource
     list []Resource
-    //ResourceFilter remove this line for disable generator functionality
 
     AbstractFilter
 }
@@ -34,9 +31,6 @@ func GetResourceFilter(request *http.Request, functionType string) (filter Resou
     if err != nil {
         return filter, err
     }
-    //filter.TestFilter, _ = strconv.Atoi(request.FormValue("TestFilter"))
-
-    //GetResourceFilter remove this line for disable generator functionality
 
     switch functionType {
     case settings.FunctionTypeMultiCreate, settings.FunctionTypeMultiUpdate, settings.FunctionTypeMultiDelete, settings.FunctionTypeMultiFindOrCreate:

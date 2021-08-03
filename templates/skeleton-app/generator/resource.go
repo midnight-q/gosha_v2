@@ -13,7 +13,6 @@ func GenResource() types.Resource {
 		Name: strings.Title(Babbler2.Babble()),
 		Code: strings.Title(Babbler2.Babble()),
 		TypeId: rand.Intn(100500),
-		//Resource remove this line for disable generator functionality
 	}
 }
 

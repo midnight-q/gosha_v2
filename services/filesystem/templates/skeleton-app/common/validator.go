@@ -5,47 +5,19 @@ import (
 	"regexp"
 	"runtime"
 	"strconv"
-	"unicode"
 )
 
 func ValidateEmail(email string) bool {
-	Re := regexp.MustCompile(`^[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,4}$`)
-	return Re.MatchString(email)
-}
-
-func ValidatePassword(password string) bool {
-	count := 0
-	hasChar := false
-	hasNum := false
-
-	for _, c := range password {
-		switch {
-		case unicode.IsNumber(c):
-			count++
-			hasNum = true
-		case unicode.IsLetter(c):
-			count++
-			hasChar = true
-		default:
-			return false
-		}
-	}
-
-	return hasChar && hasNum && count > 7
-}
-
-func ValidateApplicationName(name string) bool {
-	// The name may contain lowercase letters ('a' through 'z'), numbers, and underscores ('_'). Name parts may only start with letters.
-	Re := regexp.MustCompile(`^([a-z]{1,})+([a-z\d-_]*)[a-z\d]$`)
-	return Re.MatchString(name)
+    Re := regexp.MustCompile(`^[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,4}$`)
+    return Re.MatchString(email)
 }
 
 func ValidateMobile(phone string) bool {
-	Re := regexp.MustCompile(`^[+][0-9]{11,}`)
-	return Re.MatchString(phone)
+    Re := regexp.MustCompile(`^[+][0-9]{11,}`)
+    return Re.MatchString(phone)
 }
 
-func InArray(item interface{}, array interface{}) bool {
+func InArray (item interface{}, array interface{}) bool {
 
 	rt := reflect.TypeOf(array)
 
@@ -92,6 +64,7 @@ func checkInArray(item interface{}, array interface{}) bool {
 	return false
 }
 
+
 func getFrame(skipFrames int) runtime.Frame {
 	// We need the frame at index skipFrames+2, since we never want runtime.Callers and getFrame
 	targetFrameIndex := skipFrames + 2
@@ -120,6 +93,7 @@ func MyCaller() string {
 	// Skip GetCallerFunctionName and the function to get the caller of
 	return getFrame(2).Function
 }
+
 
 func UniqueStringArray(slice []string) []string {
 	// create a map with all the values as key
@@ -175,3 +149,4 @@ func StringArrayToIntArray(in []string) (res []int) {
 	}
 	return
 }
+

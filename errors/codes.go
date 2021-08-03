@@ -18,6 +18,7 @@ const (
 	ErrorCodeAgeToSmall              ErrorCode = 1000
 	ErrorCodeFieldLengthTooShort     ErrorCode = 1100
 	ErrorCodeAlreadyExist            ErrorCode = 1200
+	ErrorCodeNotFoundCurrentDir      ErrorCode = 1300
 )
 
 // Error messages EN
@@ -36,4 +37,5 @@ const (
 	ErrorEnMessageAgeToSmall              = "You must be over 14 years old"
 	ErrorEnMessageFieldLengthTooShort     = "Field value has too short length"
 	ErrorEnMessageAlreadyExist            = "Already exist"
+	ErrorEnMessageNotFoundCurrentDir      = "Not found current dir"
 )

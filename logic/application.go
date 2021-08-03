@@ -2,7 +2,9 @@ package logic
 
 import (
 	"gosha_v2/errors"
+	"gosha_v2/services/filesystem"
 	"gosha_v2/types"
+	"gosha_v2/utils"
 )
 
 func ApplicationFind(_ types.ApplicationFilter) (result []types.Application, totalRecords int, err error) {
@@ -29,6 +31,40 @@ func ApplicationCreate(filter types.ApplicationFilter) (data types.Application, 
 		err = model.GetValidationError()
 		return types.Application{}, err
 	}
+
+	currentPath, err := filter.GetPwd()
+	if err != nil {
+		err = errors.NewErrorWithCode(err.Error(), errors.ErrorCodeNotFound, "")
+		return types.Application{}, err
+	}
+
+	currentPath = "/home/alex/projects/gosha_test/"
+
+	// Copy all skeleton to new dir
+	err = filesystem.CopySkeletonApp(currentPath)
+	if err != nil {
+		return types.Application{}, err
+	}
+	// Update package name and imports
+	newAppName := utils.GetNameForNewApp(currentPath)
+	err = filesystem.FindAndReplaceImports(newAppName)
+	if err != nil {
+		return types.Application{}, err
+	}
+	err = filesystem.CreateGoMod(newAppName)
+	if err != nil {
+		return types.Application{}, err
+	}
+	// Update seed for password
+
+	// Update db connection and script
+
+	// Update user fixtures
+
+	// Set PK type
+
+
+
 	return
 }
 

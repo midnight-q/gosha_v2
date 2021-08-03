@@ -1,12 +1,13 @@
 package types
 
 import (
+	"gosha_v2/common"
+	"gosha_v2/errors"
 	"gosha_v2/settings"
 	"net/http"
 )
 
 type Application struct {
-	Id           int
 	Name         string
 	Email        string
 	Password     string
@@ -17,6 +18,18 @@ type Application struct {
 }
 
 func (application *Application) Validate() {
+	if application.DatabaseType < 1 {
+		application.AddValidationError("Not found databaseType", errors.ErrorCodeNotFound, "DatabaseType")
+	}
+	if !common.ValidateEmail(application.Email) {
+		application.AddValidationError("Email not valid", errors.ErrorCodeNotValid, "Email")
+	}
+	if !common.ValidatePassword(application.Password) {
+		application.AddValidationError("Password not valid", errors.ErrorCodeNotValid, "Password")
+	}
+	if !common.ValidateApplicationName(application.Name) {
+		application.AddValidationError("Name not valid", errors.ErrorCodeNotValid, "Name")
+	}
 }
 
 type ApplicationFilter struct {
@@ -84,3 +97,5 @@ func (filter *ApplicationFilter) SetApplicationModelList(data []Application) {
 
 	filter.list = data
 }
+
+

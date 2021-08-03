@@ -1,11 +1,11 @@
 package types
 
 import (
-	"gosha_v2/errors"
-	"gosha_v2/settings"
 	"net/http"
 	"net/url"
-	"os"
+	"skeleton-app/core"
+	"skeleton-app/errors"
+	"skeleton-app/settings"
 	"strconv"
 	"strings"
 
@@ -151,9 +151,10 @@ func (filter GoshaDebugFilter) IsDebug() bool {
 }
 
 type AbstractFilter struct {
-	request        *http.Request
+	request *http.Request
 	rawRequestBody []byte
 
+	Regionality
 	GoshaSearchFilter
 	GoshaOrderFilter
 	GoshaFilterIds
@@ -167,16 +168,16 @@ type AbstractFilter struct {
 func GetAbstractFilter(request *http.Request, requestBody []byte, functionType string) (filter AbstractFilter, err error) {
 
 	filter.request = request
-	filter.rawRequestBody = requestBody
+    filter.rawRequestBody = requestBody
 	filter.functionType = functionType
 	filter.urlPath = request.URL.Path
 
 	if !isGroupFunctionType(functionType) {
-		err = ReadJSON(filter.rawRequestBody, &filter.GoshaFilterIds)
-		if err != nil {
-			return
-		}
-	}
+        err = ReadJSON(filter.rawRequestBody, &filter.GoshaFilterIds)
+        if err != nil {
+            return
+        }
+    }
 
 	filter.Pagination.CurrentPage, _ = strconv.Atoi(request.FormValue("CurrentPage"))
 	filter.Pagination.PerPage, _ = strconv.Atoi(request.FormValue("PerPage"))
@@ -200,7 +201,7 @@ func GetAbstractFilter(request *http.Request, requestBody []byte, functionType s
 
 	for index, field := range arr["Order[]"] {
 
-		filter.Order = append(filter.Order, field)
+		filter.Order = append(filter.Order, core.Db.Config.NamingStrategy.ColumnName("", field))
 
 		if len(dirs) > index && dirs[index] == "desc" {
 			filter.OrderDirection = append(filter.OrderDirection, "desc")
@@ -215,7 +216,7 @@ func GetAbstractFilter(request *http.Request, requestBody []byte, functionType s
 	}
 
 	for _, field := range arr["SearchBy[]"] {
-		filter.SearchBy = append(filter.SearchBy, field)
+		filter.SearchBy = append(filter.SearchBy, core.Db.Config.NamingStrategy.ColumnName("", field))
 	}
 
 	filter.SetToken(request)
@@ -290,29 +291,12 @@ func (filter *AbstractFilter) GetCurrentUserAgent() string {
 	return filter.request.UserAgent()
 }
 
-func (filter *AbstractFilter) GetPwd() (string, error) {
-	wd, err := os.Getwd()
-	if err != nil {
-		return "", err
-	}
-
-	if len(wd) < 1 {
-		err = errors.New("wd len is 0")
-		return "", err
-	}
-
-	if wd[len(wd)-1] != '/' {
-		wd = wd + "/"
-	}
-
-	return wd, nil
-}
-
 func isGroupFunctionType(functionType string) bool {
-	switch functionType {
-	case settings.FunctionTypeMultiCreate, settings.FunctionTypeMultiUpdate, settings.FunctionTypeMultiDelete, settings.FunctionTypeMultiFindOrCreate:
-		return true
-	default:
-		return false
-	}
+    switch functionType {
+    case settings.FunctionTypeMultiCreate, settings.FunctionTypeMultiUpdate, settings.FunctionTypeMultiDelete, settings.FunctionTypeMultiFindOrCreate:
+        return true
+    default:
+        return false
+    }
 }
+

@@ -4,7 +4,6 @@ import (
 	"gosha_v2/errors"
 	"gosha_v2/services/filesystem"
 	"gosha_v2/types"
-	"gosha_v2/utils"
 )
 
 func ApplicationFind(_ types.ApplicationFilter) (result []types.Application, totalRecords int, err error) {
@@ -46,19 +45,18 @@ func ApplicationCreate(filter types.ApplicationFilter) (data types.Application, 
 		return types.Application{}, err
 	}
 	// Update package name and imports
-	newAppName := utils.GetNameForNewApp(currentPath)
-	err = filesystem.FindAndReplaceImports(newAppName)
+	err = filesystem.FindAndReplaceImports(currentPath)
 	if err != nil {
 		return types.Application{}, err
 	}
-	err = filesystem.CreateGoMod(newAppName)
+	err = filesystem.CreateGoMod(currentPath)
 	if err != nil {
 		return types.Application{}, err
 	}
-	// Update seed for password
 
 	// Update db connection and script
 
+	// Update seed for password
 	// Update user fixtures
 
 	// Set PK type

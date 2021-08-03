@@ -4,12 +4,13 @@ import (
 	"fmt"
 	"gosha_v2/settings"
 	"io"
+	"io/fs"
 	"os"
 	"strings"
 )
 
 func CopySkeletonApp(workDir string) (err error) {
-	dirs, files, err := getDirAndFileLists(settings.SkeletonAppPath)
+	dirs, files, err := getDirAndFileLists(settings.SkeletonAppPath, templateFS)
 	if err != nil {
 		return err
 	}
@@ -70,15 +71,22 @@ func copyFile(src string, dst string) error {
 	return err
 }
 
-func getDirAndFileLists(path string) (dirsRes []string, filesRes []string, err error) {
-	entries, err := templateFS.ReadDir(path)
+func getDirAndFileLists(path string, fs fs.ReadDirFS) (dirsRes []string, filesRes []string, err error) {
+
+	var entries []os.DirEntry
+	if fs == nil {
+		entries, err = os.ReadDir(path)
+	} else {
+		entries, err = fs.ReadDir(path)
+	}
+
 	if err != nil {
 		return
 	}
 	for _, entry := range entries {
 		if entry.IsDir() {
 			dirsRes = append(dirsRes, path+"/"+entry.Name())
-			dirs, files, err := getDirAndFileLists(path + "/" + entry.Name())
+			dirs, files, err := getDirAndFileLists(path + "/" + entry.Name(), fs)
 			if err != nil {
 				return nil, nil, err
 			}

@@ -4,6 +4,7 @@ import (
 	"gosha_v2/errors"
 	"gosha_v2/services/filesystem"
 	"gosha_v2/types"
+	"gosha_v2/utils"
 )
 
 func ApplicationFind(_ types.ApplicationFilter) (result []types.Application, totalRecords int, err error) {
@@ -38,6 +39,7 @@ func ApplicationCreate(filter types.ApplicationFilter) (data types.Application, 
 	}
 
 	currentPath = "/home/alex/projects/gosha_test/"
+	model.Name = utils.GetNameForNewApp(currentPath)
 
 	// Copy all skeleton to new dir
 	err = filesystem.CopySkeletonApp(currentPath)
@@ -55,13 +57,31 @@ func ApplicationCreate(filter types.ApplicationFilter) (data types.Application, 
 	}
 
 	// Update db connection and script
+	err = filesystem.UpdateDbConnection(currentPath, model.DatabaseType)
+	if err != nil {
+		return types.Application{}, err
+	}
 
 	// Update seed for password
+	newSalt := utils.GeneratePasswordSalt()
+	err = filesystem.UpdatePasswordSalt(currentPath, newSalt)
+	if err != nil {
+		return types.Application{}, err
+	}
+
 	// Update user fixtures
+	err = filesystem.UpdateUserFixtures(currentPath, newSalt, model)
+	if err != nil {
+		return types.Application{}, err
+	}
 
 	// Set PK type
-
-
+	if model.UseUuidPk {
+		err = filesystem.ChangePKToUuid(currentPath)
+		if err != nil {
+			return types.Application{}, err
+		}
+	}
 
 	return
 }

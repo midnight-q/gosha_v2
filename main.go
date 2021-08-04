@@ -16,8 +16,8 @@ func main() {
 		Name:         "example-app",
 		Email:        "test@mail.com",
 		Password:     "qwerty12",
-		UseUuidPk:    false,
-		DatabaseType: 1,
+		UseUuidPk:    true,
+		DatabaseType: 2,
 	})
 	_, err := logic.ApplicationCreate(f)
 	fmt.Println(err)

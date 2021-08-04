@@ -16,20 +16,20 @@ func GetFloat64Type() *dst.Ident {
 	return &dst.Ident{Name: "float64"}
 }
 
-func GetFloat64ArrayType() *dst.ArrayType {
-	return &dst.ArrayType{
-		Elt: GetFloat64Type(),
+func GetUuidType() *dst.SelectorExpr {
+	return &dst.SelectorExpr{
+		X:    &dst.Ident{
+			Name: "uuid",
+		},
+		Sel:  &dst.Ident{
+			Name: "UUID",
+		},
 	}
 }
 
-func GetIntArrayType() *dst.ArrayType {
+func GetArrayType(t dst.Expr) *dst.ArrayType {
 	return &dst.ArrayType{
-		Elt: GetIntType(),
+		Elt: t,
 	}
 }
 
-func GetStringArrayType() *dst.ArrayType {
-	return &dst.ArrayType{
-		Elt: GetStringType(),
-	}
-}

@@ -10,3 +10,9 @@ const (
 	GoModFilename = "go.mod"
 )
 
+const (
+	MysqlDbTypeId = 1
+	PostgresqlDbTypeId = 2
+)
+
+

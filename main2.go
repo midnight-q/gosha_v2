@@ -10,7 +10,7 @@ import (
 	"github.com/dave/dst/decorator"
 )
 
-func main() {
+func ososososososo() {
 	filePath := "./skeleton_app/dbmodels/user_role.go"
 	b, err := ioutil.ReadFile(filePath) // just pass the file name
 

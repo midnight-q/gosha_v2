@@ -25,3 +25,7 @@ func GetComment(text string) dst.FieldDecorations {
 		},
 	}
 }
+
+func WrapString(s string) string {
+	return fmt.Sprintf(`"%s"`, s)
+}

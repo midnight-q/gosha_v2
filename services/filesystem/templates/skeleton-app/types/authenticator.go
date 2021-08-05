@@ -1,41 +1,41 @@
 package types
 
 import (
-    "net/http"
-    "skeleton-app/common"
-    "skeleton-app/core"
-    "skeleton-app/dbmodels"
-    "skeleton-app/errors"
-    "skeleton-app/flags"
-    "skeleton-app/settings"
-    "strings"
+	"net/http"
+	"skeleton-app/common"
+	"skeleton-app/core"
+	"skeleton-app/dbmodels"
+	"skeleton-app/errors"
+	"skeleton-app/flags"
+	"skeleton-app/settings"
+	"strings"
 )
 
 type Access struct {
-	Find bool
-	Read bool
-	Create bool
-	Update bool
-	Delete bool
-	FindOrCreate bool
+	Find           bool
+	Read           bool
+	Create         bool
+	Update         bool
+	Delete         bool
+	FindOrCreate   bool
 	UpdateOrCreate bool
 }
 
 type Authenticator struct {
-    Token        string
-    functionType string
-    urlPath      string
+	Token        string
+	functionType string
+	urlPath      string
 	ip           string
 	maxPerPage   int
 	user         dbmodels.User
 	auth         dbmodels.Auth
 	userId       int
-    roleIds      []int
-    validator
+	roleIds      []int
+	validator
 }
 
 func (auth *Authenticator) GetCurrentUserId() int {
-    return auth.userId
+	return auth.userId
 }
 
 func (auth *Authenticator) SetIp(r *http.Request) {
@@ -54,166 +54,166 @@ func (auth *Authenticator) GetMaxPerPage() int {
 }
 
 func (auth *Authenticator) SetCurrentUserId(id int) {
-    auth.userId = id
+	auth.userId = id
 }
 
 func (auth *Authenticator) GetCurrentUserRoleIds() []int {
-    return auth.roleIds
+	return auth.roleIds
 }
 
 func (auth *Authenticator) IsCurrentUserAdmin() bool {
-    return common.InArray(settings.AdminRoleId, auth.roleIds)
+	return common.InArray(settings.AdminRoleId, auth.roleIds)
 }
 
 func (auth *Authenticator) IsAuthorized() bool {
 
-    if *flags.Auth {
-        return true
-    }
+	if *flags.Auth {
+		return true
+	}
 
-    if len(auth.Token) < 1 {
-        return false
-    }
+	if len(auth.Token) < 1 {
+		return false
+	}
 
-    dbAuth := dbmodels.Auth{}
-    core.Db.Where(dbmodels.Auth{Token: auth.Token}).First(&dbAuth)
+	dbAuth := dbmodels.Auth{}
+	core.Db.Where(dbmodels.Auth{Token: auth.Token}).First(&dbAuth)
 
-    if dbAuth.IsActive {
+	if dbAuth.IsActive {
 
-        if dbAuth.UserId < 1 {
-            return false
-        }
+		if dbAuth.UserId < 1 {
+			return false
+		}
 
-        auth.SetCurrentUserId(dbAuth.UserId)
+		auth.SetCurrentUserId(dbAuth.UserId)
 
-        userRoles := []dbmodels.UserRole{}
-        core.Db.Where(dbmodels.UserRole{UserId: dbAuth.UserId}).Find(&userRoles)
+		userRoles := []dbmodels.UserRole{}
+		core.Db.Where(dbmodels.UserRole{UserId: dbAuth.UserId}).Find(&userRoles)
 
-        for _, ur := range userRoles {
-            auth.roleIds = append(auth.roleIds, ur.RoleId)
-        }
+		for _, ur := range userRoles {
+			auth.roleIds = append(auth.roleIds, ur.RoleId)
+		}
 
-        usedResources := []dbmodels.Resource{}
+		usedResources := []dbmodels.Resource{}
 
-        core.Db.Where(dbmodels.Resource{
-            Code:   clearPath(auth.urlPath),
-            TypeId: settings.HttpRouteResourceType.Int(),
-        }).Find(&usedResources)
+		core.Db.Where(dbmodels.Resource{
+			Code:   clearPath(auth.urlPath),
+			TypeId: settings.HttpRouteResourceType.Int(),
+		}).Find(&usedResources)
 
-        if len(usedResources) < 1 {
-            return false
-        }
+		if len(usedResources) < 1 {
+			return false
+		}
 
-        ids := []int{}
+		ids := []int{}
 
-        for _, r := range usedResources {
-            ids = append(ids, r.ID)
-        }
+		for _, r := range usedResources {
+			ids = append(ids, r.ID)
+		}
 
-        roleResources := []dbmodels.RoleResource{}
+		roleResources := []dbmodels.RoleResource{}
 
-        core.Db.Model(dbmodels.RoleResource{}).
-            Where("role_id in (select role_id from user_roles where deleted_at IS NULL and user_id = ?) and resource_id in (?)", dbAuth.UserId, ids).Find(&roleResources)
+		core.Db.Model(dbmodels.RoleResource{}).
+			Where("role_id in (select role_id from user_roles where deleted_at IS NULL and user_id = ?) and resource_id in (?)", dbAuth.UserId, ids).Find(&roleResources)
 
-        switch auth.functionType {
-        case settings.FunctionTypeFind:
-            for _, rr := range roleResources {
-                if rr.Find {
-                    return true
-                }
-            }
-            return false
+		switch auth.functionType {
+		case settings.FunctionTypeFind:
+			for _, rr := range roleResources {
+				if rr.Find {
+					return true
+				}
+			}
+			return false
 
-        case settings.FunctionTypeRead:
-            for _, rr := range roleResources {
-                if rr.Read {
-                    return true
-                }
-            }
-            return false
+		case settings.FunctionTypeRead:
+			for _, rr := range roleResources {
+				if rr.Read {
+					return true
+				}
+			}
+			return false
 
-        case settings.FunctionTypeCreate, settings.FunctionTypeMultiCreate:
-            for _, rr := range roleResources {
-                if rr.Create {
-                    return true
-                }
-            }
-            return false
+		case settings.FunctionTypeCreate, settings.FunctionTypeMultiCreate:
+			for _, rr := range roleResources {
+				if rr.Create {
+					return true
+				}
+			}
+			return false
 
-        case settings.FunctionTypeUpdate, settings.FunctionTypeMultiUpdate:
-            for _, rr := range roleResources {
-                if rr.Update {
-                    return true
-                }
-            }
-            return false
+		case settings.FunctionTypeUpdate, settings.FunctionTypeMultiUpdate:
+			for _, rr := range roleResources {
+				if rr.Update {
+					return true
+				}
+			}
+			return false
 
-        case settings.FunctionTypeDelete, settings.FunctionTypeMultiDelete:
-            for _, rr := range roleResources {
-                if rr.Delete {
-                    return true
-                }
-            }
-            return false
+		case settings.FunctionTypeDelete, settings.FunctionTypeMultiDelete:
+			for _, rr := range roleResources {
+				if rr.Delete {
+					return true
+				}
+			}
+			return false
 
-        case settings.FunctionTypeFindOrCreate:
-            for _, rr := range roleResources {
-                if rr.FindOrCreate {
-                    return true
-                }
-            }
-            return false
+		case settings.FunctionTypeFindOrCreate:
+			for _, rr := range roleResources {
+				if rr.FindOrCreate {
+					return true
+				}
+			}
+			return false
 
-        case settings.FunctionTypeUpdateOrCreate:
-            for _, rr := range roleResources {
-                if rr.UpdateOrCreate {
-                    return true
-                }
-            }
-            return false
-        }
-    }
+		case settings.FunctionTypeUpdateOrCreate:
+			for _, rr := range roleResources {
+				if rr.UpdateOrCreate {
+					return true
+				}
+			}
+			return false
+		}
+	}
 
-    return false
+	return false
 }
 
 func clearPath(s string) string {
-    if strings.Count(s, "/") > 3 {
-        return s[0:strings.LastIndex(s, "/")]
-    }
+	if strings.Count(s, "/") > 3 {
+		return s[0:strings.LastIndex(s, "/")]
+	}
 
-    return s
+	return s
 }
 
 func (auth *Authenticator) SetToken(r *http.Request) error {
 
-    auth.Token = r.Header.Get("Token")
+	auth.Token = r.Header.Get("Token")
 
-    return nil
+	return nil
 }
 
 func (authenticator *Authenticator) Validate(functionType string) {
 
-    switch functionType {
+	switch functionType {
 
-    case settings.FunctionTypeFind:
-        break;
-    case settings.FunctionTypeCreate:
-        break;
-    case settings.FunctionTypeRead:
-        break;
-    case settings.FunctionTypeUpdate:
-        break;
-    case settings.FunctionTypeDelete:
-        break;
-    case settings.FunctionTypeMultiCreate:
-        break
-    case settings.FunctionTypeMultiUpdate:
-        break
-    case settings.FunctionTypeMultiDelete:
-        break
-    default:
-        authenticator.validator.AddValidationError("Unsupported function type: " + functionType, errors.ErrorCodeUnsupportedFunctionType, "")
-        break;
-    }
+	case settings.FunctionTypeFind:
+		break
+	case settings.FunctionTypeCreate:
+		break
+	case settings.FunctionTypeRead:
+		break
+	case settings.FunctionTypeUpdate:
+		break
+	case settings.FunctionTypeDelete:
+		break
+	case settings.FunctionTypeMultiCreate:
+		break
+	case settings.FunctionTypeMultiUpdate:
+		break
+	case settings.FunctionTypeMultiDelete:
+		break
+	default:
+		authenticator.validator.AddValidationError("Unsupported function type: "+functionType, errors.ErrorCodeUnsupportedFunctionType, "")
+		break
+	}
 }

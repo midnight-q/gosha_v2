@@ -14,14 +14,14 @@ import (
 )
 
 var validModelTranslateError = types.TranslateError{
-		Id:   1,
-		//Name: "Some Name",
-	}
+	Id: 1,
+	//Name: "Some Name",
+}
 
 var updateModelTranslateError = types.TranslateError{
-		Id:   1,
-		//Name: "Some Another Name",
-	}
+	Id: 1,
+	//Name: "Some Another Name",
+}
 
 var idsForRemoveTranslateError = []int{}
 
@@ -47,7 +47,7 @@ var testCreateFuncTranslateError = func(tt tests.WebTest) (*httptest.ResponseRec
 var createAdminRequestTranslateError = tests.GetCreateAdminRequest(settings.TranslateErrorRoute, validModelTranslateError)
 
 var testCasesTranslateError = []tests.WebTest{
-    {
+	{
 		Name:         "Find TranslateErrors as admin",
 		ResponseCode: 200,
 		TestFunc: func(tt tests.WebTest) (*httptest.ResponseRecorder, error) {
@@ -81,7 +81,7 @@ var testCasesTranslateError = []tests.WebTest{
 			}
 		},
 	},
-    {
+	{
 		Name:         "Create new TranslateError as admin",
 		Request:      createAdminRequestTranslateError,
 		ResponseCode: 201,
@@ -100,12 +100,12 @@ var testCasesTranslateError = []tests.WebTest{
 		ResponseCode: 403,
 		TestFunc:     testCreateFuncTranslateError,
 	},
-    {
+	{
 		Name:         "Read TranslateError as non authorized user",
 		ResponseCode: 403,
 		TestFunc: func(tt tests.WebTest) (*httptest.ResponseRecorder, error) {
 			request := tests.GetReadNonAuthorizedUserRequest(settings.TranslateErrorRoute + "/" + strconv.Itoa(updateModelTranslateError.Id))
-			return tests.SendRequest(settings.TranslateErrorRoute+ "/{id}", request, TranslateErrorRead, http.MethodGet), nil
+			return tests.SendRequest(settings.TranslateErrorRoute+"/{id}", request, TranslateErrorRead, http.MethodGet), nil
 		},
 	},
 	{
@@ -131,7 +131,7 @@ var testCasesTranslateError = []tests.WebTest{
 			id := strconv.Itoa(responseData.Id)
 			request := tests.GetReadAdminRequest(settings.TranslateErrorRoute + "/" + id)
 
-			return tests.SendRequest(settings.TranslateErrorRoute+ "/{id}", request, TranslateErrorRead, http.MethodGet), nil
+			return tests.SendRequest(settings.TranslateErrorRoute+"/{id}", request, TranslateErrorRead, http.MethodGet), nil
 
 		},
 		ResultValidator: func(t *testing.T, response *httptest.ResponseRecorder) {
@@ -139,7 +139,7 @@ var testCasesTranslateError = []tests.WebTest{
 			validateFieldsTranslateError(t, createdModelTranslateError, updateModelTranslateError, response)
 		},
 	},
-    {
+	{
 		Name:         "Update TranslateError as admin",
 		ResponseCode: 200,
 		TestFunc: func(tt tests.WebTest) (*httptest.ResponseRecorder, error) {
@@ -162,9 +162,9 @@ var testCasesTranslateError = []tests.WebTest{
 			updateModelTranslateError.Id = responseData.Id
 
 			id := strconv.Itoa(responseData.Id)
-			request := tests.GetUpdateAdminRequest(settings.TranslateErrorRoute+ "/" +id, updateModelTranslateError)
+			request := tests.GetUpdateAdminRequest(settings.TranslateErrorRoute+"/"+id, updateModelTranslateError)
 
-			return tests.SendRequest(settings.TranslateErrorRoute+ "/{id}", request, TranslateErrorUpdate, http.MethodPut), nil
+			return tests.SendRequest(settings.TranslateErrorRoute+"/{id}", request, TranslateErrorUpdate, http.MethodPut), nil
 		},
 		ResultValidator: func(t *testing.T, response *httptest.ResponseRecorder) {
 			model := getTranslateErrorParsedModel(response)
@@ -172,13 +172,13 @@ var testCasesTranslateError = []tests.WebTest{
 
 			id := strconv.Itoa(model.Id)
 			request := tests.GetReadAdminRequest(settings.TranslateErrorRoute + "/" + id)
-			readResponse := tests.SendRequest(settings.TranslateErrorRoute+ "/{id}", request, TranslateErrorRead, http.MethodGet)
+			readResponse := tests.SendRequest(settings.TranslateErrorRoute+"/{id}", request, TranslateErrorRead, http.MethodGet)
 
 			model = getTranslateErrorParsedModel(readResponse)
 			validateFieldsTranslateError(t, model, updateModelTranslateError, readResponse)
 		},
 	},
-    {
+	{
 		Name: "Delete TranslateError as unauthorized user",
 		//Request: inside delete func,
 		ResponseCode: 403,
@@ -202,7 +202,7 @@ var testCasesTranslateError = []tests.WebTest{
 		},
 	},
 	{
-		Name: "Delete TranslateError as admin",
+		Name:         "Delete TranslateError as admin",
 		ResponseCode: 200,
 		TestFunc: func(tt tests.WebTest) (*httptest.ResponseRecorder, error) {
 
@@ -223,7 +223,7 @@ var testCasesTranslateError = []tests.WebTest{
 		},
 	},
 	{
-		Name: "Delete TranslateError as admin two times",
+		Name:         "Delete TranslateError as admin two times",
 		ResponseCode: 400,
 		TestFunc: func(tt tests.WebTest) (*httptest.ResponseRecorder, error) {
 
@@ -243,10 +243,6 @@ var testCasesTranslateError = []tests.WebTest{
 			return tests.SendRequest(settings.TranslateErrorRoute+"/{id}", req, TranslateErrorDelete, http.MethodDelete), nil
 		},
 	},
-    
-
-    
-
 }
 
 func getTranslateErrorResponseModel(tt tests.WebTest, response *httptest.ResponseRecorder) (types.TranslateError, error) {
@@ -260,14 +256,13 @@ func getTranslateErrorResponseModel(tt tests.WebTest, response *httptest.Respons
 	return model, nil
 }
 
-
 func getTranslateErrorParsedList(response *httptest.ResponseRecorder) (list []types.TranslateError, total int) {
 
-	responseData := struct{
-		List []types.TranslateError
+	responseData := struct {
+		List  []types.TranslateError
 		Total int
-	} {
-		List: []types.TranslateError{},
+	}{
+		List:  []types.TranslateError{},
 		Total: 1,
 	}
 
@@ -278,16 +273,15 @@ func getTranslateErrorParsedList(response *httptest.ResponseRecorder) (list []ty
 
 func getTranslateErrorParsedModel(response *httptest.ResponseRecorder) types.TranslateError {
 
-	responseData := struct{
+	responseData := struct {
 		Model types.TranslateError
-	} {
+	}{
 		Model: types.TranslateError{},
 	}
 	json.Unmarshal(response.Body.Bytes(), &responseData)
 
 	return responseData.Model
 }
-
 
 func TestTranslateError(t *testing.T) {
 
@@ -306,4 +300,3 @@ func TestTranslateError(t *testing.T) {
 		core.Db = tmpDb
 	}()
 }
-

@@ -1,232 +1,230 @@
 package logic
 
-    import (
-        "skeleton-app/types"
-        "strconv"
+import (
+	"skeleton-app/types"
+	"strconv"
 
-        "fmt"
-        "log"
-        "skeleton-app/core"
-        "skeleton-app/dbmodels"
-        "skeleton-app/errors"
-        "strings"
+	"fmt"
+	"log"
+	"skeleton-app/core"
+	"skeleton-app/dbmodels"
+	"skeleton-app/errors"
+	"strings"
 
-        "gorm.io/gorm"
-    )
+	"gorm.io/gorm"
+)
 
-func RoleResourceFind(filter types.RoleResourceFilter)  (result []types.RoleResource, totalRecords int, err error) {
+func RoleResourceFind(filter types.RoleResourceFilter) (result []types.RoleResource, totalRecords int, err error) {
 
-    foundIds 	:= []int{}
-    dbmodelData	:= []dbmodels.RoleResource{}
-    limit       := filter.PerPage
-    offset      := filter.GetOffset()
+	foundIds := []int{}
+	dbmodelData := []dbmodels.RoleResource{}
+	limit := filter.PerPage
+	offset := filter.GetOffset()
 
-    filterIds 	:= filter.GetIds()
-    filterExceptIds 	:= filter.GetExceptIds()
+	filterIds := filter.GetIds()
+	filterExceptIds := filter.GetExceptIds()
 
-    var count int64
+	var count int64
 
-    criteria := core.Db.Where(dbmodels.RoleResource{})
+	criteria := core.Db.Where(dbmodels.RoleResource{})
 
-    if len(filterIds) > 0 {
-        criteria = criteria.Where("id in (?)", filterIds)
-    }
+	if len(filterIds) > 0 {
+		criteria = criteria.Where("id in (?)", filterIds)
+	}
 
-    if len(filterExceptIds) > 0 {
-        criteria = criteria.Where("id not in (?)", filterExceptIds)
-    }
+	if len(filterExceptIds) > 0 {
+		criteria = criteria.Where("id not in (?)", filterExceptIds)
+	}
 
-    //if len(filter.Search) > 0 {
-    //
-    //    s := ("%" + filter.Search + "%")
-    //
-    //    if len(filter.SearchBy) > 0 {
-    //
-    //        for _, field := range filter.SearchBy {
-    //
-    //            if core.Db.Migrator().HasColumn(&dbmodels.RoleResource{}, field) {
-    //                criteria = criteria.Or("`"+field+"`"+" ilike ?", s)
-    //            } else {
-    //                err = errors.NewErrorWithCode("Search by unknown field", errors.ErrorCodeNotValid ,field)
-    //                return
-    //            }
-    //        }
-    //    } else {
-    //      criteria = criteria.Where("name ilike ? or code ilike ?", ("%" + filter.Search + "%"), ("%" + filter.Search + "%"))
-    //    }
-    //}
+	//if len(filter.Search) > 0 {
+	//
+	//    s := ("%" + filter.Search + "%")
+	//
+	//    if len(filter.SearchBy) > 0 {
+	//
+	//        for _, field := range filter.SearchBy {
+	//
+	//            if core.Db.Migrator().HasColumn(&dbmodels.RoleResource{}, field) {
+	//                criteria = criteria.Or("`"+field+"`"+" ilike ?", s)
+	//            } else {
+	//                err = errors.NewErrorWithCode("Search by unknown field", errors.ErrorCodeNotValid ,field)
+	//                return
+	//            }
+	//        }
+	//    } else {
+	//      criteria = criteria.Where("name ilike ? or code ilike ?", ("%" + filter.Search + "%"), ("%" + filter.Search + "%"))
+	//    }
+	//}
 
-    q := criteria.Model(dbmodels.RoleResource{}).Count(&count)
+	q := criteria.Model(dbmodels.RoleResource{}).Count(&count)
 
-    if q.Error != nil {
-       log.Println("FindRoleResource > Ошибка получения данных:", q.Error)
-       return result, 0, nil
-    }
+	if q.Error != nil {
+		log.Println("FindRoleResource > Ошибка получения данных:", q.Error)
+		return result, 0, nil
+	}
 
-    // order global criteria
-    if len(filter.Order) > 0  {
-        for index, Field := range filter.Order {
-             if core.Db.Migrator().HasColumn(&dbmodels.RoleResource{}, Field) {
-                criteria = criteria.Order("\"" + strings.ToLower(Field) + "\"" + " " + filter.OrderDirection[index])
-            } else {
-				err = errors.NewErrorWithCode("Ordering by unknown Field", errors.ErrorCodeNotValid,Field)
-                return
-            }
-        }
-    }
+	// order global criteria
+	if len(filter.Order) > 0 {
+		for index, Field := range filter.Order {
+			if core.Db.Migrator().HasColumn(&dbmodels.RoleResource{}, Field) {
+				criteria = criteria.Order("\"" + strings.ToLower(Field) + "\"" + " " + filter.OrderDirection[index])
+			} else {
+				err = errors.NewErrorWithCode("Ordering by unknown Field", errors.ErrorCodeNotValid, Field)
+				return
+			}
+		}
+	}
 
-    q = criteria.Limit(limit).Offset(offset).Find(&dbmodelData)
+	q = criteria.Limit(limit).Offset(offset).Find(&dbmodelData)
 
-    if q.Error != nil {
-       log.Println("FindRoleResource > Ошибка получения данных2:", q.Error)
-       return []types.RoleResource{}, 0, nil
-    }
+	if q.Error != nil {
+		log.Println("FindRoleResource > Ошибка получения данных2:", q.Error)
+		return []types.RoleResource{}, 0, nil
+	}
 
-    // подготовка id для получения связанных сущностей
-    for _, item := range dbmodelData {
-        foundIds = append(foundIds, item.ID)
-    }
+	// подготовка id для получения связанных сущностей
+	for _, item := range dbmodelData {
+		foundIds = append(foundIds, item.ID)
+	}
 
-    // получение связнаных сущностей
+	// получение связнаных сущностей
 
-    //формирование результатов
-    for _, item := range dbmodelData {
-       result = append(result, AssignRoleResourceTypeFromDb(item))
-    }
+	//формирование результатов
+	for _, item := range dbmodelData {
+		result = append(result, AssignRoleResourceTypeFromDb(item))
+	}
 
-    return result, int(count), nil
+	return result, int(count), nil
 }
 
+func RoleResourceMultiCreate(filter types.RoleResourceFilter) (data []types.RoleResource, err error) {
 
-func RoleResourceMultiCreate(filter types.RoleResourceFilter)  (data []types.RoleResource, err error) {
+	typeModelList, err := filter.GetRoleResourceModelList()
 
-    typeModelList, err := filter.GetRoleResourceModelList()
+	if err != nil {
+		return
+	}
 
-    if err != nil {
-        return
-    }
+	tx := core.Db.Begin()
 
-    tx := core.Db.Begin()
+	for _, typeModel := range typeModelList {
 
-    for _, typeModel := range typeModelList {
+		filter.SetRoleResourceModel(typeModel)
+		item, e := RoleResourceCreate(filter, tx)
 
-        filter.SetRoleResourceModel(typeModel)
-        item, e := RoleResourceCreate(filter, tx)
+		if e != nil {
+			err = e
+			data = nil
+			break
+		}
 
-        if e != nil {
-            err = e
-            data = nil
-            break
-        }
+		data = append(data, item)
+	}
 
-        data = append(data, item)
-    }
+	if err == nil {
+		tx.Commit()
+	} else {
+		tx.Rollback()
+	}
 
-    if err == nil {
-        tx.Commit()
-    } else {
-        tx.Rollback()
-    }
-
-    return
+	return
 }
 
-func RoleResourceCreate(filter types.RoleResourceFilter, query *gorm.DB)  (data types.RoleResource, err error) {
+func RoleResourceCreate(filter types.RoleResourceFilter, query *gorm.DB) (data types.RoleResource, err error) {
 
-    typeModel := filter.GetRoleResourceModel()
-    dbModel := AssignRoleResourceDbFromType(typeModel)
-    dbModel.ID = 0
+	typeModel := filter.GetRoleResourceModel()
+	dbModel := AssignRoleResourceDbFromType(typeModel)
+	dbModel.ID = 0
 
-    dbModel.Validate()
+	dbModel.Validate()
 
-    if ! dbModel.IsValid() {
-        fmt.Println("RoleResourceCreate > Create RoleResource error:", dbModel)
-        return types.RoleResource{}, dbModel.GetValidationError()
-    }
+	if !dbModel.IsValid() {
+		fmt.Println("RoleResourceCreate > Create RoleResource error:", dbModel)
+		return types.RoleResource{}, dbModel.GetValidationError()
+	}
 
-    query = query.Create(&dbModel)
+	query = query.Create(&dbModel)
 
-    if query.Error != nil {
-        fmt.Println("RoleResourceCreate > Create RoleResource error:", query.Error)
-        return types.RoleResource{}, errors.NewErrorWithCode("cant create RoleResource", errors.ErrorCodeSqlError, "")
-    }
+	if query.Error != nil {
+		fmt.Println("RoleResourceCreate > Create RoleResource error:", query.Error)
+		return types.RoleResource{}, errors.NewErrorWithCode("cant create RoleResource", errors.ErrorCodeSqlError, "")
+	}
 
-    return AssignRoleResourceTypeFromDb(dbModel), nil
+	return AssignRoleResourceTypeFromDb(dbModel), nil
 }
 
-func RoleResourceRead(filter types.RoleResourceFilter)  (data types.RoleResource, err error) {
+func RoleResourceRead(filter types.RoleResourceFilter) (data types.RoleResource, err error) {
 
-    filter.Pagination.CurrentPage = 1
-    filter.Pagination.PerPage = 1
-    filter.ClearIds()
-    filter.AddId(filter.GetCurrentId())
+	filter.Pagination.CurrentPage = 1
+	filter.Pagination.PerPage = 1
+	filter.ClearIds()
+	filter.AddId(filter.GetCurrentId())
 
-    findData, _, err := RoleResourceFind(filter)
+	findData, _, err := RoleResourceFind(filter)
 
-    if len(findData) > 0 {
-        return findData[0], nil
-    }
+	if len(findData) > 0 {
+		return findData[0], nil
+	}
 
-    return types.RoleResource{}, errors.NewErrorWithCode("Not found", errors.ErrorCodeNotFound, "")
+	return types.RoleResource{}, errors.NewErrorWithCode("Not found", errors.ErrorCodeNotFound, "")
 }
 
+func RoleResourceMultiUpdate(filter types.RoleResourceFilter) (data []types.RoleResource, err error) {
 
-func RoleResourceMultiUpdate(filter types.RoleResourceFilter)  (data []types.RoleResource, err error) {
+	typeModelList, err := filter.GetRoleResourceModelList()
 
-    typeModelList, err := filter.GetRoleResourceModelList()
+	if err != nil {
+		return
+	}
 
-    if err != nil {
-        return
-    }
+	tx := core.Db.Begin()
 
-    tx := core.Db.Begin()
+	for _, typeModel := range typeModelList {
 
-    for _, typeModel := range typeModelList {
+		filter.SetRoleResourceModel(typeModel)
+		filter.ClearIds()
+		filter.SetCurrentId(typeModel.Id)
 
-        filter.SetRoleResourceModel(typeModel)
-        filter.ClearIds()
-        filter.SetCurrentId(typeModel.Id)
+		item, e := RoleResourceUpdate(filter, tx)
 
-        item, e := RoleResourceUpdate(filter, tx)
+		if e != nil {
+			err = e
+			data = nil
+			break
+		}
 
-        if e != nil {
-            err = e
-            data = nil
-            break
-        }
+		data = append(data, item)
+	}
 
-        data = append(data, item)
-    }
+	if err == nil {
+		tx.Commit()
+	} else {
+		tx.Rollback()
+	}
 
-    if err == nil {
-        tx.Commit()
-    } else {
-        tx.Rollback()
-    }
-
-    return data, nil
+	return data, nil
 }
 
-func RoleResourceUpdate(filter types.RoleResourceFilter, query *gorm.DB)  (data types.RoleResource, err error) {
+func RoleResourceUpdate(filter types.RoleResourceFilter, query *gorm.DB) (data types.RoleResource, err error) {
 
-    filter.Pagination.CurrentPage = 1
-    filter.Pagination.PerPage = 1
+	filter.Pagination.CurrentPage = 1
+	filter.Pagination.PerPage = 1
 
-    existsModel, err := RoleResourceRead(filter)
+	existsModel, err := RoleResourceRead(filter)
 
-    if existsModel.Id < 1 || err != nil {
-        err = errors.NewErrorWithCode("RoleResource not found in db with id: " + strconv.Itoa(filter.GetCurrentId()), errors.ErrorCodeNotFound, "Id")
-        return
-    }
+	if existsModel.Id < 1 || err != nil {
+		err = errors.NewErrorWithCode("RoleResource not found in db with id: "+strconv.Itoa(filter.GetCurrentId()), errors.ErrorCodeNotFound, "Id")
+		return
+	}
 
-    newModel := filter.GetRoleResourceModel()
+	newModel := filter.GetRoleResourceModel()
 
-    updateModel := AssignRoleResourceDbFromType(newModel)
-    updateModel.ID = existsModel.Id
+	updateModel := AssignRoleResourceDbFromType(newModel)
+	updateModel.ID = existsModel.Id
 
-    //updateModel.Some = newModel.Some
+	//updateModel.Some = newModel.Some
 
-    updateModel.RoleId = newModel.RoleId
+	updateModel.RoleId = newModel.RoleId
 	updateModel.ResourceId = newModel.ResourceId
 	updateModel.Find = newModel.Find
 	updateModel.Read = newModel.Read
@@ -236,173 +234,168 @@ func RoleResourceUpdate(filter types.RoleResourceFilter, query *gorm.DB)  (data 
 	updateModel.FindOrCreate = newModel.FindOrCreate
 	updateModel.UpdateOrCreate = newModel.UpdateOrCreate
 
-    updateModel.Validate()
+	updateModel.Validate()
 
-    if !updateModel.IsValid() {
-        err = updateModel.GetValidationError()
-        return
-    }
+	if !updateModel.IsValid() {
+		err = updateModel.GetValidationError()
+		return
+	}
 
-    q := query.Model(dbmodels.RoleResource{}).Save(&updateModel)
+	q := query.Model(dbmodels.RoleResource{}).Save(&updateModel)
 
-    if q.Error != nil {
-        err = q.Error
-        return
-    }
+	if q.Error != nil {
+		err = q.Error
+		return
+	}
 
-    data = AssignRoleResourceTypeFromDb(updateModel)
-    return
+	data = AssignRoleResourceTypeFromDb(updateModel)
+	return
 }
 
+func RoleResourceMultiDelete(filter types.RoleResourceFilter) (isOk bool, err error) {
 
-func RoleResourceMultiDelete(filter types.RoleResourceFilter)  (isOk bool, err error) {
+	typeModelList, err := filter.GetRoleResourceModelList()
 
-    typeModelList, err := filter.GetRoleResourceModelList()
+	if err != nil {
+		return
+	}
 
-    if err != nil {
-        return
-    }
+	isOk = true
 
-    isOk = true
+	tx := core.Db.Begin()
 
-    tx := core.Db.Begin()
+	for _, typeModel := range typeModelList {
 
-    for _, typeModel := range typeModelList {
+		filter.SetRoleResourceModel(typeModel)
+		filter.ClearIds()
+		filter.SetCurrentId(typeModel.Id)
 
-        filter.SetRoleResourceModel(typeModel)
-        filter.ClearIds()
-        filter.SetCurrentId(typeModel.Id)
+		_, e := RoleResourceDelete(filter, tx)
 
-        _, e := RoleResourceDelete(filter, tx)
+		if e != nil {
+			err = e
+			isOk = false
+			break
+		}
+	}
 
-        if e != nil {
-            err = e
-            isOk = false
-            break
-        }
-    }
+	if err == nil {
+		tx.Commit()
+	} else {
+		tx.Rollback()
+	}
 
-    if err == nil {
-        tx.Commit()
-    } else {
-        tx.Rollback()
-    }
-
-    return isOk, err
+	return isOk, err
 }
 
-func RoleResourceDelete(filter types.RoleResourceFilter, query *gorm.DB)  (isOk bool, err error) {
+func RoleResourceDelete(filter types.RoleResourceFilter, query *gorm.DB) (isOk bool, err error) {
 
-    filter.Pagination.CurrentPage = 1
-    filter.Pagination.PerPage = 1
+	filter.Pagination.CurrentPage = 1
+	filter.Pagination.PerPage = 1
 
-    existsModel, err := RoleResourceRead(filter)
+	existsModel, err := RoleResourceRead(filter)
 
-    if existsModel.Id < 1 || err != nil {
+	if existsModel.Id < 1 || err != nil {
 
-        if err != nil {
-            err = errors.NewErrorWithCode("RoleResource not found in db with id: " + strconv.Itoa(filter.GetCurrentId()), errors.ErrorCodeNotFound, "")
-        }
-        return
-    }
+		if err != nil {
+			err = errors.NewErrorWithCode("RoleResource not found in db with id: "+strconv.Itoa(filter.GetCurrentId()), errors.ErrorCodeNotFound, "")
+		}
+		return
+	}
 
-    dbModel := AssignRoleResourceDbFromType(existsModel)
-    q := query.Model(dbmodels.RoleResource{}).Where(dbmodels.RoleResource{ID: dbModel.ID}).Delete(&dbModel)
+	dbModel := AssignRoleResourceDbFromType(existsModel)
+	q := query.Model(dbmodels.RoleResource{}).Where(dbmodels.RoleResource{ID: dbModel.ID}).Delete(&dbModel)
 
-    if q.Error != nil {
-        err = q.Error
-        return
-    }
+	if q.Error != nil {
+		err = q.Error
+		return
+	}
 
-    isOk = true
-    return
+	isOk = true
+	return
 }
 
-func RoleResourceFindOrCreate(filter types.RoleResourceFilter)  (data types.RoleResource, err error) {
+func RoleResourceFindOrCreate(filter types.RoleResourceFilter) (data types.RoleResource, err error) {
 
-    filter.Pagination.CurrentPage = 1
-    filter.Pagination.PerPage = 1
+	filter.Pagination.CurrentPage = 1
+	filter.Pagination.PerPage = 1
 
-    findOrCreateModel := AssignRoleResourceDbFromType(filter.GetRoleResourceModel())
+	findOrCreateModel := AssignRoleResourceDbFromType(filter.GetRoleResourceModel())
 
-    findOrCreateModel.Validate()
+	findOrCreateModel.Validate()
 
-    if !findOrCreateModel.IsValid() {
-        err = findOrCreateModel.GetValidationError()
-        return
-    }
+	if !findOrCreateModel.IsValid() {
+		err = findOrCreateModel.GetValidationError()
+		return
+	}
 
-    q := core.Db.Model(dbmodels.RoleResource{}).Where(dbmodels.RoleResource{ID: findOrCreateModel.ID}).FirstOrCreate(&findOrCreateModel)
+	q := core.Db.Model(dbmodels.RoleResource{}).Where(dbmodels.RoleResource{ID: findOrCreateModel.ID}).FirstOrCreate(&findOrCreateModel)
 
-    if q.Error != nil {
-        err = q.Error
-        return
-    }
+	if q.Error != nil {
+		err = q.Error
+		return
+	}
 
-    data = AssignRoleResourceTypeFromDb(findOrCreateModel)
-    return
+	data = AssignRoleResourceTypeFromDb(findOrCreateModel)
+	return
 }
 
+func RoleResourceUpdateOrCreate(filter types.RoleResourceFilter) (data types.RoleResource, err error) {
 
-func RoleResourceUpdateOrCreate(filter types.RoleResourceFilter)  (data types.RoleResource, err error) {
+	filter.Pagination.CurrentPage = 1
+	filter.Pagination.PerPage = 1
 
-    filter.Pagination.CurrentPage = 1
-    filter.Pagination.PerPage = 1
+	updateOrCreateModel := AssignRoleResourceDbFromType(filter.GetRoleResourceModel())
 
-    updateOrCreateModel := AssignRoleResourceDbFromType(filter.GetRoleResourceModel())
+	updateOrCreateModel.Validate()
 
-    updateOrCreateModel.Validate()
+	if !updateOrCreateModel.IsValid() {
+		err = updateOrCreateModel.GetValidationError()
+		return
+	}
 
-    if !updateOrCreateModel.IsValid() {
-        err = updateOrCreateModel.GetValidationError()
-        return
-    }
+	//please uncomment and set criteria
+	//q := core.Db.Model(dbmodels.RoleResource{}).Where(dbmodels.RoleResource{ID: updateOrCreateModel.ID}).Assign(dbmodels.RoleResource{/*PLEASE SET CRITERIA*/}).FirstOrCreate(&updateOrCreateModel)
 
-    //please uncomment and set criteria
-    //q := core.Db.Model(dbmodels.RoleResource{}).Where(dbmodels.RoleResource{ID: updateOrCreateModel.ID}).Assign(dbmodels.RoleResource{/*PLEASE SET CRITERIA*/}).FirstOrCreate(&updateOrCreateModel)
+	//if q.Error != nil {
+	//    err = q.Error
+	//    return
+	//}
 
-    //if q.Error != nil {
-    //    err = q.Error
-    //    return
-    //}
-
-    data = AssignRoleResourceTypeFromDb(updateOrCreateModel)
-    return
+	data = AssignRoleResourceTypeFromDb(updateOrCreateModel)
+	return
 }
-
 
 // add all assign functions
 
 func AssignRoleResourceTypeFromDb(dbRoleResource dbmodels.RoleResource) types.RoleResource {
 
-    return types.RoleResource{
-        Id: dbRoleResource.ID,
-        RoleId: dbRoleResource.RoleId,
-		ResourceId: dbRoleResource.ResourceId,
-		Find: dbRoleResource.Find,
-		Read: dbRoleResource.Read,
-		Create: dbRoleResource.Create,
-		Update: dbRoleResource.Update,
-		Delete: dbRoleResource.Delete,
-		FindOrCreate: dbRoleResource.FindOrCreate,
+	return types.RoleResource{
+		Id:             dbRoleResource.ID,
+		RoleId:         dbRoleResource.RoleId,
+		ResourceId:     dbRoleResource.ResourceId,
+		Find:           dbRoleResource.Find,
+		Read:           dbRoleResource.Read,
+		Create:         dbRoleResource.Create,
+		Update:         dbRoleResource.Update,
+		Delete:         dbRoleResource.Delete,
+		FindOrCreate:   dbRoleResource.FindOrCreate,
 		UpdateOrCreate: dbRoleResource.UpdateOrCreate,
-    }
+	}
 }
 
 func AssignRoleResourceDbFromType(typeModel types.RoleResource) dbmodels.RoleResource {
-    
-    return dbmodels.RoleResource{
-        ID: typeModel.Id,
-        RoleId: typeModel.RoleId,
-		ResourceId: typeModel.ResourceId,
-		Find: typeModel.Find,
-		Read: typeModel.Read,
-		Create: typeModel.Create,
-		Update: typeModel.Update,
-		Delete: typeModel.Delete,
-		FindOrCreate: typeModel.FindOrCreate,
+
+	return dbmodels.RoleResource{
+		ID:             typeModel.Id,
+		RoleId:         typeModel.RoleId,
+		ResourceId:     typeModel.ResourceId,
+		Find:           typeModel.Find,
+		Read:           typeModel.Read,
+		Create:         typeModel.Create,
+		Update:         typeModel.Update,
+		Delete:         typeModel.Delete,
+		FindOrCreate:   typeModel.FindOrCreate,
 		UpdateOrCreate: typeModel.UpdateOrCreate,
-    }
+	}
 }
-
-

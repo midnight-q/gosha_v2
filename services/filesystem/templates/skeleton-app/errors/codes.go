@@ -1,4 +1,3 @@
-
 package errors
 
 const DefaultErrorLanguageId = 1
@@ -22,17 +21,17 @@ const (
 
 // Error messages EN
 const (
-	ErrorEnMessageUndefined                          = "Undefined error"
-	ErrorEnMessageNotFound                           = "Not found"
-	ErrorEnMessageInvalidAuthorize                   = "Invalid authorize"
-	ErrorEnMessageUnsupportedFunctionType            = "Unsupported function type"
-	ErrorEnMessageParseId                            = "Error parse Id"
-	ErrorEnMessageInvalidPerPage                     = "Invalid PerPage"
-	ErrorEnMessageRabbitQueueNameNotSet              = "RabbitQueueName not set for application"
-	ErrorEnMessageNotValid                           = "Field not valid"
-	ErrorEnMessageSqlError                           = "Sql error"
-	ErrorEnMessageInvalidCurrentPage                 = "Invalid CurrentPage"
-	ErrorEnMessageNotEmpty                           = "Field in not empty"
-	ErrorEnMessageAgeToSmall                         = "You must be over 14 years old"
-	ErrorEnMessageFieldLengthTooShort                = "Field value has too short length"
+	ErrorEnMessageUndefined               = "Undefined error"
+	ErrorEnMessageNotFound                = "Not found"
+	ErrorEnMessageInvalidAuthorize        = "Invalid authorize"
+	ErrorEnMessageUnsupportedFunctionType = "Unsupported function type"
+	ErrorEnMessageParseId                 = "Error parse Id"
+	ErrorEnMessageInvalidPerPage          = "Invalid PerPage"
+	ErrorEnMessageRabbitQueueNameNotSet   = "RabbitQueueName not set for application"
+	ErrorEnMessageNotValid                = "Field not valid"
+	ErrorEnMessageSqlError                = "Sql error"
+	ErrorEnMessageInvalidCurrentPage      = "Invalid CurrentPage"
+	ErrorEnMessageNotEmpty                = "Field in not empty"
+	ErrorEnMessageAgeToSmall              = "You must be over 14 years old"
+	ErrorEnMessageFieldLengthTooShort     = "Field value has too short length"
 )

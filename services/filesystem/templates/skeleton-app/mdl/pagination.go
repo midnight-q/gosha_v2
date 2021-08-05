@@ -1,8 +1,8 @@
 package mdl
 
 type Pagination struct {
-	CurrentPage		int
-	PerPage			int
+	CurrentPage int
+	PerPage     int
 }
 
 func (pagination Pagination) GetOffset() int {

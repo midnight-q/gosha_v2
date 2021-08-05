@@ -4,8 +4,10 @@ const HomePageRoute = "/api"
 
 // routes as app resource
 const HttpRouteResourceType ConfigId = 1
+
 // web socket resource type
 const WsResourceType ConfigId = 2
+
 // html template resource type
 const HtmlResourceType ConfigId = 3
 
@@ -31,8 +33,6 @@ const RegionRoute = "/api/v1/region"
 
 const LanguageRoute = "/api/v1/language"
 
-
-
 var RoutesArray = []string{
 
 	UserRoute,
@@ -46,5 +46,4 @@ var RoutesArray = []string{
 	TranslateErrorRoute,
 	RegionRoute,
 	LanguageRoute,
-
 }

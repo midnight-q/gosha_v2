@@ -16,7 +16,7 @@ func GenResourceType() types.ResourceType {
 
 func GenListResourceType() (list []types.ResourceType) {
 
-	for i:=0; i<rand.Intn(5) + 2; i++{
+	for i := 0; i < rand.Intn(5)+2; i++ {
 		list = append(list, GenResourceType())
 	}
 

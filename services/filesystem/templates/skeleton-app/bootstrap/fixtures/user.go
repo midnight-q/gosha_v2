@@ -42,7 +42,7 @@ func AddUser() {
 			MobilePhone: "",
 			Password:    "qwerty",
 		}
-		
+
 		core.Db.Model(dbmodels.User{}).FirstOrCreate(&user)
 
 		setRole(user.ID, settings.AdminRoleId.Int())

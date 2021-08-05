@@ -14,14 +14,14 @@ import (
 )
 
 var validModelRegion = types.Region{
-		Id:   1,
-		//Name: "Some Name",
-	}
+	Id: 1,
+	//Name: "Some Name",
+}
 
 var updateModelRegion = types.Region{
-		Id:   1,
-		//Name: "Some Another Name",
-	}
+	Id: 1,
+	//Name: "Some Another Name",
+}
 
 var idsForRemoveRegion = []int{}
 
@@ -47,7 +47,7 @@ var testCreateFuncRegion = func(tt tests.WebTest) (*httptest.ResponseRecorder, e
 var createAdminRequestRegion = tests.GetCreateAdminRequest(settings.RegionRoute, validModelRegion)
 
 var testCasesRegion = []tests.WebTest{
-    {
+	{
 		Name:         "Find Regions as admin",
 		ResponseCode: 200,
 		TestFunc: func(tt tests.WebTest) (*httptest.ResponseRecorder, error) {
@@ -81,7 +81,7 @@ var testCasesRegion = []tests.WebTest{
 			}
 		},
 	},
-    {
+	{
 		Name:         "Create new Region as admin",
 		Request:      createAdminRequestRegion,
 		ResponseCode: 201,
@@ -100,12 +100,12 @@ var testCasesRegion = []tests.WebTest{
 		ResponseCode: 403,
 		TestFunc:     testCreateFuncRegion,
 	},
-    {
+	{
 		Name:         "Read Region as non authorized user",
 		ResponseCode: 403,
 		TestFunc: func(tt tests.WebTest) (*httptest.ResponseRecorder, error) {
 			request := tests.GetReadNonAuthorizedUserRequest(settings.RegionRoute + "/" + strconv.Itoa(updateModelRegion.Id))
-			return tests.SendRequest(settings.RegionRoute+ "/{id}", request, RegionRead, http.MethodGet), nil
+			return tests.SendRequest(settings.RegionRoute+"/{id}", request, RegionRead, http.MethodGet), nil
 		},
 	},
 	{
@@ -131,7 +131,7 @@ var testCasesRegion = []tests.WebTest{
 			id := strconv.Itoa(responseData.Id)
 			request := tests.GetReadAdminRequest(settings.RegionRoute + "/" + id)
 
-			return tests.SendRequest(settings.RegionRoute+ "/{id}", request, RegionRead, http.MethodGet), nil
+			return tests.SendRequest(settings.RegionRoute+"/{id}", request, RegionRead, http.MethodGet), nil
 
 		},
 		ResultValidator: func(t *testing.T, response *httptest.ResponseRecorder) {
@@ -139,7 +139,7 @@ var testCasesRegion = []tests.WebTest{
 			validateFieldsRegion(t, createdModelRegion, updateModelRegion, response)
 		},
 	},
-    {
+	{
 		Name:         "Update Region as admin",
 		ResponseCode: 200,
 		TestFunc: func(tt tests.WebTest) (*httptest.ResponseRecorder, error) {
@@ -162,9 +162,9 @@ var testCasesRegion = []tests.WebTest{
 			updateModelRegion.Id = responseData.Id
 
 			id := strconv.Itoa(responseData.Id)
-			request := tests.GetUpdateAdminRequest(settings.RegionRoute+ "/" +id, updateModelRegion)
+			request := tests.GetUpdateAdminRequest(settings.RegionRoute+"/"+id, updateModelRegion)
 
-			return tests.SendRequest(settings.RegionRoute+ "/{id}", request, RegionUpdate, http.MethodPut), nil
+			return tests.SendRequest(settings.RegionRoute+"/{id}", request, RegionUpdate, http.MethodPut), nil
 		},
 		ResultValidator: func(t *testing.T, response *httptest.ResponseRecorder) {
 			model := getRegionParsedModel(response)
@@ -172,13 +172,13 @@ var testCasesRegion = []tests.WebTest{
 
 			id := strconv.Itoa(model.Id)
 			request := tests.GetReadAdminRequest(settings.RegionRoute + "/" + id)
-			readResponse := tests.SendRequest(settings.RegionRoute+ "/{id}", request, RegionRead, http.MethodGet)
+			readResponse := tests.SendRequest(settings.RegionRoute+"/{id}", request, RegionRead, http.MethodGet)
 
 			model = getRegionParsedModel(readResponse)
 			validateFieldsRegion(t, model, updateModelRegion, readResponse)
 		},
 	},
-    {
+	{
 		Name: "Delete Region as unauthorized user",
 		//Request: inside delete func,
 		ResponseCode: 403,
@@ -202,7 +202,7 @@ var testCasesRegion = []tests.WebTest{
 		},
 	},
 	{
-		Name: "Delete Region as admin",
+		Name:         "Delete Region as admin",
 		ResponseCode: 200,
 		TestFunc: func(tt tests.WebTest) (*httptest.ResponseRecorder, error) {
 
@@ -223,7 +223,7 @@ var testCasesRegion = []tests.WebTest{
 		},
 	},
 	{
-		Name: "Delete Region as admin two times",
+		Name:         "Delete Region as admin two times",
 		ResponseCode: 400,
 		TestFunc: func(tt tests.WebTest) (*httptest.ResponseRecorder, error) {
 
@@ -243,10 +243,6 @@ var testCasesRegion = []tests.WebTest{
 			return tests.SendRequest(settings.RegionRoute+"/{id}", req, RegionDelete, http.MethodDelete), nil
 		},
 	},
-    
-
-    
-
 }
 
 func getRegionResponseModel(tt tests.WebTest, response *httptest.ResponseRecorder) (types.Region, error) {
@@ -260,14 +256,13 @@ func getRegionResponseModel(tt tests.WebTest, response *httptest.ResponseRecorde
 	return model, nil
 }
 
-
 func getRegionParsedList(response *httptest.ResponseRecorder) (list []types.Region, total int) {
 
-	responseData := struct{
-		List []types.Region
+	responseData := struct {
+		List  []types.Region
 		Total int
-	} {
-		List: []types.Region{},
+	}{
+		List:  []types.Region{},
 		Total: 1,
 	}
 
@@ -278,16 +273,15 @@ func getRegionParsedList(response *httptest.ResponseRecorder) (list []types.Regi
 
 func getRegionParsedModel(response *httptest.ResponseRecorder) types.Region {
 
-	responseData := struct{
+	responseData := struct {
 		Model types.Region
-	} {
+	}{
 		Model: types.Region{},
 	}
 	json.Unmarshal(response.Body.Bytes(), &responseData)
 
 	return responseData.Model
 }
-
 
 func TestRegion(t *testing.T) {
 
@@ -306,4 +300,3 @@ func TestRegion(t *testing.T) {
 		core.Db = tmpDb
 	}()
 }
-

@@ -9,17 +9,15 @@ import (
 	"skeleton-app/types"
 )
 
-    
-
 func TranslateErrorFind(w http.ResponseWriter, httpRequest *http.Request) {
 
-    requestDto, err := types.GetTranslateErrorFilter(httpRequest, settings.FunctionTypeFind)
+	requestDto, err := types.GetTranslateErrorFilter(httpRequest, settings.FunctionTypeFind)
 	if err != nil {
 		ErrResponse(w, err, http.StatusBadRequest, requestDto)
 		return
 	}
 
-    if !requestDto.IsAuthorized() {
+	if !requestDto.IsAuthorized() {
 		AuthErr(w, requestDto)
 		return
 	}
@@ -29,34 +27,31 @@ func TranslateErrorFind(w http.ResponseWriter, httpRequest *http.Request) {
 		return
 	}
 
-    
-    // Получаем список
-    data, totalRecords, err := logic.TranslateErrorFind(requestDto)
+	// Получаем список
+	data, totalRecords, err := logic.TranslateErrorFind(requestDto)
 
-    if err != nil {
-        ErrResponse(w, err, http.StatusBadRequest, requestDto)
-        return
-    }
+	if err != nil {
+		ErrResponse(w, err, http.StatusBadRequest, requestDto)
+		return
+	}
 
-    ValidResponse(w, mdl.ResponseFind{
-	    ApplyFieldsFilterToData(requestDto.GetFields(), data),
-        totalRecords,
-    })
+	ValidResponse(w, mdl.ResponseFind{
+		ApplyFieldsFilterToData(requestDto.GetFields(), data),
+		totalRecords,
+	})
 
-    return
+	return
 }
 
-    
 func TranslateErrorMultiCreate(w http.ResponseWriter, httpRequest *http.Request) {
 
-
-    requestDto, err := types.GetTranslateErrorFilter(httpRequest, settings.FunctionTypeMultiCreate)
+	requestDto, err := types.GetTranslateErrorFilter(httpRequest, settings.FunctionTypeMultiCreate)
 	if err != nil {
 		ErrResponse(w, err, http.StatusBadRequest, requestDto)
 		return
 	}
 
-    if !requestDto.IsAuthorized() {
+	if !requestDto.IsAuthorized() {
 		AuthErr(w, requestDto)
 		return
 	}
@@ -66,30 +61,29 @@ func TranslateErrorMultiCreate(w http.ResponseWriter, httpRequest *http.Request)
 		return
 	}
 
+	data, err := logic.TranslateErrorMultiCreate(requestDto)
 
-    data, err := logic.TranslateErrorMultiCreate(requestDto)
+	if err != nil {
+		ErrResponse(w, err, http.StatusBadRequest, requestDto)
+		return
+	}
 
-    if err != nil {
-        ErrResponse(w, err, http.StatusBadRequest, requestDto)
-        return
-    }
+	ValidResponse(w, mdl.ResponseCreate{
+		data,
+	})
 
-    ValidResponse(w, mdl.ResponseCreate{
-        data,
-    })
-
-    return
+	return
 }
 
 func TranslateErrorCreate(w http.ResponseWriter, httpRequest *http.Request) {
 
-    requestDto, err := types.GetTranslateErrorFilter(httpRequest, settings.FunctionTypeCreate)
+	requestDto, err := types.GetTranslateErrorFilter(httpRequest, settings.FunctionTypeCreate)
 	if err != nil {
 		ErrResponse(w, err, http.StatusBadRequest, requestDto)
 		return
 	}
 
-    if !requestDto.IsAuthorized() {
+	if !requestDto.IsAuthorized() {
 		AuthErr(w, requestDto)
 		return
 	}
@@ -99,77 +93,69 @@ func TranslateErrorCreate(w http.ResponseWriter, httpRequest *http.Request) {
 		return
 	}
 
+	data, err := logic.TranslateErrorCreate(requestDto, core.Db)
 
-    data, err := logic.TranslateErrorCreate(requestDto, core.Db)
+	if err != nil {
+		ErrResponse(w, err, http.StatusBadRequest, requestDto)
+		return
+	}
 
-    if err != nil {
-        ErrResponse(w, err, http.StatusBadRequest, requestDto)
-        return
-    }
+	ValidResponse(w, mdl.ResponseCreate{
+		ApplyFieldsFilterToData(requestDto.GetFields(), data),
+	})
 
-    ValidResponse(w, mdl.ResponseCreate{
-	    ApplyFieldsFilterToData(requestDto.GetFields(), data),
-    })
-
-    return
+	return
 }
-
-    
 
 func TranslateErrorRead(w http.ResponseWriter, httpRequest *http.Request) {
 
-
-    requestDto, err := types.GetTranslateErrorFilter(httpRequest, settings.FunctionTypeRead)
+	requestDto, err := types.GetTranslateErrorFilter(httpRequest, settings.FunctionTypeRead)
 	if err != nil {
 		ErrResponse(w, err, http.StatusBadRequest, requestDto)
 		return
 	}
 
-    if !requestDto.IsAuthorized() {
+	if !requestDto.IsAuthorized() {
 		AuthErr(w, requestDto)
 		return
 	}
 
-    requestDto.PerPage = 1
-    requestDto.CurrentPage = 1
+	requestDto.PerPage = 1
+	requestDto.CurrentPage = 1
 
 	if !requestDto.IsValid() {
 		Bad(w, requestDto, requestDto.GetValidationError())
 		return
 	}
 
+	data, err := logic.TranslateErrorRead(requestDto)
 
-    data, err := logic.TranslateErrorRead(requestDto)
+	// Создаём структуру ответа
+	if err != nil {
+		code := http.StatusBadRequest
+		if err.Error() == "Not found" {
+			code = http.StatusNotFound
+		}
+		ErrResponse(w, err, code, requestDto)
+		return
+	}
 
-    // Создаём структуру ответа
-    if err != nil {
-        code := http.StatusBadRequest
-        if err.Error() == "Not found" {
-            code = http.StatusNotFound
-        }
-        ErrResponse(w, err, code, requestDto)
-        return
-    }
+	ValidResponse(w, mdl.ResponseRead{
+		ApplyFieldsFilterToData(requestDto.GetFields(), data),
+	})
 
-    ValidResponse(w, mdl.ResponseRead{
-	    ApplyFieldsFilterToData(requestDto.GetFields(), data),
-    })
-
-    return
+	return
 }
-
-    
-
 
 func TranslateErrorMultiUpdate(w http.ResponseWriter, httpRequest *http.Request) {
 
-    requestDto, err := types.GetTranslateErrorFilter(httpRequest, settings.FunctionTypeMultiUpdate)
+	requestDto, err := types.GetTranslateErrorFilter(httpRequest, settings.FunctionTypeMultiUpdate)
 	if err != nil {
 		ErrResponse(w, err, http.StatusBadRequest, requestDto)
 		return
 	}
 
-    if !requestDto.IsAuthorized() {
+	if !requestDto.IsAuthorized() {
 		AuthErr(w, requestDto)
 		return
 	}
@@ -179,30 +165,29 @@ func TranslateErrorMultiUpdate(w http.ResponseWriter, httpRequest *http.Request)
 		return
 	}
 
+	data, err := logic.TranslateErrorMultiUpdate(requestDto)
 
-    data, err := logic.TranslateErrorMultiUpdate(requestDto)
+	if err != nil {
+		ErrResponse(w, err, http.StatusBadRequest, requestDto)
+		return
+	}
 
-    if err != nil {
-        ErrResponse(w, err, http.StatusBadRequest, requestDto)
-        return
-    }
+	ValidResponse(w, mdl.ResponseUpdate{
+		data,
+	})
 
-    ValidResponse(w, mdl.ResponseUpdate{
-        data,
-    })
-
-    return
+	return
 }
 
 func TranslateErrorUpdate(w http.ResponseWriter, httpRequest *http.Request) {
 
-    requestDto, err := types.GetTranslateErrorFilter(httpRequest, settings.FunctionTypeUpdate)
+	requestDto, err := types.GetTranslateErrorFilter(httpRequest, settings.FunctionTypeUpdate)
 	if err != nil {
 		ErrResponse(w, err, http.StatusBadRequest, requestDto)
 		return
 	}
 
-    if !requestDto.IsAuthorized() {
+	if !requestDto.IsAuthorized() {
 		AuthErr(w, requestDto)
 		return
 	}
@@ -212,33 +197,29 @@ func TranslateErrorUpdate(w http.ResponseWriter, httpRequest *http.Request) {
 		return
 	}
 
+	data, err := logic.TranslateErrorUpdate(requestDto, core.Db)
 
-    data, err := logic.TranslateErrorUpdate(requestDto, core.Db)
+	if err != nil {
+		ErrResponse(w, err, http.StatusBadRequest, requestDto)
+		return
+	}
 
-    if err != nil {
-        ErrResponse(w, err, http.StatusBadRequest, requestDto)
-        return
-    }
+	ValidResponse(w, mdl.ResponseUpdate{
+		ApplyFieldsFilterToData(requestDto.GetFields(), data),
+	})
 
-    ValidResponse(w, mdl.ResponseUpdate{
-	    ApplyFieldsFilterToData(requestDto.GetFields(), data),
-    })
-
-    return
+	return
 }
-
-    
 
 func TranslateErrorMultiDelete(w http.ResponseWriter, httpRequest *http.Request) {
 
-
-    requestDto, err := types.GetTranslateErrorFilter(httpRequest, settings.FunctionTypeMultiDelete)
+	requestDto, err := types.GetTranslateErrorFilter(httpRequest, settings.FunctionTypeMultiDelete)
 	if err != nil {
 		ErrResponse(w, err, http.StatusBadRequest, requestDto)
 		return
 	}
 
-    if !requestDto.IsAuthorized() {
+	if !requestDto.IsAuthorized() {
 		AuthErr(w, requestDto)
 		return
 	}
@@ -248,31 +229,29 @@ func TranslateErrorMultiDelete(w http.ResponseWriter, httpRequest *http.Request)
 		return
 	}
 
+	isOk, err := logic.TranslateErrorMultiDelete(requestDto)
 
-    isOk, err := logic.TranslateErrorMultiDelete(requestDto)
+	if err != nil {
+		ErrResponse(w, err, http.StatusBadRequest, requestDto)
+		return
+	}
 
-    if err != nil {
-        ErrResponse(w, err, http.StatusBadRequest, requestDto)
-        return
-    }
+	ValidResponse(w, mdl.ResponseDelete{
+		isOk,
+	})
 
-    ValidResponse(w, mdl.ResponseDelete{
-        isOk,
-    })
-
-    return
+	return
 }
 
 func TranslateErrorDelete(w http.ResponseWriter, httpRequest *http.Request) {
 
-
-    requestDto, err := types.GetTranslateErrorFilter(httpRequest, settings.FunctionTypeDelete)
+	requestDto, err := types.GetTranslateErrorFilter(httpRequest, settings.FunctionTypeDelete)
 	if err != nil {
 		ErrResponse(w, err, http.StatusBadRequest, requestDto)
 		return
 	}
 
-    if !requestDto.IsAuthorized() {
+	if !requestDto.IsAuthorized() {
 		AuthErr(w, requestDto)
 		return
 	}
@@ -282,32 +261,29 @@ func TranslateErrorDelete(w http.ResponseWriter, httpRequest *http.Request) {
 		return
 	}
 
+	isOk, err := logic.TranslateErrorDelete(requestDto, core.Db)
 
-    isOk, err := logic.TranslateErrorDelete(requestDto, core.Db)
+	if err != nil {
+		ErrResponse(w, err, http.StatusBadRequest, requestDto)
+		return
+	}
 
-    if err != nil {
-        ErrResponse(w, err, http.StatusBadRequest, requestDto)
-        return
-    }
+	ValidResponse(w, mdl.ResponseDelete{
+		isOk,
+	})
 
-    ValidResponse(w, mdl.ResponseDelete{
-        isOk,
-    })
-
-    return
+	return
 }
-
-    
 
 func TranslateErrorFindOrCreate(w http.ResponseWriter, httpRequest *http.Request) {
 
-    requestDto, err := types.GetTranslateErrorFilter(httpRequest, settings.FunctionTypeFindOrCreate)
+	requestDto, err := types.GetTranslateErrorFilter(httpRequest, settings.FunctionTypeFindOrCreate)
 	if err != nil {
 		ErrResponse(w, err, http.StatusBadRequest, requestDto)
 		return
 	}
 
-    if !requestDto.IsAuthorized() {
+	if !requestDto.IsAuthorized() {
 		AuthErr(w, requestDto)
 		return
 	}
@@ -317,50 +293,43 @@ func TranslateErrorFindOrCreate(w http.ResponseWriter, httpRequest *http.Request
 		return
 	}
 
+	data, err := logic.TranslateErrorFindOrCreate(requestDto)
 
-    data, err := logic.TranslateErrorFindOrCreate(requestDto)
-
-    if err != nil {
-        ErrResponse(w, err, http.StatusBadRequest, requestDto)
-        return
-    }
-
-    ValidResponse(w, mdl.ResponseFindOrCreate{
-	    ApplyFieldsFilterToData(requestDto.GetFields(), data),
-    })
-
-    return
-}
-
-    
-
-func TranslateErrorUpdateOrCreate(w http.ResponseWriter, httpRequest *http.Request) {
-
-    requestDto, err := types.GetTranslateErrorFilter(httpRequest, settings.FunctionTypeUpdateOrCreate)
 	if err != nil {
 		ErrResponse(w, err, http.StatusBadRequest, requestDto)
 		return
 	}
 
-    
+	ValidResponse(w, mdl.ResponseFindOrCreate{
+		ApplyFieldsFilterToData(requestDto.GetFields(), data),
+	})
+
+	return
+}
+
+func TranslateErrorUpdateOrCreate(w http.ResponseWriter, httpRequest *http.Request) {
+
+	requestDto, err := types.GetTranslateErrorFilter(httpRequest, settings.FunctionTypeUpdateOrCreate)
+	if err != nil {
+		ErrResponse(w, err, http.StatusBadRequest, requestDto)
+		return
+	}
 
 	if !requestDto.IsValid() {
 		Bad(w, requestDto, requestDto.GetValidationError())
 		return
 	}
 
+	data, err := logic.TranslateErrorUpdateOrCreate(requestDto)
 
-    data, err := logic.TranslateErrorUpdateOrCreate(requestDto)
+	if err != nil {
+		ErrResponse(w, err, http.StatusBadRequest, requestDto)
+		return
+	}
 
-    if err != nil {
-        ErrResponse(w, err, http.StatusBadRequest, requestDto)
-        return
-    }
+	ValidResponse(w, mdl.ResponseUpdateOrCreate{
+		ApplyFieldsFilterToData(requestDto.GetFields(), data),
+	})
 
-    ValidResponse(w, mdl.ResponseUpdateOrCreate{
-	    ApplyFieldsFilterToData(requestDto.GetFields(), data),
-    })
-
-    return
+	return
 }
-

@@ -11,13 +11,13 @@ import (
 )
 
 func main() {
-	f:= types.ApplicationFilter{}
+	f := types.ApplicationFilter{}
 	f.SetApplicationModel(types.Application{
 		Name:         "example-app",
 		Email:        "test@mail.com",
 		Password:     "qwerty12",
 		UseUuidPk:    true,
-		DatabaseType: 2,
+		DatabaseType: 1,
 	})
 	_, err := logic.ApplicationCreate(f)
 	fmt.Println(err)

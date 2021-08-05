@@ -9,16 +9,16 @@ import (
 func GenResource() types.Resource {
 
 	return types.Resource{
-		Id:   rand.Intn(100500),
-		Name: strings.Title(Babbler2.Babble()),
-		Code: strings.Title(Babbler2.Babble()),
+		Id:     rand.Intn(100500),
+		Name:   strings.Title(Babbler2.Babble()),
+		Code:   strings.Title(Babbler2.Babble()),
 		TypeId: rand.Intn(100500),
 	}
 }
 
 func GenListResource() (list []types.Resource) {
 
-	for i:=0; i<rand.Intn(5) + 2; i++{
+	for i := 0; i < rand.Intn(5)+2; i++ {
 		list = append(list, GenResource())
 	}
 

@@ -14,14 +14,14 @@ import (
 )
 
 var validModelResourceType = types.ResourceType{
-		Id:   1,
-		//Name: "Some Name",
-	}
+	Id: 1,
+	//Name: "Some Name",
+}
 
 var updateModelResourceType = types.ResourceType{
-		Id:   1,
-		//Name: "Some Another Name",
-	}
+	Id: 1,
+	//Name: "Some Another Name",
+}
 
 var idsForRemoveResourceType = []int{}
 
@@ -47,7 +47,7 @@ var testCreateFuncResourceType = func(tt tests.WebTest) (*httptest.ResponseRecor
 var createAdminRequestResourceType = tests.GetCreateAdminRequest(settings.ResourceTypeRoute, validModelResourceType)
 
 var testCasesResourceType = []tests.WebTest{
-    {
+	{
 		Name:         "Find ResourceTypes as admin",
 		ResponseCode: 200,
 		TestFunc: func(tt tests.WebTest) (*httptest.ResponseRecorder, error) {
@@ -81,7 +81,7 @@ var testCasesResourceType = []tests.WebTest{
 			}
 		},
 	},
-    {
+	{
 		Name:         "Create new ResourceType as admin",
 		Request:      createAdminRequestResourceType,
 		ResponseCode: 201,
@@ -100,12 +100,12 @@ var testCasesResourceType = []tests.WebTest{
 		ResponseCode: 403,
 		TestFunc:     testCreateFuncResourceType,
 	},
-    {
+	{
 		Name:         "Read ResourceType as non authorized user",
 		ResponseCode: 403,
 		TestFunc: func(tt tests.WebTest) (*httptest.ResponseRecorder, error) {
 			request := tests.GetReadNonAuthorizedUserRequest(settings.ResourceTypeRoute + "/" + strconv.Itoa(updateModelResourceType.Id))
-			return tests.SendRequest(settings.ResourceTypeRoute+ "/{id}", request, ResourceTypeRead, http.MethodGet), nil
+			return tests.SendRequest(settings.ResourceTypeRoute+"/{id}", request, ResourceTypeRead, http.MethodGet), nil
 		},
 	},
 	{
@@ -131,7 +131,7 @@ var testCasesResourceType = []tests.WebTest{
 			id := strconv.Itoa(responseData.Id)
 			request := tests.GetReadAdminRequest(settings.ResourceTypeRoute + "/" + id)
 
-			return tests.SendRequest(settings.ResourceTypeRoute+ "/{id}", request, ResourceTypeRead, http.MethodGet), nil
+			return tests.SendRequest(settings.ResourceTypeRoute+"/{id}", request, ResourceTypeRead, http.MethodGet), nil
 
 		},
 		ResultValidator: func(t *testing.T, response *httptest.ResponseRecorder) {
@@ -139,7 +139,7 @@ var testCasesResourceType = []tests.WebTest{
 			validateFieldsResourceType(t, createdModelResourceType, updateModelResourceType, response)
 		},
 	},
-    {
+	{
 		Name:         "Update ResourceType as admin",
 		ResponseCode: 200,
 		TestFunc: func(tt tests.WebTest) (*httptest.ResponseRecorder, error) {
@@ -162,9 +162,9 @@ var testCasesResourceType = []tests.WebTest{
 			updateModelResourceType.Id = responseData.Id
 
 			id := strconv.Itoa(responseData.Id)
-			request := tests.GetUpdateAdminRequest(settings.ResourceTypeRoute+ "/" +id, updateModelResourceType)
+			request := tests.GetUpdateAdminRequest(settings.ResourceTypeRoute+"/"+id, updateModelResourceType)
 
-			return tests.SendRequest(settings.ResourceTypeRoute+ "/{id}", request, ResourceTypeUpdate, http.MethodPut), nil
+			return tests.SendRequest(settings.ResourceTypeRoute+"/{id}", request, ResourceTypeUpdate, http.MethodPut), nil
 		},
 		ResultValidator: func(t *testing.T, response *httptest.ResponseRecorder) {
 			model := getResourceTypeParsedModel(response)
@@ -172,13 +172,13 @@ var testCasesResourceType = []tests.WebTest{
 
 			id := strconv.Itoa(model.Id)
 			request := tests.GetReadAdminRequest(settings.ResourceTypeRoute + "/" + id)
-			readResponse := tests.SendRequest(settings.ResourceTypeRoute+ "/{id}", request, ResourceTypeRead, http.MethodGet)
+			readResponse := tests.SendRequest(settings.ResourceTypeRoute+"/{id}", request, ResourceTypeRead, http.MethodGet)
 
 			model = getResourceTypeParsedModel(readResponse)
 			validateFieldsResourceType(t, model, updateModelResourceType, readResponse)
 		},
 	},
-    {
+	{
 		Name: "Delete ResourceType as unauthorized user",
 		//Request: inside delete func,
 		ResponseCode: 403,
@@ -202,7 +202,7 @@ var testCasesResourceType = []tests.WebTest{
 		},
 	},
 	{
-		Name: "Delete ResourceType as admin",
+		Name:         "Delete ResourceType as admin",
 		ResponseCode: 200,
 		TestFunc: func(tt tests.WebTest) (*httptest.ResponseRecorder, error) {
 
@@ -223,7 +223,7 @@ var testCasesResourceType = []tests.WebTest{
 		},
 	},
 	{
-		Name: "Delete ResourceType as admin two times",
+		Name:         "Delete ResourceType as admin two times",
 		ResponseCode: 400,
 		TestFunc: func(tt tests.WebTest) (*httptest.ResponseRecorder, error) {
 
@@ -243,10 +243,6 @@ var testCasesResourceType = []tests.WebTest{
 			return tests.SendRequest(settings.ResourceTypeRoute+"/{id}", req, ResourceTypeDelete, http.MethodDelete), nil
 		},
 	},
-    
-
-    
-
 }
 
 func getResourceTypeResponseModel(tt tests.WebTest, response *httptest.ResponseRecorder) (types.ResourceType, error) {
@@ -260,14 +256,13 @@ func getResourceTypeResponseModel(tt tests.WebTest, response *httptest.ResponseR
 	return model, nil
 }
 
-
 func getResourceTypeParsedList(response *httptest.ResponseRecorder) (list []types.ResourceType, total int) {
 
-	responseData := struct{
-		List []types.ResourceType
+	responseData := struct {
+		List  []types.ResourceType
 		Total int
-	} {
-		List: []types.ResourceType{},
+	}{
+		List:  []types.ResourceType{},
 		Total: 1,
 	}
 
@@ -278,16 +273,15 @@ func getResourceTypeParsedList(response *httptest.ResponseRecorder) (list []type
 
 func getResourceTypeParsedModel(response *httptest.ResponseRecorder) types.ResourceType {
 
-	responseData := struct{
+	responseData := struct {
 		Model types.ResourceType
-	} {
+	}{
 		Model: types.ResourceType{},
 	}
 	json.Unmarshal(response.Body.Bytes(), &responseData)
 
 	return responseData.Model
 }
-
 
 func TestResourceType(t *testing.T) {
 
@@ -306,4 +300,3 @@ func TestResourceType(t *testing.T) {
 		core.Db = tmpDb
 	}()
 }
-

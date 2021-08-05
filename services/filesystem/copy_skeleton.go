@@ -32,7 +32,6 @@ func CopySkeletonApp(workDir string) (err error) {
 		}
 	}
 
-
 	return nil
 }
 
@@ -86,7 +85,7 @@ func getDirAndFileLists(path string, fs fs.ReadDirFS) (dirsRes []string, filesRe
 	for _, entry := range entries {
 		if entry.IsDir() {
 			dirsRes = append(dirsRes, path+"/"+entry.Name())
-			dirs, files, err := getDirAndFileLists(path + "/" + entry.Name(), fs)
+			dirs, files, err := getDirAndFileLists(path+"/"+entry.Name(), fs)
 			if err != nil {
 				return nil, nil, err
 			}

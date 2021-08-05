@@ -1,7 +1,7 @@
 package settings
 
 var ExtResources = []string{
-    "ws",
+	"ws",
 }
 
 const HttpResource ConfigId = 1

@@ -17,7 +17,7 @@ func GenRegion() types.Region {
 
 func GenListRegion() (list []types.Region) {
 
-	for i:=0; i<rand.Intn(5) + 2; i++{
+	for i := 0; i < rand.Intn(5)+2; i++ {
 		list = append(list, GenRegion())
 	}
 

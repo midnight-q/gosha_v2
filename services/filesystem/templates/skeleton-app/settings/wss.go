@@ -6,9 +6,9 @@ const WssPortProd = "5050"
 
 func GetWssPort() string {
 
-    if IsDev() {
-        return WssPortDev
-    }
+	if IsDev() {
+		return WssPortDev
+	}
 
-    return WssPortProd
+	return WssPortProd
 }

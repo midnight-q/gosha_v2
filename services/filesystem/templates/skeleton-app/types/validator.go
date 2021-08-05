@@ -1,57 +1,57 @@
 package types
 
 import (
-    "skeleton-app/errors"
-    "skeleton-app/settings"
+	"skeleton-app/errors"
+	"skeleton-app/settings"
 )
 
 type validator struct {
-    validationError errors.ValidatorError
+	validationError errors.ValidatorError
 }
 
 func (val *validator) IsValid() bool {
 
-    return val.validationError.IsEmpty()
+	return val.validationError.IsEmpty()
 }
 
 func (val *validator) GetValidationError() errors.ValidatorErrorInterface {
-    return &val.validationError
+	return &val.validationError
 }
 
 func (val *validator) AddValidationError(err string, code errors.ErrorCode, field string) {
-    val.validationError.AddError(errors.NewErrorWithCode(err, code, field))
+	val.validationError.AddError(errors.NewErrorWithCode(err, code, field))
 }
 
 func (val *validator) Validate(functionType string) {
 
-    switch functionType {
+	switch functionType {
 
-    case settings.FunctionTypeFind:
-        break
+	case settings.FunctionTypeFind:
+		break
 
-    case settings.FunctionTypeCreate:
-        break
+	case settings.FunctionTypeCreate:
+		break
 
-    case settings.FunctionTypeMultiCreate:
-        break
+	case settings.FunctionTypeMultiCreate:
+		break
 
-    case settings.FunctionTypeRead:
-        break
+	case settings.FunctionTypeRead:
+		break
 
-    case settings.FunctionTypeUpdate:
-        break
+	case settings.FunctionTypeUpdate:
+		break
 
-    case settings.FunctionTypeMultiUpdate:
-        break
+	case settings.FunctionTypeMultiUpdate:
+		break
 
-    case settings.FunctionTypeDelete:
-        break
+	case settings.FunctionTypeDelete:
+		break
 
-    case settings.FunctionTypeMultiDelete:
-        break
+	case settings.FunctionTypeMultiDelete:
+		break
 
-    default:
-        val.AddValidationError("Unsupported function type: "+functionType, errors.ErrorCodeUnsupportedFunctionType, "")
-        break
-    }
+	default:
+		val.AddValidationError("Unsupported function type: "+functionType, errors.ErrorCodeUnsupportedFunctionType, "")
+		break
+	}
 }

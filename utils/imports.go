@@ -15,8 +15,8 @@ func GetUuidImport() *dst.ImportSpec {
 	}
 }
 
-func AddUuidImportIfNotExist(file *dst.File) {
-	if CheckImport("github.com/google/uuid", file) {
+func AddImportIfNotExist(file *dst.File, importSpec *dst.ImportSpec, name string) {
+	if CheckImport(importSpec.Path.Value, file) {
 		return
 	}
 	isAdded := false
@@ -29,15 +29,15 @@ func AddUuidImportIfNotExist(file *dst.File) {
 			continue
 		}
 
-		genDecl.Specs = append(genDecl.Specs, GetUuidImport())
+		genDecl.Specs = append(genDecl.Specs, importSpec)
 		isAdded = true
 	}
 
 	if !isAdded {
-		//file.Decls = append(file.Decls, &dst.GenDecl{
-		//	Tok:    token.IMPORT,
-		//	Specs:  []dst.Spec{GetUuidImport()},
-		//})
+		file.Decls = append([]dst.Decl{&dst.GenDecl{
+			Tok:   token.IMPORT,
+			Specs: []dst.Spec{GetUuidImport()},
+		}}, file.Decls...)
 	}
 }
 

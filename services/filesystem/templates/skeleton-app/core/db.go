@@ -8,16 +8,14 @@ import (
 	"gorm.io/gorm/logger"
 )
 
-const DbConnectString =
-    "host='" + settings.DbHost +
-    "' port='" + settings.DbPort +
-    "' user='" + settings.DbUser +
-    "' password='" + settings.DbPass +
-    "' dbname='" + settings.DbName +
-    "' sslmode='disable'"
+const DbConnectString = "host='" + settings.DbHost +
+	"' port='" + settings.DbPort +
+	"' user='" + settings.DbUser +
+	"' password='" + settings.DbPass +
+	"' dbname='" + settings.DbName +
+	"' sslmode='disable'"
 
-
-var	config = gorm.Config{DisableForeignKeyConstraintWhenMigrating: true}
+var config = gorm.Config{DisableForeignKeyConstraintWhenMigrating: true}
 
 var Db, DbErr = gorm.Open(postgres.Open(DbConnectString), &config)
 

@@ -28,7 +28,6 @@ type Pagination struct {
 	validator
 }
 
-
 func (pagination *Pagination) GetOffset() int {
 	return (pagination.CurrentPage - 1) * pagination.PerPage
 }
@@ -40,15 +39,15 @@ func (pagination *Pagination) Validate(functionType string) {
 	case settings.FunctionTypeFind:
 
 		if pagination.CurrentPage < 1 {
-			pagination.AddValidationError("CurrentPage parameter is not set", errors.ErrorCodeInvalidCurrentPage,"CurrentPage")
+			pagination.AddValidationError("CurrentPage parameter is not set", errors.ErrorCodeInvalidCurrentPage, "CurrentPage")
 		}
 
 		if pagination.PerPage < 1 {
-			pagination.AddValidationError("PerPage parameter is not set", errors.ErrorCodeInvalidPerPage,"PerPage")
+			pagination.AddValidationError("PerPage parameter is not set", errors.ErrorCodeInvalidPerPage, "PerPage")
 		}
 
 		break
-    case settings.FunctionTypeCreate:
+	case settings.FunctionTypeCreate:
 		break
 	case settings.FunctionTypeMultiCreate:
 		break
@@ -64,7 +63,7 @@ func (pagination *Pagination) Validate(functionType string) {
 		break
 
 	default:
-		pagination.validator.AddValidationError("Usupported function type: " + functionType, errors.ErrorCodeUnsupportedFunctionType, "")
+		pagination.validator.AddValidationError("Usupported function type: "+functionType, errors.ErrorCodeUnsupportedFunctionType, "")
 		break
 	}
 }

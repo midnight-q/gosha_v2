@@ -9,17 +9,15 @@ import (
 	"skeleton-app/types"
 )
 
-    
-
 func RoleFind(w http.ResponseWriter, httpRequest *http.Request) {
 
-    requestDto, err := types.GetRoleFilter(httpRequest, settings.FunctionTypeFind)
+	requestDto, err := types.GetRoleFilter(httpRequest, settings.FunctionTypeFind)
 	if err != nil {
 		ErrResponse(w, err, http.StatusBadRequest, requestDto)
 		return
 	}
 
-    if !requestDto.IsAuthorized() {
+	if !requestDto.IsAuthorized() {
 		AuthErr(w, requestDto)
 		return
 	}
@@ -29,34 +27,31 @@ func RoleFind(w http.ResponseWriter, httpRequest *http.Request) {
 		return
 	}
 
-    
-    // Получаем список
-    data, totalRecords, err := logic.RoleFind(requestDto)
+	// Получаем список
+	data, totalRecords, err := logic.RoleFind(requestDto)
 
-    if err != nil {
-        ErrResponse(w, err, http.StatusBadRequest, requestDto)
-        return
-    }
+	if err != nil {
+		ErrResponse(w, err, http.StatusBadRequest, requestDto)
+		return
+	}
 
-    ValidResponse(w, mdl.ResponseFind{
-	    ApplyFieldsFilterToData(requestDto.GetFields(), data),
-        totalRecords,
-    })
+	ValidResponse(w, mdl.ResponseFind{
+		ApplyFieldsFilterToData(requestDto.GetFields(), data),
+		totalRecords,
+	})
 
-    return
+	return
 }
 
-    
 func RoleMultiCreate(w http.ResponseWriter, httpRequest *http.Request) {
 
-
-    requestDto, err := types.GetRoleFilter(httpRequest, settings.FunctionTypeMultiCreate)
+	requestDto, err := types.GetRoleFilter(httpRequest, settings.FunctionTypeMultiCreate)
 	if err != nil {
 		ErrResponse(w, err, http.StatusBadRequest, requestDto)
 		return
 	}
 
-    if !requestDto.IsAuthorized() {
+	if !requestDto.IsAuthorized() {
 		AuthErr(w, requestDto)
 		return
 	}
@@ -66,30 +61,29 @@ func RoleMultiCreate(w http.ResponseWriter, httpRequest *http.Request) {
 		return
 	}
 
+	data, err := logic.RoleMultiCreate(requestDto)
 
-    data, err := logic.RoleMultiCreate(requestDto)
+	if err != nil {
+		ErrResponse(w, err, http.StatusBadRequest, requestDto)
+		return
+	}
 
-    if err != nil {
-        ErrResponse(w, err, http.StatusBadRequest, requestDto)
-        return
-    }
+	ValidResponse(w, mdl.ResponseCreate{
+		data,
+	})
 
-    ValidResponse(w, mdl.ResponseCreate{
-        data,
-    })
-
-    return
+	return
 }
 
 func RoleCreate(w http.ResponseWriter, httpRequest *http.Request) {
 
-    requestDto, err := types.GetRoleFilter(httpRequest, settings.FunctionTypeCreate)
+	requestDto, err := types.GetRoleFilter(httpRequest, settings.FunctionTypeCreate)
 	if err != nil {
 		ErrResponse(w, err, http.StatusBadRequest, requestDto)
 		return
 	}
 
-    if !requestDto.IsAuthorized() {
+	if !requestDto.IsAuthorized() {
 		AuthErr(w, requestDto)
 		return
 	}
@@ -99,77 +93,69 @@ func RoleCreate(w http.ResponseWriter, httpRequest *http.Request) {
 		return
 	}
 
+	data, err := logic.RoleCreate(requestDto, core.Db)
 
-    data, err := logic.RoleCreate(requestDto, core.Db)
+	if err != nil {
+		ErrResponse(w, err, http.StatusBadRequest, requestDto)
+		return
+	}
 
-    if err != nil {
-        ErrResponse(w, err, http.StatusBadRequest, requestDto)
-        return
-    }
+	ValidResponse(w, mdl.ResponseCreate{
+		ApplyFieldsFilterToData(requestDto.GetFields(), data),
+	})
 
-    ValidResponse(w, mdl.ResponseCreate{
-	    ApplyFieldsFilterToData(requestDto.GetFields(), data),
-    })
-
-    return
+	return
 }
-
-    
 
 func RoleRead(w http.ResponseWriter, httpRequest *http.Request) {
 
-
-    requestDto, err := types.GetRoleFilter(httpRequest, settings.FunctionTypeRead)
+	requestDto, err := types.GetRoleFilter(httpRequest, settings.FunctionTypeRead)
 	if err != nil {
 		ErrResponse(w, err, http.StatusBadRequest, requestDto)
 		return
 	}
 
-    if !requestDto.IsAuthorized() {
+	if !requestDto.IsAuthorized() {
 		AuthErr(w, requestDto)
 		return
 	}
 
-    requestDto.PerPage = 1
-    requestDto.CurrentPage = 1
+	requestDto.PerPage = 1
+	requestDto.CurrentPage = 1
 
 	if !requestDto.IsValid() {
 		Bad(w, requestDto, requestDto.GetValidationError())
 		return
 	}
 
+	data, err := logic.RoleRead(requestDto)
 
-    data, err := logic.RoleRead(requestDto)
+	// Создаём структуру ответа
+	if err != nil {
+		code := http.StatusBadRequest
+		if err.Error() == "Not found" {
+			code = http.StatusNotFound
+		}
+		ErrResponse(w, err, code, requestDto)
+		return
+	}
 
-    // Создаём структуру ответа
-    if err != nil {
-        code := http.StatusBadRequest
-        if err.Error() == "Not found" {
-            code = http.StatusNotFound
-        }
-        ErrResponse(w, err, code, requestDto)
-        return
-    }
+	ValidResponse(w, mdl.ResponseRead{
+		ApplyFieldsFilterToData(requestDto.GetFields(), data),
+	})
 
-    ValidResponse(w, mdl.ResponseRead{
-	    ApplyFieldsFilterToData(requestDto.GetFields(), data),
-    })
-
-    return
+	return
 }
-
-    
-
 
 func RoleMultiUpdate(w http.ResponseWriter, httpRequest *http.Request) {
 
-    requestDto, err := types.GetRoleFilter(httpRequest, settings.FunctionTypeMultiUpdate)
+	requestDto, err := types.GetRoleFilter(httpRequest, settings.FunctionTypeMultiUpdate)
 	if err != nil {
 		ErrResponse(w, err, http.StatusBadRequest, requestDto)
 		return
 	}
 
-    if !requestDto.IsAuthorized() {
+	if !requestDto.IsAuthorized() {
 		AuthErr(w, requestDto)
 		return
 	}
@@ -179,30 +165,29 @@ func RoleMultiUpdate(w http.ResponseWriter, httpRequest *http.Request) {
 		return
 	}
 
+	data, err := logic.RoleMultiUpdate(requestDto)
 
-    data, err := logic.RoleMultiUpdate(requestDto)
+	if err != nil {
+		ErrResponse(w, err, http.StatusBadRequest, requestDto)
+		return
+	}
 
-    if err != nil {
-        ErrResponse(w, err, http.StatusBadRequest, requestDto)
-        return
-    }
+	ValidResponse(w, mdl.ResponseUpdate{
+		data,
+	})
 
-    ValidResponse(w, mdl.ResponseUpdate{
-        data,
-    })
-
-    return
+	return
 }
 
 func RoleUpdate(w http.ResponseWriter, httpRequest *http.Request) {
 
-    requestDto, err := types.GetRoleFilter(httpRequest, settings.FunctionTypeUpdate)
+	requestDto, err := types.GetRoleFilter(httpRequest, settings.FunctionTypeUpdate)
 	if err != nil {
 		ErrResponse(w, err, http.StatusBadRequest, requestDto)
 		return
 	}
 
-    if !requestDto.IsAuthorized() {
+	if !requestDto.IsAuthorized() {
 		AuthErr(w, requestDto)
 		return
 	}
@@ -212,33 +197,29 @@ func RoleUpdate(w http.ResponseWriter, httpRequest *http.Request) {
 		return
 	}
 
+	data, err := logic.RoleUpdate(requestDto, core.Db)
 
-    data, err := logic.RoleUpdate(requestDto, core.Db)
+	if err != nil {
+		ErrResponse(w, err, http.StatusBadRequest, requestDto)
+		return
+	}
 
-    if err != nil {
-        ErrResponse(w, err, http.StatusBadRequest, requestDto)
-        return
-    }
+	ValidResponse(w, mdl.ResponseUpdate{
+		ApplyFieldsFilterToData(requestDto.GetFields(), data),
+	})
 
-    ValidResponse(w, mdl.ResponseUpdate{
-	    ApplyFieldsFilterToData(requestDto.GetFields(), data),
-    })
-
-    return
+	return
 }
-
-    
 
 func RoleMultiDelete(w http.ResponseWriter, httpRequest *http.Request) {
 
-
-    requestDto, err := types.GetRoleFilter(httpRequest, settings.FunctionTypeMultiDelete)
+	requestDto, err := types.GetRoleFilter(httpRequest, settings.FunctionTypeMultiDelete)
 	if err != nil {
 		ErrResponse(w, err, http.StatusBadRequest, requestDto)
 		return
 	}
 
-    if !requestDto.IsAuthorized() {
+	if !requestDto.IsAuthorized() {
 		AuthErr(w, requestDto)
 		return
 	}
@@ -248,31 +229,29 @@ func RoleMultiDelete(w http.ResponseWriter, httpRequest *http.Request) {
 		return
 	}
 
+	isOk, err := logic.RoleMultiDelete(requestDto)
 
-    isOk, err := logic.RoleMultiDelete(requestDto)
+	if err != nil {
+		ErrResponse(w, err, http.StatusBadRequest, requestDto)
+		return
+	}
 
-    if err != nil {
-        ErrResponse(w, err, http.StatusBadRequest, requestDto)
-        return
-    }
+	ValidResponse(w, mdl.ResponseDelete{
+		isOk,
+	})
 
-    ValidResponse(w, mdl.ResponseDelete{
-        isOk,
-    })
-
-    return
+	return
 }
 
 func RoleDelete(w http.ResponseWriter, httpRequest *http.Request) {
 
-
-    requestDto, err := types.GetRoleFilter(httpRequest, settings.FunctionTypeDelete)
+	requestDto, err := types.GetRoleFilter(httpRequest, settings.FunctionTypeDelete)
 	if err != nil {
 		ErrResponse(w, err, http.StatusBadRequest, requestDto)
 		return
 	}
 
-    if !requestDto.IsAuthorized() {
+	if !requestDto.IsAuthorized() {
 		AuthErr(w, requestDto)
 		return
 	}
@@ -282,32 +261,29 @@ func RoleDelete(w http.ResponseWriter, httpRequest *http.Request) {
 		return
 	}
 
+	isOk, err := logic.RoleDelete(requestDto, core.Db)
 
-    isOk, err := logic.RoleDelete(requestDto, core.Db)
+	if err != nil {
+		ErrResponse(w, err, http.StatusBadRequest, requestDto)
+		return
+	}
 
-    if err != nil {
-        ErrResponse(w, err, http.StatusBadRequest, requestDto)
-        return
-    }
+	ValidResponse(w, mdl.ResponseDelete{
+		isOk,
+	})
 
-    ValidResponse(w, mdl.ResponseDelete{
-        isOk,
-    })
-
-    return
+	return
 }
-
-    
 
 func RoleFindOrCreate(w http.ResponseWriter, httpRequest *http.Request) {
 
-    requestDto, err := types.GetRoleFilter(httpRequest, settings.FunctionTypeFindOrCreate)
+	requestDto, err := types.GetRoleFilter(httpRequest, settings.FunctionTypeFindOrCreate)
 	if err != nil {
 		ErrResponse(w, err, http.StatusBadRequest, requestDto)
 		return
 	}
 
-    if !requestDto.IsAuthorized() {
+	if !requestDto.IsAuthorized() {
 		AuthErr(w, requestDto)
 		return
 	}
@@ -317,32 +293,29 @@ func RoleFindOrCreate(w http.ResponseWriter, httpRequest *http.Request) {
 		return
 	}
 
+	data, err := logic.RoleFindOrCreate(requestDto)
 
-    data, err := logic.RoleFindOrCreate(requestDto)
+	if err != nil {
+		ErrResponse(w, err, http.StatusBadRequest, requestDto)
+		return
+	}
 
-    if err != nil {
-        ErrResponse(w, err, http.StatusBadRequest, requestDto)
-        return
-    }
+	ValidResponse(w, mdl.ResponseFindOrCreate{
+		ApplyFieldsFilterToData(requestDto.GetFields(), data),
+	})
 
-    ValidResponse(w, mdl.ResponseFindOrCreate{
-	    ApplyFieldsFilterToData(requestDto.GetFields(), data),
-    })
-
-    return
+	return
 }
-
-    
 
 func RoleUpdateOrCreate(w http.ResponseWriter, httpRequest *http.Request) {
 
-    requestDto, err := types.GetRoleFilter(httpRequest, settings.FunctionTypeUpdateOrCreate)
+	requestDto, err := types.GetRoleFilter(httpRequest, settings.FunctionTypeUpdateOrCreate)
 	if err != nil {
 		ErrResponse(w, err, http.StatusBadRequest, requestDto)
 		return
 	}
 
-    if !requestDto.IsAuthorized() {
+	if !requestDto.IsAuthorized() {
 		AuthErr(w, requestDto)
 		return
 	}
@@ -352,18 +325,16 @@ func RoleUpdateOrCreate(w http.ResponseWriter, httpRequest *http.Request) {
 		return
 	}
 
+	data, err := logic.RoleUpdateOrCreate(requestDto)
 
-    data, err := logic.RoleUpdateOrCreate(requestDto)
+	if err != nil {
+		ErrResponse(w, err, http.StatusBadRequest, requestDto)
+		return
+	}
 
-    if err != nil {
-        ErrResponse(w, err, http.StatusBadRequest, requestDto)
-        return
-    }
+	ValidResponse(w, mdl.ResponseUpdateOrCreate{
+		ApplyFieldsFilterToData(requestDto.GetFields(), data),
+	})
 
-    ValidResponse(w, mdl.ResponseUpdateOrCreate{
-	    ApplyFieldsFilterToData(requestDto.GetFields(), data),
-    })
-
-    return
+	return
 }
-

@@ -11,7 +11,6 @@ type Application struct {
 	Name         string
 	Email        string
 	Password     string
-	UseUuidPk    bool
 	DatabaseType int
 
 	validator
@@ -94,5 +93,3 @@ func (filter *ApplicationFilter) SetApplicationModelList(data []Application) {
 
 	filter.list = data
 }
-
-

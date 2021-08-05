@@ -14,14 +14,14 @@ import (
 )
 
 var validModelResource = types.Resource{
-		Id:   1,
-		//Name: "Some Name",
-	}
+	Id: 1,
+	//Name: "Some Name",
+}
 
 var updateModelResource = types.Resource{
-		Id:   1,
-		//Name: "Some Another Name",
-	}
+	Id: 1,
+	//Name: "Some Another Name",
+}
 
 var idsForRemoveResource = []int{}
 
@@ -47,7 +47,7 @@ var testCreateFuncResource = func(tt tests.WebTest) (*httptest.ResponseRecorder,
 var createAdminRequestResource = tests.GetCreateAdminRequest(settings.ResourceRoute, validModelResource)
 
 var testCasesResource = []tests.WebTest{
-    {
+	{
 		Name:         "Find Resources as admin",
 		ResponseCode: 200,
 		TestFunc: func(tt tests.WebTest) (*httptest.ResponseRecorder, error) {
@@ -81,7 +81,7 @@ var testCasesResource = []tests.WebTest{
 			}
 		},
 	},
-    {
+	{
 		Name:         "Create new Resource as admin",
 		Request:      createAdminRequestResource,
 		ResponseCode: 201,
@@ -100,12 +100,12 @@ var testCasesResource = []tests.WebTest{
 		ResponseCode: 403,
 		TestFunc:     testCreateFuncResource,
 	},
-    {
+	{
 		Name:         "Read Resource as non authorized user",
 		ResponseCode: 403,
 		TestFunc: func(tt tests.WebTest) (*httptest.ResponseRecorder, error) {
 			request := tests.GetReadNonAuthorizedUserRequest(settings.ResourceRoute + "/" + strconv.Itoa(updateModelResource.Id))
-			return tests.SendRequest(settings.ResourceRoute+ "/{id}", request, ResourceRead, http.MethodGet), nil
+			return tests.SendRequest(settings.ResourceRoute+"/{id}", request, ResourceRead, http.MethodGet), nil
 		},
 	},
 	{
@@ -131,7 +131,7 @@ var testCasesResource = []tests.WebTest{
 			id := strconv.Itoa(responseData.Id)
 			request := tests.GetReadAdminRequest(settings.ResourceRoute + "/" + id)
 
-			return tests.SendRequest(settings.ResourceRoute+ "/{id}", request, ResourceRead, http.MethodGet), nil
+			return tests.SendRequest(settings.ResourceRoute+"/{id}", request, ResourceRead, http.MethodGet), nil
 
 		},
 		ResultValidator: func(t *testing.T, response *httptest.ResponseRecorder) {
@@ -139,7 +139,7 @@ var testCasesResource = []tests.WebTest{
 			validateFieldsResource(t, createdModelResource, updateModelResource, response)
 		},
 	},
-    {
+	{
 		Name:         "Update Resource as admin",
 		ResponseCode: 200,
 		TestFunc: func(tt tests.WebTest) (*httptest.ResponseRecorder, error) {
@@ -162,9 +162,9 @@ var testCasesResource = []tests.WebTest{
 			updateModelResource.Id = responseData.Id
 
 			id := strconv.Itoa(responseData.Id)
-			request := tests.GetUpdateAdminRequest(settings.ResourceRoute+ "/" +id, updateModelResource)
+			request := tests.GetUpdateAdminRequest(settings.ResourceRoute+"/"+id, updateModelResource)
 
-			return tests.SendRequest(settings.ResourceRoute+ "/{id}", request, ResourceUpdate, http.MethodPut), nil
+			return tests.SendRequest(settings.ResourceRoute+"/{id}", request, ResourceUpdate, http.MethodPut), nil
 		},
 		ResultValidator: func(t *testing.T, response *httptest.ResponseRecorder) {
 			model := getResourceParsedModel(response)
@@ -172,13 +172,13 @@ var testCasesResource = []tests.WebTest{
 
 			id := strconv.Itoa(model.Id)
 			request := tests.GetReadAdminRequest(settings.ResourceRoute + "/" + id)
-			readResponse := tests.SendRequest(settings.ResourceRoute+ "/{id}", request, ResourceRead, http.MethodGet)
+			readResponse := tests.SendRequest(settings.ResourceRoute+"/{id}", request, ResourceRead, http.MethodGet)
 
 			model = getResourceParsedModel(readResponse)
 			validateFieldsResource(t, model, updateModelResource, readResponse)
 		},
 	},
-    {
+	{
 		Name: "Delete Resource as unauthorized user",
 		//Request: inside delete func,
 		ResponseCode: 403,
@@ -202,7 +202,7 @@ var testCasesResource = []tests.WebTest{
 		},
 	},
 	{
-		Name: "Delete Resource as admin",
+		Name:         "Delete Resource as admin",
 		ResponseCode: 200,
 		TestFunc: func(tt tests.WebTest) (*httptest.ResponseRecorder, error) {
 
@@ -223,7 +223,7 @@ var testCasesResource = []tests.WebTest{
 		},
 	},
 	{
-		Name: "Delete Resource as admin two times",
+		Name:         "Delete Resource as admin two times",
 		ResponseCode: 400,
 		TestFunc: func(tt tests.WebTest) (*httptest.ResponseRecorder, error) {
 
@@ -243,10 +243,6 @@ var testCasesResource = []tests.WebTest{
 			return tests.SendRequest(settings.ResourceRoute+"/{id}", req, ResourceDelete, http.MethodDelete), nil
 		},
 	},
-    
-
-    
-
 }
 
 func getResourceResponseModel(tt tests.WebTest, response *httptest.ResponseRecorder) (types.Resource, error) {
@@ -260,14 +256,13 @@ func getResourceResponseModel(tt tests.WebTest, response *httptest.ResponseRecor
 	return model, nil
 }
 
-
 func getResourceParsedList(response *httptest.ResponseRecorder) (list []types.Resource, total int) {
 
-	responseData := struct{
-		List []types.Resource
+	responseData := struct {
+		List  []types.Resource
 		Total int
-	} {
-		List: []types.Resource{},
+	}{
+		List:  []types.Resource{},
 		Total: 1,
 	}
 
@@ -278,16 +273,15 @@ func getResourceParsedList(response *httptest.ResponseRecorder) (list []types.Re
 
 func getResourceParsedModel(response *httptest.ResponseRecorder) types.Resource {
 
-	responseData := struct{
+	responseData := struct {
 		Model types.Resource
-	} {
+	}{
 		Model: types.Resource{},
 	}
 	json.Unmarshal(response.Body.Bytes(), &responseData)
 
 	return responseData.Model
 }
-
 
 func TestResource(t *testing.T) {
 
@@ -306,4 +300,3 @@ func TestResource(t *testing.T) {
 		core.Db = tmpDb
 	}()
 }
-

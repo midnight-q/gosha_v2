@@ -8,7 +8,7 @@ import (
 )
 
 type userType struct {
-	RoleId int
+	RoleId   int
 	IsActive bool
 }
 
@@ -36,7 +36,7 @@ func getRole(name string) dbmodels.Role {
 	var role dbmodels.Role
 
 	critery := core.Db.Model(dbmodels.Role{}).Where(dbmodels.Role{
-		Name:    name,
+		Name: name,
 	})
 
 	critery.First(&role)

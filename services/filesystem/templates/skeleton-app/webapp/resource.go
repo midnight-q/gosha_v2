@@ -9,17 +9,15 @@ import (
 	"skeleton-app/types"
 )
 
-    
-
 func ResourceFind(w http.ResponseWriter, httpRequest *http.Request) {
 
-    requestDto, err := types.GetResourceFilter(httpRequest, settings.FunctionTypeFind)
+	requestDto, err := types.GetResourceFilter(httpRequest, settings.FunctionTypeFind)
 	if err != nil {
 		ErrResponse(w, err, http.StatusBadRequest, requestDto)
 		return
 	}
 
-    if !requestDto.IsAuthorized() {
+	if !requestDto.IsAuthorized() {
 		AuthErr(w, requestDto)
 		return
 	}
@@ -29,34 +27,31 @@ func ResourceFind(w http.ResponseWriter, httpRequest *http.Request) {
 		return
 	}
 
-    
-    // Получаем список
-    data, totalRecords, err := logic.ResourceFind(requestDto)
+	// Получаем список
+	data, totalRecords, err := logic.ResourceFind(requestDto)
 
-    if err != nil {
-        ErrResponse(w, err, http.StatusBadRequest, requestDto)
-        return
-    }
+	if err != nil {
+		ErrResponse(w, err, http.StatusBadRequest, requestDto)
+		return
+	}
 
-    ValidResponse(w, mdl.ResponseFind{
-	    ApplyFieldsFilterToData(requestDto.GetFields(), data),
-        totalRecords,
-    })
+	ValidResponse(w, mdl.ResponseFind{
+		ApplyFieldsFilterToData(requestDto.GetFields(), data),
+		totalRecords,
+	})
 
-    return
+	return
 }
 
-    
 func ResourceMultiCreate(w http.ResponseWriter, httpRequest *http.Request) {
 
-
-    requestDto, err := types.GetResourceFilter(httpRequest, settings.FunctionTypeMultiCreate)
+	requestDto, err := types.GetResourceFilter(httpRequest, settings.FunctionTypeMultiCreate)
 	if err != nil {
 		ErrResponse(w, err, http.StatusBadRequest, requestDto)
 		return
 	}
 
-    if !requestDto.IsAuthorized() {
+	if !requestDto.IsAuthorized() {
 		AuthErr(w, requestDto)
 		return
 	}
@@ -66,30 +61,29 @@ func ResourceMultiCreate(w http.ResponseWriter, httpRequest *http.Request) {
 		return
 	}
 
+	data, err := logic.ResourceMultiCreate(requestDto)
 
-    data, err := logic.ResourceMultiCreate(requestDto)
+	if err != nil {
+		ErrResponse(w, err, http.StatusBadRequest, requestDto)
+		return
+	}
 
-    if err != nil {
-        ErrResponse(w, err, http.StatusBadRequest, requestDto)
-        return
-    }
+	ValidResponse(w, mdl.ResponseCreate{
+		data,
+	})
 
-    ValidResponse(w, mdl.ResponseCreate{
-        data,
-    })
-
-    return
+	return
 }
 
 func ResourceCreate(w http.ResponseWriter, httpRequest *http.Request) {
 
-    requestDto, err := types.GetResourceFilter(httpRequest, settings.FunctionTypeCreate)
+	requestDto, err := types.GetResourceFilter(httpRequest, settings.FunctionTypeCreate)
 	if err != nil {
 		ErrResponse(w, err, http.StatusBadRequest, requestDto)
 		return
 	}
 
-    if !requestDto.IsAuthorized() {
+	if !requestDto.IsAuthorized() {
 		AuthErr(w, requestDto)
 		return
 	}
@@ -99,77 +93,69 @@ func ResourceCreate(w http.ResponseWriter, httpRequest *http.Request) {
 		return
 	}
 
+	data, err := logic.ResourceCreate(requestDto, core.Db)
 
-    data, err := logic.ResourceCreate(requestDto, core.Db)
+	if err != nil {
+		ErrResponse(w, err, http.StatusBadRequest, requestDto)
+		return
+	}
 
-    if err != nil {
-        ErrResponse(w, err, http.StatusBadRequest, requestDto)
-        return
-    }
+	ValidResponse(w, mdl.ResponseCreate{
+		ApplyFieldsFilterToData(requestDto.GetFields(), data),
+	})
 
-    ValidResponse(w, mdl.ResponseCreate{
-	    ApplyFieldsFilterToData(requestDto.GetFields(), data),
-    })
-
-    return
+	return
 }
-
-    
 
 func ResourceRead(w http.ResponseWriter, httpRequest *http.Request) {
 
-
-    requestDto, err := types.GetResourceFilter(httpRequest, settings.FunctionTypeRead)
+	requestDto, err := types.GetResourceFilter(httpRequest, settings.FunctionTypeRead)
 	if err != nil {
 		ErrResponse(w, err, http.StatusBadRequest, requestDto)
 		return
 	}
 
-    if !requestDto.IsAuthorized() {
+	if !requestDto.IsAuthorized() {
 		AuthErr(w, requestDto)
 		return
 	}
 
-    requestDto.PerPage = 1
-    requestDto.CurrentPage = 1
+	requestDto.PerPage = 1
+	requestDto.CurrentPage = 1
 
 	if !requestDto.IsValid() {
 		Bad(w, requestDto, requestDto.GetValidationError())
 		return
 	}
 
+	data, err := logic.ResourceRead(requestDto)
 
-    data, err := logic.ResourceRead(requestDto)
+	// Создаём структуру ответа
+	if err != nil {
+		code := http.StatusBadRequest
+		if err.Error() == "Not found" {
+			code = http.StatusNotFound
+		}
+		ErrResponse(w, err, code, requestDto)
+		return
+	}
 
-    // Создаём структуру ответа
-    if err != nil {
-        code := http.StatusBadRequest
-        if err.Error() == "Not found" {
-            code = http.StatusNotFound
-        }
-        ErrResponse(w, err, code, requestDto)
-        return
-    }
+	ValidResponse(w, mdl.ResponseRead{
+		ApplyFieldsFilterToData(requestDto.GetFields(), data),
+	})
 
-    ValidResponse(w, mdl.ResponseRead{
-	    ApplyFieldsFilterToData(requestDto.GetFields(), data),
-    })
-
-    return
+	return
 }
-
-    
-
 
 func ResourceMultiUpdate(w http.ResponseWriter, httpRequest *http.Request) {
 
-    requestDto, err := types.GetResourceFilter(httpRequest, settings.FunctionTypeMultiUpdate)
+	requestDto, err := types.GetResourceFilter(httpRequest, settings.FunctionTypeMultiUpdate)
 	if err != nil {
 		ErrResponse(w, err, http.StatusBadRequest, requestDto)
 		return
 	}
 
-    if !requestDto.IsAuthorized() {
+	if !requestDto.IsAuthorized() {
 		AuthErr(w, requestDto)
 		return
 	}
@@ -179,30 +165,29 @@ func ResourceMultiUpdate(w http.ResponseWriter, httpRequest *http.Request) {
 		return
 	}
 
+	data, err := logic.ResourceMultiUpdate(requestDto)
 
-    data, err := logic.ResourceMultiUpdate(requestDto)
+	if err != nil {
+		ErrResponse(w, err, http.StatusBadRequest, requestDto)
+		return
+	}
 
-    if err != nil {
-        ErrResponse(w, err, http.StatusBadRequest, requestDto)
-        return
-    }
+	ValidResponse(w, mdl.ResponseUpdate{
+		data,
+	})
 
-    ValidResponse(w, mdl.ResponseUpdate{
-        data,
-    })
-
-    return
+	return
 }
 
 func ResourceUpdate(w http.ResponseWriter, httpRequest *http.Request) {
 
-    requestDto, err := types.GetResourceFilter(httpRequest, settings.FunctionTypeUpdate)
+	requestDto, err := types.GetResourceFilter(httpRequest, settings.FunctionTypeUpdate)
 	if err != nil {
 		ErrResponse(w, err, http.StatusBadRequest, requestDto)
 		return
 	}
 
-    if !requestDto.IsAuthorized() {
+	if !requestDto.IsAuthorized() {
 		AuthErr(w, requestDto)
 		return
 	}
@@ -212,33 +197,29 @@ func ResourceUpdate(w http.ResponseWriter, httpRequest *http.Request) {
 		return
 	}
 
+	data, err := logic.ResourceUpdate(requestDto, core.Db)
 
-    data, err := logic.ResourceUpdate(requestDto, core.Db)
+	if err != nil {
+		ErrResponse(w, err, http.StatusBadRequest, requestDto)
+		return
+	}
 
-    if err != nil {
-        ErrResponse(w, err, http.StatusBadRequest, requestDto)
-        return
-    }
+	ValidResponse(w, mdl.ResponseUpdate{
+		ApplyFieldsFilterToData(requestDto.GetFields(), data),
+	})
 
-    ValidResponse(w, mdl.ResponseUpdate{
-	    ApplyFieldsFilterToData(requestDto.GetFields(), data),
-    })
-
-    return
+	return
 }
-
-    
 
 func ResourceMultiDelete(w http.ResponseWriter, httpRequest *http.Request) {
 
-
-    requestDto, err := types.GetResourceFilter(httpRequest, settings.FunctionTypeMultiDelete)
+	requestDto, err := types.GetResourceFilter(httpRequest, settings.FunctionTypeMultiDelete)
 	if err != nil {
 		ErrResponse(w, err, http.StatusBadRequest, requestDto)
 		return
 	}
 
-    if !requestDto.IsAuthorized() {
+	if !requestDto.IsAuthorized() {
 		AuthErr(w, requestDto)
 		return
 	}
@@ -248,31 +229,29 @@ func ResourceMultiDelete(w http.ResponseWriter, httpRequest *http.Request) {
 		return
 	}
 
+	isOk, err := logic.ResourceMultiDelete(requestDto)
 
-    isOk, err := logic.ResourceMultiDelete(requestDto)
+	if err != nil {
+		ErrResponse(w, err, http.StatusBadRequest, requestDto)
+		return
+	}
 
-    if err != nil {
-        ErrResponse(w, err, http.StatusBadRequest, requestDto)
-        return
-    }
+	ValidResponse(w, mdl.ResponseDelete{
+		isOk,
+	})
 
-    ValidResponse(w, mdl.ResponseDelete{
-        isOk,
-    })
-
-    return
+	return
 }
 
 func ResourceDelete(w http.ResponseWriter, httpRequest *http.Request) {
 
-
-    requestDto, err := types.GetResourceFilter(httpRequest, settings.FunctionTypeDelete)
+	requestDto, err := types.GetResourceFilter(httpRequest, settings.FunctionTypeDelete)
 	if err != nil {
 		ErrResponse(w, err, http.StatusBadRequest, requestDto)
 		return
 	}
 
-    if !requestDto.IsAuthorized() {
+	if !requestDto.IsAuthorized() {
 		AuthErr(w, requestDto)
 		return
 	}
@@ -282,32 +261,29 @@ func ResourceDelete(w http.ResponseWriter, httpRequest *http.Request) {
 		return
 	}
 
+	isOk, err := logic.ResourceDelete(requestDto, core.Db)
 
-    isOk, err := logic.ResourceDelete(requestDto, core.Db)
+	if err != nil {
+		ErrResponse(w, err, http.StatusBadRequest, requestDto)
+		return
+	}
 
-    if err != nil {
-        ErrResponse(w, err, http.StatusBadRequest, requestDto)
-        return
-    }
+	ValidResponse(w, mdl.ResponseDelete{
+		isOk,
+	})
 
-    ValidResponse(w, mdl.ResponseDelete{
-        isOk,
-    })
-
-    return
+	return
 }
-
-    
 
 func ResourceFindOrCreate(w http.ResponseWriter, httpRequest *http.Request) {
 
-    requestDto, err := types.GetResourceFilter(httpRequest, settings.FunctionTypeFindOrCreate)
+	requestDto, err := types.GetResourceFilter(httpRequest, settings.FunctionTypeFindOrCreate)
 	if err != nil {
 		ErrResponse(w, err, http.StatusBadRequest, requestDto)
 		return
 	}
 
-    if !requestDto.IsAuthorized() {
+	if !requestDto.IsAuthorized() {
 		AuthErr(w, requestDto)
 		return
 	}
@@ -317,32 +293,29 @@ func ResourceFindOrCreate(w http.ResponseWriter, httpRequest *http.Request) {
 		return
 	}
 
+	data, err := logic.ResourceFindOrCreate(requestDto)
 
-    data, err := logic.ResourceFindOrCreate(requestDto)
+	if err != nil {
+		ErrResponse(w, err, http.StatusBadRequest, requestDto)
+		return
+	}
 
-    if err != nil {
-        ErrResponse(w, err, http.StatusBadRequest, requestDto)
-        return
-    }
+	ValidResponse(w, mdl.ResponseFindOrCreate{
+		ApplyFieldsFilterToData(requestDto.GetFields(), data),
+	})
 
-    ValidResponse(w, mdl.ResponseFindOrCreate{
-	    ApplyFieldsFilterToData(requestDto.GetFields(), data),
-    })
-
-    return
+	return
 }
-
-    
 
 func ResourceUpdateOrCreate(w http.ResponseWriter, httpRequest *http.Request) {
 
-    requestDto, err := types.GetResourceFilter(httpRequest, settings.FunctionTypeUpdateOrCreate)
+	requestDto, err := types.GetResourceFilter(httpRequest, settings.FunctionTypeUpdateOrCreate)
 	if err != nil {
 		ErrResponse(w, err, http.StatusBadRequest, requestDto)
 		return
 	}
 
-    if !requestDto.IsAuthorized() {
+	if !requestDto.IsAuthorized() {
 		AuthErr(w, requestDto)
 		return
 	}
@@ -352,18 +325,16 @@ func ResourceUpdateOrCreate(w http.ResponseWriter, httpRequest *http.Request) {
 		return
 	}
 
+	data, err := logic.ResourceUpdateOrCreate(requestDto)
 
-    data, err := logic.ResourceUpdateOrCreate(requestDto)
+	if err != nil {
+		ErrResponse(w, err, http.StatusBadRequest, requestDto)
+		return
+	}
 
-    if err != nil {
-        ErrResponse(w, err, http.StatusBadRequest, requestDto)
-        return
-    }
+	ValidResponse(w, mdl.ResponseUpdateOrCreate{
+		ApplyFieldsFilterToData(requestDto.GetFields(), data),
+	})
 
-    ValidResponse(w, mdl.ResponseUpdateOrCreate{
-	    ApplyFieldsFilterToData(requestDto.GetFields(), data),
-    })
-
-    return
+	return
 }
-

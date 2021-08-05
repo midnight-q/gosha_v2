@@ -14,14 +14,14 @@ import (
 )
 
 var validModelCurrentUser = types.CurrentUser{
-		Id:   1,
-		//Name: "Some Name",
-	}
+	Id: 1,
+	//Name: "Some Name",
+}
 
 var updateModelCurrentUser = types.CurrentUser{
-		Id:   1,
-		//Name: "Some Another Name",
-	}
+	Id: 1,
+	//Name: "Some Another Name",
+}
 
 var idsForRemoveCurrentUser = []int{}
 
@@ -47,7 +47,7 @@ var testCreateFuncCurrentUser = func(tt tests.WebTest) (*httptest.ResponseRecord
 var createAdminRequestCurrentUser = tests.GetCreateAdminRequest(settings.CurrentUserRoute, validModelCurrentUser)
 
 var testCasesCurrentUser = []tests.WebTest{
-    {
+	{
 		Name:         "Find CurrentUsers as admin",
 		ResponseCode: 200,
 		TestFunc: func(tt tests.WebTest) (*httptest.ResponseRecorder, error) {
@@ -81,7 +81,7 @@ var testCasesCurrentUser = []tests.WebTest{
 			}
 		},
 	},
-    {
+	{
 		Name:         "Create new CurrentUser as admin",
 		Request:      createAdminRequestCurrentUser,
 		ResponseCode: 201,
@@ -100,12 +100,12 @@ var testCasesCurrentUser = []tests.WebTest{
 		ResponseCode: 403,
 		TestFunc:     testCreateFuncCurrentUser,
 	},
-    {
+	{
 		Name:         "Read CurrentUser as non authorized user",
 		ResponseCode: 403,
 		TestFunc: func(tt tests.WebTest) (*httptest.ResponseRecorder, error) {
 			request := tests.GetReadNonAuthorizedUserRequest(settings.CurrentUserRoute + "/" + strconv.Itoa(updateModelCurrentUser.Id))
-			return tests.SendRequest(settings.CurrentUserRoute+ "/{id}", request, CurrentUserRead, http.MethodGet), nil
+			return tests.SendRequest(settings.CurrentUserRoute+"/{id}", request, CurrentUserRead, http.MethodGet), nil
 		},
 	},
 	{
@@ -131,7 +131,7 @@ var testCasesCurrentUser = []tests.WebTest{
 			id := strconv.Itoa(responseData.Id)
 			request := tests.GetReadAdminRequest(settings.CurrentUserRoute + "/" + id)
 
-			return tests.SendRequest(settings.CurrentUserRoute+ "/{id}", request, CurrentUserRead, http.MethodGet), nil
+			return tests.SendRequest(settings.CurrentUserRoute+"/{id}", request, CurrentUserRead, http.MethodGet), nil
 
 		},
 		ResultValidator: func(t *testing.T, response *httptest.ResponseRecorder) {
@@ -139,7 +139,7 @@ var testCasesCurrentUser = []tests.WebTest{
 			validateFieldsCurrentUser(t, createdModelCurrentUser, updateModelCurrentUser, response)
 		},
 	},
-    {
+	{
 		Name:         "Update CurrentUser as admin",
 		ResponseCode: 200,
 		TestFunc: func(tt tests.WebTest) (*httptest.ResponseRecorder, error) {
@@ -162,9 +162,9 @@ var testCasesCurrentUser = []tests.WebTest{
 			updateModelCurrentUser.Id = responseData.Id
 
 			id := strconv.Itoa(responseData.Id)
-			request := tests.GetUpdateAdminRequest(settings.CurrentUserRoute+ "/" +id, updateModelCurrentUser)
+			request := tests.GetUpdateAdminRequest(settings.CurrentUserRoute+"/"+id, updateModelCurrentUser)
 
-			return tests.SendRequest(settings.CurrentUserRoute+ "/{id}", request, CurrentUserUpdate, http.MethodPut), nil
+			return tests.SendRequest(settings.CurrentUserRoute+"/{id}", request, CurrentUserUpdate, http.MethodPut), nil
 		},
 		ResultValidator: func(t *testing.T, response *httptest.ResponseRecorder) {
 			model := getCurrentUserParsedModel(response)
@@ -172,13 +172,13 @@ var testCasesCurrentUser = []tests.WebTest{
 
 			id := strconv.Itoa(model.Id)
 			request := tests.GetReadAdminRequest(settings.CurrentUserRoute + "/" + id)
-			readResponse := tests.SendRequest(settings.CurrentUserRoute+ "/{id}", request, CurrentUserRead, http.MethodGet)
+			readResponse := tests.SendRequest(settings.CurrentUserRoute+"/{id}", request, CurrentUserRead, http.MethodGet)
 
 			model = getCurrentUserParsedModel(readResponse)
 			validateFieldsCurrentUser(t, model, updateModelCurrentUser, readResponse)
 		},
 	},
-    {
+	{
 		Name: "Delete CurrentUser as unauthorized user",
 		//Request: inside delete func,
 		ResponseCode: 403,
@@ -202,7 +202,7 @@ var testCasesCurrentUser = []tests.WebTest{
 		},
 	},
 	{
-		Name: "Delete CurrentUser as admin",
+		Name:         "Delete CurrentUser as admin",
 		ResponseCode: 200,
 		TestFunc: func(tt tests.WebTest) (*httptest.ResponseRecorder, error) {
 
@@ -223,7 +223,7 @@ var testCasesCurrentUser = []tests.WebTest{
 		},
 	},
 	{
-		Name: "Delete CurrentUser as admin two times",
+		Name:         "Delete CurrentUser as admin two times",
 		ResponseCode: 400,
 		TestFunc: func(tt tests.WebTest) (*httptest.ResponseRecorder, error) {
 
@@ -243,10 +243,6 @@ var testCasesCurrentUser = []tests.WebTest{
 			return tests.SendRequest(settings.CurrentUserRoute+"/{id}", req, CurrentUserDelete, http.MethodDelete), nil
 		},
 	},
-    
-
-    
-
 }
 
 func getCurrentUserResponseModel(tt tests.WebTest, response *httptest.ResponseRecorder) (types.CurrentUser, error) {
@@ -260,14 +256,13 @@ func getCurrentUserResponseModel(tt tests.WebTest, response *httptest.ResponseRe
 	return model, nil
 }
 
-
 func getCurrentUserParsedList(response *httptest.ResponseRecorder) (list []types.CurrentUser, total int) {
 
-	responseData := struct{
-		List []types.CurrentUser
+	responseData := struct {
+		List  []types.CurrentUser
 		Total int
-	} {
-		List: []types.CurrentUser{},
+	}{
+		List:  []types.CurrentUser{},
 		Total: 1,
 	}
 
@@ -278,16 +273,15 @@ func getCurrentUserParsedList(response *httptest.ResponseRecorder) (list []types
 
 func getCurrentUserParsedModel(response *httptest.ResponseRecorder) types.CurrentUser {
 
-	responseData := struct{
+	responseData := struct {
 		Model types.CurrentUser
-	} {
+	}{
 		Model: types.CurrentUser{},
 	}
 	json.Unmarshal(response.Body.Bytes(), &responseData)
 
 	return responseData.Model
 }
-
 
 func TestCurrentUser(t *testing.T) {
 
@@ -306,4 +300,3 @@ func TestCurrentUser(t *testing.T) {
 		core.Db = tmpDb
 	}()
 }
-

@@ -2,14 +2,13 @@ package mdl
 
 import "github.com/google/uuid"
 
-
 type RequestFind struct {
 	Filter     interface{}
 	Pagination Pagination
 }
 
 type RequestCreate struct {
-	Model	interface{}
+	Model interface{}
 }
 
 type RequestRead struct {
@@ -17,8 +16,8 @@ type RequestRead struct {
 }
 
 type RequestUpdate struct {
-	GUID uuid.UUID
-	Model	interface{}
+	GUID  uuid.UUID
+	Model interface{}
 }
 
 type RequestDelete struct {
@@ -38,11 +37,11 @@ func (request *RequestFind) CheckPagination() (offset int, page int, perPage int
 	pagination := request.GetPagination()
 
 	if pagination.CurrentPage < 1 {
-		return 0,0,0, false
+		return 0, 0, 0, false
 	}
 
 	if pagination.PerPage < 1 {
-		return 0,0,0, false
+		return 0, 0, 0, false
 	}
 
 	page = pagination.CurrentPage

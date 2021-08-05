@@ -68,7 +68,7 @@ func ApplicationMultiCreate(w http.ResponseWriter, httpRequest *http.Request) {
 	}
 
 	ValidResponse(w, mdl.ResponseCreate{
-		Model:data,
+		Model: data,
 	})
 
 	return
@@ -100,7 +100,7 @@ func ApplicationCreate(w http.ResponseWriter, httpRequest *http.Request) {
 	}
 
 	ValidResponse(w, mdl.ResponseCreate{
-		Model:ApplyFieldsFilterToData(requestDto.GetFields(), data),
+		Model: ApplyFieldsFilterToData(requestDto.GetFields(), data),
 	})
 
 	return
@@ -172,7 +172,7 @@ func ApplicationMultiUpdate(w http.ResponseWriter, httpRequest *http.Request) {
 	}
 
 	ValidResponse(w, mdl.ResponseUpdate{
-		Model:data,
+		Model: data,
 	})
 
 	return
@@ -204,7 +204,7 @@ func ApplicationUpdate(w http.ResponseWriter, httpRequest *http.Request) {
 	}
 
 	ValidResponse(w, mdl.ResponseUpdate{
-		Model:ApplyFieldsFilterToData(requestDto.GetFields(), data),
+		Model: ApplyFieldsFilterToData(requestDto.GetFields(), data),
 	})
 
 	return
@@ -236,7 +236,7 @@ func ApplicationMultiDelete(w http.ResponseWriter, httpRequest *http.Request) {
 	}
 
 	ValidResponse(w, mdl.ResponseDelete{
-		IsSuccess:isOk,
+		IsSuccess: isOk,
 	})
 
 	return
@@ -268,7 +268,7 @@ func ApplicationDelete(w http.ResponseWriter, httpRequest *http.Request) {
 	}
 
 	ValidResponse(w, mdl.ResponseDelete{
-		IsSuccess:isOk,
+		IsSuccess: isOk,
 	})
 
 	return

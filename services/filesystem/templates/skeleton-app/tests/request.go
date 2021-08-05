@@ -14,10 +14,10 @@ import (
 )
 
 type WebTest struct {
-	Name string
-	Request *http.Request
-	ResponseCode int
-	TestFunc func(tt WebTest) (*httptest.ResponseRecorder, error)
+	Name            string
+	Request         *http.Request
+	ResponseCode    int
+	TestFunc        func(tt WebTest) (*httptest.ResponseRecorder, error)
 	ResultValidator func(t *testing.T, response *httptest.ResponseRecorder)
 }
 

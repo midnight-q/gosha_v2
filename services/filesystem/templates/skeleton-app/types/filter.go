@@ -151,7 +151,7 @@ func (filter GoshaDebugFilter) IsDebug() bool {
 }
 
 type AbstractFilter struct {
-	request *http.Request
+	request        *http.Request
 	rawRequestBody []byte
 
 	Regionality
@@ -168,16 +168,16 @@ type AbstractFilter struct {
 func GetAbstractFilter(request *http.Request, requestBody []byte, functionType string) (filter AbstractFilter, err error) {
 
 	filter.request = request
-    filter.rawRequestBody = requestBody
+	filter.rawRequestBody = requestBody
 	filter.functionType = functionType
 	filter.urlPath = request.URL.Path
 
 	if !isGroupFunctionType(functionType) {
-        err = ReadJSON(filter.rawRequestBody, &filter.GoshaFilterIds)
-        if err != nil {
-            return
-        }
-    }
+		err = ReadJSON(filter.rawRequestBody, &filter.GoshaFilterIds)
+		if err != nil {
+			return
+		}
+	}
 
 	filter.Pagination.CurrentPage, _ = strconv.Atoi(request.FormValue("CurrentPage"))
 	filter.Pagination.PerPage, _ = strconv.Atoi(request.FormValue("PerPage"))
@@ -292,11 +292,10 @@ func (filter *AbstractFilter) GetCurrentUserAgent() string {
 }
 
 func isGroupFunctionType(functionType string) bool {
-    switch functionType {
-    case settings.FunctionTypeMultiCreate, settings.FunctionTypeMultiUpdate, settings.FunctionTypeMultiDelete, settings.FunctionTypeMultiFindOrCreate:
-        return true
-    default:
-        return false
-    }
+	switch functionType {
+	case settings.FunctionTypeMultiCreate, settings.FunctionTypeMultiUpdate, settings.FunctionTypeMultiDelete, settings.FunctionTypeMultiFindOrCreate:
+		return true
+	default:
+		return false
+	}
 }
-

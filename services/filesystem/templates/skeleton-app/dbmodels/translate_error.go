@@ -7,19 +7,17 @@ import (
 )
 
 type TranslateError struct {
-
-    ID        int       `gorm:"primary_key"`
-    Code int
+	ID           int `gorm:"primary_key"`
+	Code         int
 	LanguageCode string
-	Translate string
+	Translate    string
 
-    CreatedAt time.Time
-    UpdatedAt time.Time
-    DeletedAt gorm.DeletedAt `sql:"index" json:"-"`
+	CreatedAt time.Time
+	UpdatedAt time.Time
+	DeletedAt gorm.DeletedAt `sql:"index" json:"-"`
 
 	validator
 }
 
 func (translateError *TranslateError) Validate() {
 }
-

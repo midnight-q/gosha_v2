@@ -9,17 +9,15 @@ import (
 	"skeleton-app/types"
 )
 
-    
-
 func CurrentUserFind(w http.ResponseWriter, httpRequest *http.Request) {
 
-    requestDto, err := types.GetCurrentUserFilter(httpRequest, settings.FunctionTypeFind)
+	requestDto, err := types.GetCurrentUserFilter(httpRequest, settings.FunctionTypeFind)
 	if err != nil {
 		ErrResponse(w, err, http.StatusBadRequest, requestDto)
 		return
 	}
 
-    if !requestDto.IsAuthorized() {
+	if !requestDto.IsAuthorized() {
 		AuthErr(w, requestDto)
 		return
 	}
@@ -29,34 +27,31 @@ func CurrentUserFind(w http.ResponseWriter, httpRequest *http.Request) {
 		return
 	}
 
-    
-    // Получаем список
-    data, totalRecords, err := logic.CurrentUserFind(requestDto)
+	// Получаем список
+	data, totalRecords, err := logic.CurrentUserFind(requestDto)
 
-    if err != nil {
-        ErrResponse(w, err, http.StatusBadRequest, requestDto)
-        return
-    }
+	if err != nil {
+		ErrResponse(w, err, http.StatusBadRequest, requestDto)
+		return
+	}
 
-    ValidResponse(w, mdl.ResponseFind{
-	    ApplyFieldsFilterToData(requestDto.GetFields(), data),
-        totalRecords,
-    })
+	ValidResponse(w, mdl.ResponseFind{
+		ApplyFieldsFilterToData(requestDto.GetFields(), data),
+		totalRecords,
+	})
 
-    return
+	return
 }
 
-    
 func CurrentUserMultiCreate(w http.ResponseWriter, httpRequest *http.Request) {
 
-
-    requestDto, err := types.GetCurrentUserFilter(httpRequest, settings.FunctionTypeMultiCreate)
+	requestDto, err := types.GetCurrentUserFilter(httpRequest, settings.FunctionTypeMultiCreate)
 	if err != nil {
 		ErrResponse(w, err, http.StatusBadRequest, requestDto)
 		return
 	}
 
-    if !requestDto.IsAuthorized() {
+	if !requestDto.IsAuthorized() {
 		AuthErr(w, requestDto)
 		return
 	}
@@ -66,30 +61,29 @@ func CurrentUserMultiCreate(w http.ResponseWriter, httpRequest *http.Request) {
 		return
 	}
 
+	data, err := logic.CurrentUserMultiCreate(requestDto)
 
-    data, err := logic.CurrentUserMultiCreate(requestDto)
+	if err != nil {
+		ErrResponse(w, err, http.StatusBadRequest, requestDto)
+		return
+	}
 
-    if err != nil {
-        ErrResponse(w, err, http.StatusBadRequest, requestDto)
-        return
-    }
+	ValidResponse(w, mdl.ResponseCreate{
+		data,
+	})
 
-    ValidResponse(w, mdl.ResponseCreate{
-        data,
-    })
-
-    return
+	return
 }
 
 func CurrentUserCreate(w http.ResponseWriter, httpRequest *http.Request) {
 
-    requestDto, err := types.GetCurrentUserFilter(httpRequest, settings.FunctionTypeCreate)
+	requestDto, err := types.GetCurrentUserFilter(httpRequest, settings.FunctionTypeCreate)
 	if err != nil {
 		ErrResponse(w, err, http.StatusBadRequest, requestDto)
 		return
 	}
 
-    if !requestDto.IsAuthorized() {
+	if !requestDto.IsAuthorized() {
 		AuthErr(w, requestDto)
 		return
 	}
@@ -99,77 +93,69 @@ func CurrentUserCreate(w http.ResponseWriter, httpRequest *http.Request) {
 		return
 	}
 
+	data, err := logic.CurrentUserCreate(requestDto, core.Db)
 
-    data, err := logic.CurrentUserCreate(requestDto, core.Db)
+	if err != nil {
+		ErrResponse(w, err, http.StatusBadRequest, requestDto)
+		return
+	}
 
-    if err != nil {
-        ErrResponse(w, err, http.StatusBadRequest, requestDto)
-        return
-    }
+	ValidResponse(w, mdl.ResponseCreate{
+		ApplyFieldsFilterToData(requestDto.GetFields(), data),
+	})
 
-    ValidResponse(w, mdl.ResponseCreate{
-	    ApplyFieldsFilterToData(requestDto.GetFields(), data),
-    })
-
-    return
+	return
 }
-
-    
 
 func CurrentUserRead(w http.ResponseWriter, httpRequest *http.Request) {
 
-
-    requestDto, err := types.GetCurrentUserFilter(httpRequest, settings.FunctionTypeRead)
+	requestDto, err := types.GetCurrentUserFilter(httpRequest, settings.FunctionTypeRead)
 	if err != nil {
 		ErrResponse(w, err, http.StatusBadRequest, requestDto)
 		return
 	}
 
-    if !requestDto.IsAuthorized() {
+	if !requestDto.IsAuthorized() {
 		AuthErr(w, requestDto)
 		return
 	}
 
-    requestDto.PerPage = 1
-    requestDto.CurrentPage = 1
+	requestDto.PerPage = 1
+	requestDto.CurrentPage = 1
 
 	if !requestDto.IsValid() {
 		Bad(w, requestDto, requestDto.GetValidationError())
 		return
 	}
 
+	data, err := logic.CurrentUserRead(requestDto)
 
-    data, err := logic.CurrentUserRead(requestDto)
+	// Создаём структуру ответа
+	if err != nil {
+		code := http.StatusBadRequest
+		if err.Error() == "Not found" {
+			code = http.StatusNotFound
+		}
+		ErrResponse(w, err, code, requestDto)
+		return
+	}
 
-    // Создаём структуру ответа
-    if err != nil {
-        code := http.StatusBadRequest
-        if err.Error() == "Not found" {
-            code = http.StatusNotFound
-        }
-        ErrResponse(w, err, code, requestDto)
-        return
-    }
+	ValidResponse(w, mdl.ResponseRead{
+		ApplyFieldsFilterToData(requestDto.GetFields(), data),
+	})
 
-    ValidResponse(w, mdl.ResponseRead{
-	    ApplyFieldsFilterToData(requestDto.GetFields(), data),
-    })
-
-    return
+	return
 }
-
-    
-
 
 func CurrentUserMultiUpdate(w http.ResponseWriter, httpRequest *http.Request) {
 
-    requestDto, err := types.GetCurrentUserFilter(httpRequest, settings.FunctionTypeMultiUpdate)
+	requestDto, err := types.GetCurrentUserFilter(httpRequest, settings.FunctionTypeMultiUpdate)
 	if err != nil {
 		ErrResponse(w, err, http.StatusBadRequest, requestDto)
 		return
 	}
 
-    if !requestDto.IsAuthorized() {
+	if !requestDto.IsAuthorized() {
 		AuthErr(w, requestDto)
 		return
 	}
@@ -179,30 +165,29 @@ func CurrentUserMultiUpdate(w http.ResponseWriter, httpRequest *http.Request) {
 		return
 	}
 
+	data, err := logic.CurrentUserMultiUpdate(requestDto)
 
-    data, err := logic.CurrentUserMultiUpdate(requestDto)
+	if err != nil {
+		ErrResponse(w, err, http.StatusBadRequest, requestDto)
+		return
+	}
 
-    if err != nil {
-        ErrResponse(w, err, http.StatusBadRequest, requestDto)
-        return
-    }
+	ValidResponse(w, mdl.ResponseUpdate{
+		data,
+	})
 
-    ValidResponse(w, mdl.ResponseUpdate{
-        data,
-    })
-
-    return
+	return
 }
 
 func CurrentUserUpdate(w http.ResponseWriter, httpRequest *http.Request) {
 
-    requestDto, err := types.GetCurrentUserFilter(httpRequest, settings.FunctionTypeUpdate)
+	requestDto, err := types.GetCurrentUserFilter(httpRequest, settings.FunctionTypeUpdate)
 	if err != nil {
 		ErrResponse(w, err, http.StatusBadRequest, requestDto)
 		return
 	}
 
-    if !requestDto.IsAuthorized() {
+	if !requestDto.IsAuthorized() {
 		AuthErr(w, requestDto)
 		return
 	}
@@ -212,33 +197,29 @@ func CurrentUserUpdate(w http.ResponseWriter, httpRequest *http.Request) {
 		return
 	}
 
+	data, err := logic.CurrentUserUpdate(requestDto, core.Db)
 
-    data, err := logic.CurrentUserUpdate(requestDto, core.Db)
+	if err != nil {
+		ErrResponse(w, err, http.StatusBadRequest, requestDto)
+		return
+	}
 
-    if err != nil {
-        ErrResponse(w, err, http.StatusBadRequest, requestDto)
-        return
-    }
+	ValidResponse(w, mdl.ResponseUpdate{
+		ApplyFieldsFilterToData(requestDto.GetFields(), data),
+	})
 
-    ValidResponse(w, mdl.ResponseUpdate{
-	    ApplyFieldsFilterToData(requestDto.GetFields(), data),
-    })
-
-    return
+	return
 }
-
-    
 
 func CurrentUserMultiDelete(w http.ResponseWriter, httpRequest *http.Request) {
 
-
-    requestDto, err := types.GetCurrentUserFilter(httpRequest, settings.FunctionTypeMultiDelete)
+	requestDto, err := types.GetCurrentUserFilter(httpRequest, settings.FunctionTypeMultiDelete)
 	if err != nil {
 		ErrResponse(w, err, http.StatusBadRequest, requestDto)
 		return
 	}
 
-    if !requestDto.IsAuthorized() {
+	if !requestDto.IsAuthorized() {
 		AuthErr(w, requestDto)
 		return
 	}
@@ -248,31 +229,29 @@ func CurrentUserMultiDelete(w http.ResponseWriter, httpRequest *http.Request) {
 		return
 	}
 
+	isOk, err := logic.CurrentUserMultiDelete(requestDto)
 
-    isOk, err := logic.CurrentUserMultiDelete(requestDto)
+	if err != nil {
+		ErrResponse(w, err, http.StatusBadRequest, requestDto)
+		return
+	}
 
-    if err != nil {
-        ErrResponse(w, err, http.StatusBadRequest, requestDto)
-        return
-    }
+	ValidResponse(w, mdl.ResponseDelete{
+		isOk,
+	})
 
-    ValidResponse(w, mdl.ResponseDelete{
-        isOk,
-    })
-
-    return
+	return
 }
 
 func CurrentUserDelete(w http.ResponseWriter, httpRequest *http.Request) {
 
-
-    requestDto, err := types.GetCurrentUserFilter(httpRequest, settings.FunctionTypeDelete)
+	requestDto, err := types.GetCurrentUserFilter(httpRequest, settings.FunctionTypeDelete)
 	if err != nil {
 		ErrResponse(w, err, http.StatusBadRequest, requestDto)
 		return
 	}
 
-    if !requestDto.IsAuthorized() {
+	if !requestDto.IsAuthorized() {
 		AuthErr(w, requestDto)
 		return
 	}
@@ -282,32 +261,29 @@ func CurrentUserDelete(w http.ResponseWriter, httpRequest *http.Request) {
 		return
 	}
 
+	isOk, err := logic.CurrentUserDelete(requestDto, core.Db)
 
-    isOk, err := logic.CurrentUserDelete(requestDto, core.Db)
+	if err != nil {
+		ErrResponse(w, err, http.StatusBadRequest, requestDto)
+		return
+	}
 
-    if err != nil {
-        ErrResponse(w, err, http.StatusBadRequest, requestDto)
-        return
-    }
+	ValidResponse(w, mdl.ResponseDelete{
+		isOk,
+	})
 
-    ValidResponse(w, mdl.ResponseDelete{
-        isOk,
-    })
-
-    return
+	return
 }
-
-    
 
 func CurrentUserFindOrCreate(w http.ResponseWriter, httpRequest *http.Request) {
 
-    requestDto, err := types.GetCurrentUserFilter(httpRequest, settings.FunctionTypeFindOrCreate)
+	requestDto, err := types.GetCurrentUserFilter(httpRequest, settings.FunctionTypeFindOrCreate)
 	if err != nil {
 		ErrResponse(w, err, http.StatusBadRequest, requestDto)
 		return
 	}
 
-    if !requestDto.IsAuthorized() {
+	if !requestDto.IsAuthorized() {
 		AuthErr(w, requestDto)
 		return
 	}
@@ -317,32 +293,29 @@ func CurrentUserFindOrCreate(w http.ResponseWriter, httpRequest *http.Request) {
 		return
 	}
 
+	data, err := logic.CurrentUserFindOrCreate(requestDto)
 
-    data, err := logic.CurrentUserFindOrCreate(requestDto)
+	if err != nil {
+		ErrResponse(w, err, http.StatusBadRequest, requestDto)
+		return
+	}
 
-    if err != nil {
-        ErrResponse(w, err, http.StatusBadRequest, requestDto)
-        return
-    }
+	ValidResponse(w, mdl.ResponseFindOrCreate{
+		ApplyFieldsFilterToData(requestDto.GetFields(), data),
+	})
 
-    ValidResponse(w, mdl.ResponseFindOrCreate{
-	    ApplyFieldsFilterToData(requestDto.GetFields(), data),
-    })
-
-    return
+	return
 }
-
-    
 
 func CurrentUserUpdateOrCreate(w http.ResponseWriter, httpRequest *http.Request) {
 
-    requestDto, err := types.GetCurrentUserFilter(httpRequest, settings.FunctionTypeUpdateOrCreate)
+	requestDto, err := types.GetCurrentUserFilter(httpRequest, settings.FunctionTypeUpdateOrCreate)
 	if err != nil {
 		ErrResponse(w, err, http.StatusBadRequest, requestDto)
 		return
 	}
 
-    if !requestDto.IsAuthorized() {
+	if !requestDto.IsAuthorized() {
 		AuthErr(w, requestDto)
 		return
 	}
@@ -352,18 +325,16 @@ func CurrentUserUpdateOrCreate(w http.ResponseWriter, httpRequest *http.Request)
 		return
 	}
 
+	data, err := logic.CurrentUserUpdateOrCreate(requestDto)
 
-    data, err := logic.CurrentUserUpdateOrCreate(requestDto)
+	if err != nil {
+		ErrResponse(w, err, http.StatusBadRequest, requestDto)
+		return
+	}
 
-    if err != nil {
-        ErrResponse(w, err, http.StatusBadRequest, requestDto)
-        return
-    }
+	ValidResponse(w, mdl.ResponseUpdateOrCreate{
+		ApplyFieldsFilterToData(requestDto.GetFields(), data),
+	})
 
-    ValidResponse(w, mdl.ResponseUpdateOrCreate{
-	    ApplyFieldsFilterToData(requestDto.GetFields(), data),
-    })
-
-    return
+	return
 }
-

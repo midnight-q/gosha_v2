@@ -1,22 +1,20 @@
 package dbmodels
 
 import (
-    "time"
+	"time"
 
-    "gorm.io/gorm"
+	"gorm.io/gorm"
 )
 
 type CurrentUser struct {
+	ID int `gorm:"primary_key"`
 
-    ID        int       `gorm:"primary_key"`
+	CreatedAt time.Time
+	UpdatedAt time.Time
+	DeletedAt gorm.DeletedAt `sql:"index" json:"-"`
 
-    CreatedAt time.Time
-    UpdatedAt time.Time
-    DeletedAt gorm.DeletedAt `sql:"index" json:"-"`
-
-    validator
+	validator
 }
 
 func (currentUser *CurrentUser) Validate() {
 }
-

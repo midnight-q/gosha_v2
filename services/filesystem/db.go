@@ -15,8 +15,6 @@ import (
 
 func UpdateDbConnection(currentPath string, dbTypeId int) error {
 	switch dbTypeId {
-	case settings.MysqlDbTypeId:
-		return fmt.Errorf("mysql not implement")
 	case settings.PostgresqlDbTypeId:
 
 	default:
@@ -124,6 +122,7 @@ func UpdateDbConnection(currentPath string, dbTypeId int) error {
 	buf := bytes.NewBuffer([]byte{})
 	err = decorator.Fprint(buf, file)
 	if err != nil {
+		fmt.Println(err)
 		return err
 	}
 
@@ -135,25 +134,20 @@ func UpdateDbConnection(currentPath string, dbTypeId int) error {
 	return updateDbScript(currentPath, dbTypeId, appName, dbPass, dbPort)
 }
 
-
 const PgScript = `
 #!/bin/bash
 docker run --rm --name pg-%s -e POSTGRES_DB=%s -e POSTGRES_USER=%s -e POSTGRES_PASSWORD=%s -d -p %s:5432 -v "$(pwd)/.postgres:/var/lib/postgresql/data" postgres
 `
 
-
 func updateDbScript(currentPath string, dbTypeId int, appName, dbPass, dbPort string) error {
 	scriptString := ""
 	switch dbTypeId {
-	case settings.MysqlDbTypeId:
-		return fmt.Errorf("mysql not implement")
 	case settings.PostgresqlDbTypeId:
 		scriptString = fmt.Sprintf(PgScript, appName, appName, appName, dbPass, dbPort)
 	default:
 		return errors.NewErrorWithCode("Unsupported DatabaseType", errors.ErrorCodeNotFound, "DatabaseType")
 	}
 
-	return ioutil.WriteFile(currentPath+"/db-docker.sh", []byte(scriptString), fs.ModePerm)
+	err := ioutil.WriteFile(currentPath+"/db-docker.sh", []byte(scriptString), fs.ModePerm)
+	return err
 }
-
-

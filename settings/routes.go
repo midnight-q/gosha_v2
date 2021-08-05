@@ -29,5 +29,3 @@ const ModelRoute = "/api/v1/model"
 const FieldRoute = "/api/v1/field"
 
 const ApplicationRoute = "/api/v1/application"
-
-

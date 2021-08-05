@@ -17,7 +17,7 @@ func GenLanguage() types.Language {
 
 func GenListLanguage() (list []types.Language) {
 
-	for i:=0; i<rand.Intn(5) + 2; i++{
+	for i := 0; i < rand.Intn(5)+2; i++ {
 		list = append(list, GenLanguage())
 	}
 

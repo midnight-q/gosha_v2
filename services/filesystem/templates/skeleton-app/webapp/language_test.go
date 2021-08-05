@@ -14,14 +14,14 @@ import (
 )
 
 var validModelLanguage = types.Language{
-		Id:   1,
-		//Name: "Some Name",
-	}
+	Id: 1,
+	//Name: "Some Name",
+}
 
 var updateModelLanguage = types.Language{
-		Id:   1,
-		//Name: "Some Another Name",
-	}
+	Id: 1,
+	//Name: "Some Another Name",
+}
 
 var idsForRemoveLanguage = []int{}
 
@@ -47,7 +47,7 @@ var testCreateFuncLanguage = func(tt tests.WebTest) (*httptest.ResponseRecorder,
 var createAdminRequestLanguage = tests.GetCreateAdminRequest(settings.LanguageRoute, validModelLanguage)
 
 var testCasesLanguage = []tests.WebTest{
-    {
+	{
 		Name:         "Find Languages as admin",
 		ResponseCode: 200,
 		TestFunc: func(tt tests.WebTest) (*httptest.ResponseRecorder, error) {
@@ -81,7 +81,7 @@ var testCasesLanguage = []tests.WebTest{
 			}
 		},
 	},
-    {
+	{
 		Name:         "Create new Language as admin",
 		Request:      createAdminRequestLanguage,
 		ResponseCode: 201,
@@ -100,12 +100,12 @@ var testCasesLanguage = []tests.WebTest{
 		ResponseCode: 403,
 		TestFunc:     testCreateFuncLanguage,
 	},
-    {
+	{
 		Name:         "Read Language as non authorized user",
 		ResponseCode: 403,
 		TestFunc: func(tt tests.WebTest) (*httptest.ResponseRecorder, error) {
 			request := tests.GetReadNonAuthorizedUserRequest(settings.LanguageRoute + "/" + strconv.Itoa(updateModelLanguage.Id))
-			return tests.SendRequest(settings.LanguageRoute+ "/{id}", request, LanguageRead, http.MethodGet), nil
+			return tests.SendRequest(settings.LanguageRoute+"/{id}", request, LanguageRead, http.MethodGet), nil
 		},
 	},
 	{
@@ -131,7 +131,7 @@ var testCasesLanguage = []tests.WebTest{
 			id := strconv.Itoa(responseData.Id)
 			request := tests.GetReadAdminRequest(settings.LanguageRoute + "/" + id)
 
-			return tests.SendRequest(settings.LanguageRoute+ "/{id}", request, LanguageRead, http.MethodGet), nil
+			return tests.SendRequest(settings.LanguageRoute+"/{id}", request, LanguageRead, http.MethodGet), nil
 
 		},
 		ResultValidator: func(t *testing.T, response *httptest.ResponseRecorder) {
@@ -139,7 +139,7 @@ var testCasesLanguage = []tests.WebTest{
 			validateFieldsLanguage(t, createdModelLanguage, updateModelLanguage, response)
 		},
 	},
-    {
+	{
 		Name:         "Update Language as admin",
 		ResponseCode: 200,
 		TestFunc: func(tt tests.WebTest) (*httptest.ResponseRecorder, error) {
@@ -162,9 +162,9 @@ var testCasesLanguage = []tests.WebTest{
 			updateModelLanguage.Id = responseData.Id
 
 			id := strconv.Itoa(responseData.Id)
-			request := tests.GetUpdateAdminRequest(settings.LanguageRoute+ "/" +id, updateModelLanguage)
+			request := tests.GetUpdateAdminRequest(settings.LanguageRoute+"/"+id, updateModelLanguage)
 
-			return tests.SendRequest(settings.LanguageRoute+ "/{id}", request, LanguageUpdate, http.MethodPut), nil
+			return tests.SendRequest(settings.LanguageRoute+"/{id}", request, LanguageUpdate, http.MethodPut), nil
 		},
 		ResultValidator: func(t *testing.T, response *httptest.ResponseRecorder) {
 			model := getLanguageParsedModel(response)
@@ -172,13 +172,13 @@ var testCasesLanguage = []tests.WebTest{
 
 			id := strconv.Itoa(model.Id)
 			request := tests.GetReadAdminRequest(settings.LanguageRoute + "/" + id)
-			readResponse := tests.SendRequest(settings.LanguageRoute+ "/{id}", request, LanguageRead, http.MethodGet)
+			readResponse := tests.SendRequest(settings.LanguageRoute+"/{id}", request, LanguageRead, http.MethodGet)
 
 			model = getLanguageParsedModel(readResponse)
 			validateFieldsLanguage(t, model, updateModelLanguage, readResponse)
 		},
 	},
-    {
+	{
 		Name: "Delete Language as unauthorized user",
 		//Request: inside delete func,
 		ResponseCode: 403,
@@ -202,7 +202,7 @@ var testCasesLanguage = []tests.WebTest{
 		},
 	},
 	{
-		Name: "Delete Language as admin",
+		Name:         "Delete Language as admin",
 		ResponseCode: 200,
 		TestFunc: func(tt tests.WebTest) (*httptest.ResponseRecorder, error) {
 
@@ -223,7 +223,7 @@ var testCasesLanguage = []tests.WebTest{
 		},
 	},
 	{
-		Name: "Delete Language as admin two times",
+		Name:         "Delete Language as admin two times",
 		ResponseCode: 400,
 		TestFunc: func(tt tests.WebTest) (*httptest.ResponseRecorder, error) {
 
@@ -243,10 +243,6 @@ var testCasesLanguage = []tests.WebTest{
 			return tests.SendRequest(settings.LanguageRoute+"/{id}", req, LanguageDelete, http.MethodDelete), nil
 		},
 	},
-    
-
-    
-
 }
 
 func getLanguageResponseModel(tt tests.WebTest, response *httptest.ResponseRecorder) (types.Language, error) {
@@ -260,14 +256,13 @@ func getLanguageResponseModel(tt tests.WebTest, response *httptest.ResponseRecor
 	return model, nil
 }
 
-
 func getLanguageParsedList(response *httptest.ResponseRecorder) (list []types.Language, total int) {
 
-	responseData := struct{
-		List []types.Language
+	responseData := struct {
+		List  []types.Language
 		Total int
-	} {
-		List: []types.Language{},
+	}{
+		List:  []types.Language{},
 		Total: 1,
 	}
 
@@ -278,16 +273,15 @@ func getLanguageParsedList(response *httptest.ResponseRecorder) (list []types.La
 
 func getLanguageParsedModel(response *httptest.ResponseRecorder) types.Language {
 
-	responseData := struct{
+	responseData := struct {
 		Model types.Language
-	} {
+	}{
 		Model: types.Language{},
 	}
 	json.Unmarshal(response.Body.Bytes(), &responseData)
 
 	return responseData.Model
 }
-
 
 func TestLanguage(t *testing.T) {
 
@@ -306,4 +300,3 @@ func TestLanguage(t *testing.T) {
 		core.Db = tmpDb
 	}()
 }
-

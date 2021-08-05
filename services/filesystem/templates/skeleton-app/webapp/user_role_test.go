@@ -14,14 +14,14 @@ import (
 )
 
 var validModelUserRole = types.UserRole{
-		Id:   1,
-		//Name: "Some Name",
-	}
+	Id: 1,
+	//Name: "Some Name",
+}
 
 var updateModelUserRole = types.UserRole{
-		Id:   1,
-		//Name: "Some Another Name",
-	}
+	Id: 1,
+	//Name: "Some Another Name",
+}
 
 var idsForRemoveUserRole = []int{}
 
@@ -47,7 +47,7 @@ var testCreateFuncUserRole = func(tt tests.WebTest) (*httptest.ResponseRecorder,
 var createAdminRequestUserRole = tests.GetCreateAdminRequest(settings.UserRoleRoute, validModelUserRole)
 
 var testCasesUserRole = []tests.WebTest{
-    {
+	{
 		Name:         "Find UserRoles as admin",
 		ResponseCode: 200,
 		TestFunc: func(tt tests.WebTest) (*httptest.ResponseRecorder, error) {
@@ -81,7 +81,7 @@ var testCasesUserRole = []tests.WebTest{
 			}
 		},
 	},
-    {
+	{
 		Name:         "Create new UserRole as admin",
 		Request:      createAdminRequestUserRole,
 		ResponseCode: 201,
@@ -100,12 +100,12 @@ var testCasesUserRole = []tests.WebTest{
 		ResponseCode: 403,
 		TestFunc:     testCreateFuncUserRole,
 	},
-    {
+	{
 		Name:         "Read UserRole as non authorized user",
 		ResponseCode: 403,
 		TestFunc: func(tt tests.WebTest) (*httptest.ResponseRecorder, error) {
 			request := tests.GetReadNonAuthorizedUserRequest(settings.UserRoleRoute + "/" + strconv.Itoa(updateModelUserRole.Id))
-			return tests.SendRequest(settings.UserRoleRoute+ "/{id}", request, UserRoleRead, http.MethodGet), nil
+			return tests.SendRequest(settings.UserRoleRoute+"/{id}", request, UserRoleRead, http.MethodGet), nil
 		},
 	},
 	{
@@ -131,7 +131,7 @@ var testCasesUserRole = []tests.WebTest{
 			id := strconv.Itoa(responseData.Id)
 			request := tests.GetReadAdminRequest(settings.UserRoleRoute + "/" + id)
 
-			return tests.SendRequest(settings.UserRoleRoute+ "/{id}", request, UserRoleRead, http.MethodGet), nil
+			return tests.SendRequest(settings.UserRoleRoute+"/{id}", request, UserRoleRead, http.MethodGet), nil
 
 		},
 		ResultValidator: func(t *testing.T, response *httptest.ResponseRecorder) {
@@ -139,7 +139,7 @@ var testCasesUserRole = []tests.WebTest{
 			validateFieldsUserRole(t, createdModelUserRole, updateModelUserRole, response)
 		},
 	},
-    {
+	{
 		Name:         "Update UserRole as admin",
 		ResponseCode: 200,
 		TestFunc: func(tt tests.WebTest) (*httptest.ResponseRecorder, error) {
@@ -162,9 +162,9 @@ var testCasesUserRole = []tests.WebTest{
 			updateModelUserRole.Id = responseData.Id
 
 			id := strconv.Itoa(responseData.Id)
-			request := tests.GetUpdateAdminRequest(settings.UserRoleRoute+ "/" +id, updateModelUserRole)
+			request := tests.GetUpdateAdminRequest(settings.UserRoleRoute+"/"+id, updateModelUserRole)
 
-			return tests.SendRequest(settings.UserRoleRoute+ "/{id}", request, UserRoleUpdate, http.MethodPut), nil
+			return tests.SendRequest(settings.UserRoleRoute+"/{id}", request, UserRoleUpdate, http.MethodPut), nil
 		},
 		ResultValidator: func(t *testing.T, response *httptest.ResponseRecorder) {
 			model := getUserRoleParsedModel(response)
@@ -172,13 +172,13 @@ var testCasesUserRole = []tests.WebTest{
 
 			id := strconv.Itoa(model.Id)
 			request := tests.GetReadAdminRequest(settings.UserRoleRoute + "/" + id)
-			readResponse := tests.SendRequest(settings.UserRoleRoute+ "/{id}", request, UserRoleRead, http.MethodGet)
+			readResponse := tests.SendRequest(settings.UserRoleRoute+"/{id}", request, UserRoleRead, http.MethodGet)
 
 			model = getUserRoleParsedModel(readResponse)
 			validateFieldsUserRole(t, model, updateModelUserRole, readResponse)
 		},
 	},
-    {
+	{
 		Name: "Delete UserRole as unauthorized user",
 		//Request: inside delete func,
 		ResponseCode: 403,
@@ -202,7 +202,7 @@ var testCasesUserRole = []tests.WebTest{
 		},
 	},
 	{
-		Name: "Delete UserRole as admin",
+		Name:         "Delete UserRole as admin",
 		ResponseCode: 200,
 		TestFunc: func(tt tests.WebTest) (*httptest.ResponseRecorder, error) {
 
@@ -223,7 +223,7 @@ var testCasesUserRole = []tests.WebTest{
 		},
 	},
 	{
-		Name: "Delete UserRole as admin two times",
+		Name:         "Delete UserRole as admin two times",
 		ResponseCode: 400,
 		TestFunc: func(tt tests.WebTest) (*httptest.ResponseRecorder, error) {
 
@@ -243,10 +243,6 @@ var testCasesUserRole = []tests.WebTest{
 			return tests.SendRequest(settings.UserRoleRoute+"/{id}", req, UserRoleDelete, http.MethodDelete), nil
 		},
 	},
-    
-
-    
-
 }
 
 func getUserRoleResponseModel(tt tests.WebTest, response *httptest.ResponseRecorder) (types.UserRole, error) {
@@ -260,14 +256,13 @@ func getUserRoleResponseModel(tt tests.WebTest, response *httptest.ResponseRecor
 	return model, nil
 }
 
-
 func getUserRoleParsedList(response *httptest.ResponseRecorder) (list []types.UserRole, total int) {
 
-	responseData := struct{
-		List []types.UserRole
+	responseData := struct {
+		List  []types.UserRole
 		Total int
-	} {
-		List: []types.UserRole{},
+	}{
+		List:  []types.UserRole{},
 		Total: 1,
 	}
 
@@ -278,16 +273,15 @@ func getUserRoleParsedList(response *httptest.ResponseRecorder) (list []types.Us
 
 func getUserRoleParsedModel(response *httptest.ResponseRecorder) types.UserRole {
 
-	responseData := struct{
+	responseData := struct {
 		Model types.UserRole
-	} {
+	}{
 		Model: types.UserRole{},
 	}
 	json.Unmarshal(response.Body.Bytes(), &responseData)
 
 	return responseData.Model
 }
-
 
 func TestUserRole(t *testing.T) {
 
@@ -306,4 +300,3 @@ func TestUserRole(t *testing.T) {
 		core.Db = tmpDb
 	}()
 }
-

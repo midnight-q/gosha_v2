@@ -1,16 +1,14 @@
 package services
 
 type TicketInterface interface {
-
-    GetId()             int
+	GetId() int
 }
 
 type Ticket struct {
-    id int
+	id int
 	TicketInterface
 }
 
 func (ticket Ticket) GetId() int {
-    return ticket.id
+	return ticket.id
 }
-

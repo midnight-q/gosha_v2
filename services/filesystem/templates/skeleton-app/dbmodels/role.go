@@ -1,24 +1,22 @@
 package dbmodels
 
 import (
-    "time"
+	"time"
 
-    "gorm.io/gorm"
+	"gorm.io/gorm"
 )
 
 type Role struct {
-
-    ID        int       `gorm:"primary_key"`
-    Name string
+	ID          int `gorm:"primary_key"`
+	Name        string
 	Description string
 
-    CreatedAt time.Time
-    UpdatedAt time.Time
-    DeletedAt gorm.DeletedAt `sql:"index" json:"-"`
+	CreatedAt time.Time
+	UpdatedAt time.Time
+	DeletedAt gorm.DeletedAt `sql:"index" json:"-"`
 
-    validator
+	validator
 }
 
 func (role *Role) Validate() {
 }
-

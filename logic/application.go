@@ -38,7 +38,6 @@ func ApplicationCreate(filter types.ApplicationFilter) (data types.Application, 
 		return types.Application{}, err
 	}
 
-	currentPath = "/home/alex/projects/gosha_test/"
 	model.Name = utils.GetNameForNewApp(currentPath)
 
 	// Copy all skeleton to new dir
@@ -73,14 +72,6 @@ func ApplicationCreate(filter types.ApplicationFilter) (data types.Application, 
 	err = filesystem.UpdateUserFixtures(currentPath, newSalt, model)
 	if err != nil {
 		return types.Application{}, err
-	}
-
-	// Set PK type
-	if model.UseUuidPk {
-		err = filesystem.ChangePKToUuid(currentPath)
-		if err != nil {
-			return types.Application{}, err
-		}
 	}
 
 	return

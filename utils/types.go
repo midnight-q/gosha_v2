@@ -18,10 +18,10 @@ func GetFloat64Type() *dst.Ident {
 
 func GetUuidType() *dst.SelectorExpr {
 	return &dst.SelectorExpr{
-		X:    &dst.Ident{
+		X: &dst.Ident{
 			Name: "uuid",
 		},
-		Sel:  &dst.Ident{
+		Sel: &dst.Ident{
 			Name: "UUID",
 		},
 	}
@@ -32,4 +32,3 @@ func GetArrayType(t dst.Expr) *dst.ArrayType {
 		Elt: t,
 	}
 }
-

@@ -31,3 +31,25 @@ func CreateGoMod(path string) error {
 
 	return os.Remove(skeletonGoModPath)
 }
+
+func FindAppName(path string) (name string) {
+	goModPath := path + settings.GoModFilename
+
+	if _, err := os.Stat(goModPath); os.IsNotExist(err) {
+		return ""
+	}
+
+	b, err := os.ReadFile(goModPath)
+	if err != nil {
+		return ""
+	}
+	file := string(b)
+
+	lines := strings.Split(file, "\n")
+
+	rawName := strings.Replace(lines[0], "module", "", 1)
+
+	name = strings.TrimSpace(rawName)
+
+	return
+}

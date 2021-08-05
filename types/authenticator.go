@@ -67,11 +67,11 @@ func clearPath(s string) string {
 	return s
 }
 
-func (auth *Authenticator) SetToken(r *http.Request) error {
+func (auth *Authenticator) SetToken(r *http.Request) {
 
 	auth.Token = r.Header.Get("Token")
 
-	return nil
+	return
 }
 
 func (authenticator *Authenticator) Validate(functionType string) {

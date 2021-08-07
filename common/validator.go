@@ -45,51 +45,29 @@ func ValidateMobile(phone string) bool {
 	return Re.MatchString(phone)
 }
 
-func InArray(item interface{}, array interface{}) bool {
+func InArray(val interface{}, array interface{}) (exists bool, index int) {
+	exists = false
+	index = -1
 
-	rt := reflect.TypeOf(array)
-
-	switch rt.Kind() {
+	switch reflect.TypeOf(array).Kind() {
 	case reflect.Slice:
-		return checkInArray(item, array)
-	case reflect.Array:
-		return checkInArray(item, array)
-	default:
-		return false
+		s := reflect.ValueOf(array)
+
+		for i := 0; i < s.Len(); i++ {
+			if reflect.DeepEqual(val, s.Index(i).Interface()) == true {
+				index = i
+				exists = true
+				return
+			}
+		}
 	}
 
+	return
 }
 
-func checkInArray(item interface{}, array interface{}) bool {
-
-	listS, ok := array.([]string)
-	if ok {
-		for _, i := range listS {
-			if i == item {
-				return true
-			}
-		}
-	}
-
-	listInt, ok := array.([]int)
-	if ok {
-		for _, i := range listInt {
-			if i == item {
-				return true
-			}
-		}
-	}
-
-	listI, ok := array.([]interface{})
-	if ok {
-		for _, i := range listI {
-			if i == item {
-				return true
-			}
-		}
-	}
-
-	return false
+func CheckInArray(item interface{}, array interface{}) bool {
+	exist, _ := InArray(item, array)
+	return exist
 }
 
 func getFrame(skipFrames int) runtime.Frame {

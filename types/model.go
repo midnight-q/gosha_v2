@@ -6,8 +6,33 @@ import (
 )
 
 type Model struct {
-	Id   int
-	Name string
+	Name        string
+	Fields      []Field
+	IsTypeModel bool
+	IsDbModel   bool
+	PkType      string
+	CommentType string
+	CommentDb   string
+	Filter      *Model
+	HttpRoutes  struct {
+		Find           string
+		Create         string
+		Read           string
+		Update         string
+		Delete         string
+		FindOrCreate   string
+		UpdateOrCreate string
+	}
+
+	HttpMethods struct {
+		IsFind           bool
+		IsCreate         bool
+		IsRead           bool
+		IsUpdate         bool
+		IsDelete         bool
+		IsFindOrCreate   bool
+		IsUpdateOrCreate bool
+	}
 
 	validator
 }

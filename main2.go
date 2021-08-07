@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 	"go/token"
-	"gosha_v2/utils"
+	"gosha_v2/services/utils"
 	"io/ioutil"
 
 	"github.com/dave/dst"

@@ -4,8 +4,8 @@ import (
 	"bytes"
 	"fmt"
 	"gosha_v2/errors"
+	"gosha_v2/services/utils"
 	"gosha_v2/settings"
-	"gosha_v2/utils"
 	"io/fs"
 	"io/ioutil"
 

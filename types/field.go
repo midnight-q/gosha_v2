@@ -6,9 +6,12 @@ import (
 )
 
 type Field struct {
-	Id   int
-	Name string
-
+	Name        string
+	Type        string
+	CommentType string
+	CommentDb   string
+	IsTypeField bool
+	IsDbField   bool
 	validator
 }
 

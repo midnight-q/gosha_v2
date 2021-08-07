@@ -3,7 +3,7 @@ package filesystem
 import (
 	"bytes"
 	"fmt"
-	"gosha_v2/utils"
+	"gosha_v2/services/utils"
 	"io/fs"
 	"io/ioutil"
 

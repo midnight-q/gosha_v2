@@ -5,4 +5,7 @@
  3. Add and modify fields in exist models
  4. And more ...
 
-# [WIP]
+# TODO:
+ - [ ] Select PK type: uuid\int
+ - [ ] Select db connection type pq\mysql
+ 

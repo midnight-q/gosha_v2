@@ -8,6 +8,9 @@ import (
 )
 
 func main() {
+	//f := types.ModelFilter{}
+	//fmt.Println(logic.ModelFind(f))
+	//os.Exit(42)
 	runHttpServer()
 }
 

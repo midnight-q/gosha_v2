@@ -3,9 +3,9 @@ package logic
 import (
 	"gosha_v2/errors"
 	"gosha_v2/services/filesystem"
+	"gosha_v2/services/utils"
 	"gosha_v2/settings"
 	"gosha_v2/types"
-	"gosha_v2/utils"
 )
 
 func ApplicationFind(filter types.ApplicationFilter) (result []types.Application, totalRecords int, err error) {

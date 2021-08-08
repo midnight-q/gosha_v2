@@ -14,4 +14,5 @@ var ServiceModelNames = []string{
 	"GoshaFilterIds",
 	"Authenticator",
 	"Access",
+	"validator",
 }

@@ -3,7 +3,21 @@ package types
 import (
 	"gosha_v2/settings"
 	"net/http"
+	"strconv"
 )
+
+type HttpMethods struct {
+	Find           bool
+	Create         bool
+	MultiCreate    bool
+	Read           bool
+	Update         bool
+	MultiUpdate    bool
+	Delete         bool
+	MultiDelete    bool
+	FindOrCreate   bool
+	UpdateOrCreate bool
+}
 
 type Model struct {
 	Name        string
@@ -17,22 +31,29 @@ type Model struct {
 	HttpRoutes  struct {
 		Find           string
 		Create         string
+		MultiCreate    string
 		Read           string
 		Update         string
+		MultiUpdate    string
 		Delete         string
+		MultiDelete    string
 		FindOrCreate   string
 		UpdateOrCreate string
 	}
 
 	HttpMethods struct {
-		IsFind           bool
-		IsCreate         bool
-		IsRead           bool
-		IsUpdate         bool
-		IsDelete         bool
-		IsFindOrCreate   bool
-		IsUpdateOrCreate bool
+		Find           bool
+		Create         bool
+		MultiCreate    bool
+		Read           bool
+		Update         bool
+		MultiUpdate    bool
+		Delete         bool
+		MultiDelete    bool
+		FindOrCreate   bool
+		UpdateOrCreate bool
 	}
+	IsServiceModel bool
 
 	validator
 }
@@ -44,6 +65,8 @@ type ModelFilter struct {
 	model Model
 	list  []Model
 
+	IsShowServiceModels bool
+
 	AbstractFilter
 }
 
@@ -54,6 +77,8 @@ func GetModelFilter(request *http.Request, functionType string) (filter ModelFil
 	if err != nil {
 		return filter, err
 	}
+
+	filter.IsShowServiceModels, _ = strconv.ParseBool(request.FormValue("IsShowServiceModels"))
 
 	switch functionType {
 	case settings.FunctionTypeMultiCreate, settings.FunctionTypeMultiUpdate, settings.FunctionTypeMultiDelete, settings.FunctionTypeMultiFindOrCreate:

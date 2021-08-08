@@ -12,6 +12,7 @@ type Field struct {
 	CommentDb   string
 	IsTypeField bool
 	IsDbField   bool
+	SourceModel string
 	validator
 }
 

@@ -1,8 +1,10 @@
 package filesystem
 
 import (
+	"fmt"
 	"go/token"
 	"gosha_v2/common"
+	"gosha_v2/errors"
 	"gosha_v2/services/utils"
 	"gosha_v2/settings"
 	"os"
@@ -13,17 +15,20 @@ import (
 )
 
 type Field struct {
-	Name    string
-	Type    string
-	Comment string
+	Name        string
+	Type        string
+	Comment     string
+	SourceModel string
 }
 
 type Model struct {
-	Name     string
-	Path     string
-	Comment  string
-	IsFilter bool
-	Fields   []Field
+	Name              string
+	Path              string
+	Comment           string
+	IsFilter          bool
+	Fields            []Field
+	IsServiceModel    bool
+	CompositionModels []string
 }
 
 func LoadDbModels(path string) (res []Model, err error) {
@@ -32,6 +37,8 @@ func LoadDbModels(path string) (res []Model, err error) {
 	if err != nil {
 		return nil, err
 	}
+
+	rawRes := []Model{}
 
 	for _, entry := range entries {
 		filePath := dirPath + "/" + entry.Name()
@@ -65,15 +72,15 @@ func LoadDbModels(path string) (res []Model, err error) {
 				}
 
 				if common.CheckInArray(model.Name, settings.ServiceModelNames) {
-					continue
-				}
-
-				if model.Name[:1] == strings.ToLower(model.Name[:1]) {
-					continue
+					model.IsServiceModel = true
 				}
 
 				for _, field := range structType.Fields.List {
-					if len(field.Names) != 1 {
+					if len(field.Names) < 1 {
+						model.CompositionModels = append(model.CompositionModels, utils.ParseType(field.Type))
+						continue
+					}
+					if field.Names[0].Name[:1] == strings.ToLower(field.Names[0].Name[:1]) {
 						continue
 					}
 					model.Fields = append(model.Fields, Field{
@@ -83,11 +90,11 @@ func LoadDbModels(path string) (res []Model, err error) {
 					})
 				}
 
-				res = append(res, model)
+				rawRes = append(rawRes, model)
 			}
 		}
 	}
-	return
+	return LoadCompositionFields(rawRes)
 }
 
 func LoadTypeModels(path string) (res []Model, err error) {
@@ -96,6 +103,8 @@ func LoadTypeModels(path string) (res []Model, err error) {
 	if err != nil {
 		return nil, err
 	}
+
+	rawRes := []Model{}
 
 	for _, entry := range entries {
 		filePath := dirPath + "/" + entry.Name()
@@ -128,16 +137,16 @@ func LoadTypeModels(path string) (res []Model, err error) {
 					continue
 				}
 
-				if model.Name[:1] == strings.ToLower(model.Name[:1]) {
-					continue
-				}
-
 				if common.CheckInArray(model.Name, settings.ServiceModelNames) {
-					continue
+					model.IsServiceModel = true
 				}
 
 				for _, field := range structType.Fields.List {
-					if len(field.Names) != 1 {
+					if len(field.Names) < 1 {
+						model.CompositionModels = append(model.CompositionModels, utils.ParseType(field.Type))
+						continue
+					}
+					if field.Names[0].Name[:1] == strings.ToLower(field.Names[0].Name[:1]) {
 						continue
 					}
 					f := Field{
@@ -154,9 +163,55 @@ func LoadTypeModels(path string) (res []Model, err error) {
 					}
 					model.Fields = append(model.Fields, f)
 				}
-				res = append(res, model)
+				rawRes = append(rawRes, model)
 			}
 		}
 	}
+
+	return LoadCompositionFields(rawRes)
+}
+
+func LoadCompositionFields(models []Model) (res []Model, err error) {
+	for _, model := range models {
+		if len(model.CompositionModels) > 0 {
+			for _, compositionModelName := range model.CompositionModels {
+				fields, err := loadFields(compositionModelName, models, "")
+				if err != nil {
+					return nil, err
+				}
+				model.Fields = append(model.Fields, fields...)
+			}
+		}
+		res = append(res, model)
+	}
 	return
+}
+
+func loadFields(modelName string, models []Model, prefix string) (res []Field, err error) {
+	model, isFind := FindModel(modelName, models)
+	if !isFind {
+		return nil, errors.New(fmt.Sprintf("Not found composition model name=%s", modelName))
+	}
+	for _, field := range model.Fields {
+		field.SourceModel = utils.CreateModelPath(prefix, modelName)
+		res = append(res, field)
+	}
+	for _, name := range model.CompositionModels {
+		fields, err := loadFields(name, models, utils.CreateModelPath(prefix, modelName))
+		if err != nil {
+			return nil, err
+		}
+		res = append(res, fields...)
+	}
+
+	return
+}
+
+func FindModel(name string, models []Model) (Model, bool) {
+	for _, model := range models {
+		if model.Name == name {
+			return model, true
+		}
+	}
+	return Model{}, false
 }

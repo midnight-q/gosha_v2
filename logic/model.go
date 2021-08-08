@@ -1,6 +1,8 @@
 package logic
 
 import (
+	"github.com/elliotchance/orderedmap"
+
 	"gosha_v2/services/filesystem"
 	"gosha_v2/services/utils"
 	"gosha_v2/types"
@@ -8,18 +10,19 @@ import (
 )
 
 func ModelFind(filter types.ModelFilter) (result []types.Model, totalRecords int, err error) {
-	path, err := filter.GetPwd()
+	currentPath, err := filter.GetPwd()
 	if err != nil {
 		return nil, 0, err
 	}
+
 	// load dbmodels
-	dbModels, err := filesystem.LoadDbModels(path)
+	dbModels, err := filesystem.LoadDbModels(currentPath)
 	if err != nil {
 		return nil, 0, err
 	}
 
 	// load type models
-	typeModels, err := filesystem.LoadTypeModels(path)
+	typeModels, err := filesystem.LoadTypeModels(currentPath)
 	if err != nil {
 		return nil, 0, err
 	}
@@ -30,35 +33,41 @@ func ModelFind(filter types.ModelFilter) (result []types.Model, totalRecords int
 		return nil, 0, err
 	}
 
-	//result, err = utils.GenerateRoutesForModels(result)
-	//if err != nil {
-	//	return nil, 0, err
-	//}
-	//result, err = filesystem.CheckRoutesAvailability(result)
-	//if err != nil {
-	//	return nil, 0, err
-	//}
+	result, err = utils.GenerateRoutesForModels(result)
+	if err != nil {
+		return nil, 0, err
+	}
+
+	result, err = filesystem.CheckRoutesAvailability(currentPath, result)
+	if err != nil {
+		return nil, 0, err
+	}
+
+	if !filter.IsShowServiceModels {
+		result = utils.FilterServiceModels(result)
+	}
 
 	return result, len(result), nil
 }
 
 func mergeModels(typeModels, dbModels []filesystem.Model) (res []types.Model, err error) {
 	for _, typeModel := range typeModels {
-		if typeModel.IsFilter {
+		if typeModel.IsFilter && !typeModel.IsServiceModel {
 			continue
 		}
 
-		dbModel, isFindDbModel := findModel(typeModel.Name, dbModels)
-		filter, isFindFilter := findModel(typeModel.Name+"Filter", typeModels)
+		dbModel, isFindDbModel := filesystem.FindModel(typeModel.Name, dbModels)
+		filter, isFindFilter := filesystem.FindModel(typeModel.Name+"Filter", typeModels)
 
 		model := types.Model{
-			Name:        typeModel.Name,
-			Fields:      []types.Field{},
-			IsTypeModel: true,
-			IsDbModel:   isFindDbModel,
-			PkType:      getPkType(dbModel),
-			CommentType: typeModel.Comment,
-			CommentDb:   dbModel.Comment,
+			Name:           typeModel.Name,
+			Fields:         []types.Field{},
+			IsTypeModel:    true,
+			IsDbModel:      isFindDbModel,
+			PkType:         getPkType(dbModel),
+			CommentType:    typeModel.Comment,
+			CommentDb:      dbModel.Comment,
+			IsServiceModel: typeModel.IsServiceModel,
 		}
 
 		model.Fields = mergeFields(typeModel.Fields, dbModel.Fields)
@@ -76,6 +85,7 @@ func mergeModels(typeModels, dbModels []filesystem.Model) (res []types.Model, er
 					Type:        field.Type,
 					CommentType: field.Comment,
 					IsTypeField: true,
+					SourceModel: field.SourceModel,
 				})
 			}
 		}
@@ -86,43 +96,40 @@ func mergeModels(typeModels, dbModels []filesystem.Model) (res []types.Model, er
 }
 
 func mergeFields(typeField []filesystem.Field, dbField []filesystem.Field) (res []types.Field) {
-	fieldsMap := map[string]types.Field{}
+	fieldsMap := orderedmap.NewOrderedMap()
 	for _, field := range typeField {
-		fieldsMap[strings.ToLower(field.Name)] = types.Field{
+		fieldsMap.Set(strings.ToLower(field.Name), types.Field{
 			Name:        field.Name,
 			Type:        field.Type,
 			CommentType: field.Comment,
 			IsTypeField: true,
-		}
+			SourceModel: field.SourceModel,
+		})
 	}
 
 	for _, dbField := range dbField {
-		field, isFind := fieldsMap[strings.ToLower(dbField.Name)]
+		rawField, isFind := fieldsMap.Get(strings.ToLower(dbField.Name))
 		if !isFind {
-			field = types.Field{
-				Name: dbField.Name,
-				Type: dbField.Type,
-			}
+			fieldsMap.Set(strings.ToLower(dbField.Name), types.Field{
+				Name:        dbField.Name,
+				Type:        dbField.Type,
+				IsDbField:   true,
+				CommentDb:   dbField.Comment,
+				SourceModel: dbField.SourceModel,
+			})
+		} else {
+			field := rawField.(types.Field)
+			field.IsDbField = true
+			field.CommentDb = dbField.Comment
+			fieldsMap.Set(strings.ToLower(dbField.Name), field)
 		}
 
-		field.IsDbField = true
-		field.CommentDb = dbField.Comment
-		fieldsMap[strings.ToLower(dbField.Name)] = field
 	}
 
-	for _, field := range fieldsMap {
-		res = append(res, field)
+	for el := fieldsMap.Front(); el != nil; el = el.Next() {
+		res = append(res, el.Value.(types.Field))
 	}
 	return
-}
-
-func findModel(name string, models []filesystem.Model) (filesystem.Model, bool) {
-	for _, model := range models {
-		if model.Name == name {
-			return model, true
-		}
-	}
-	return filesystem.Model{}, false
 }
 
 func getPkType(model filesystem.Model) string {

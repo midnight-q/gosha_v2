@@ -6,13 +6,28 @@ import (
 )
 
 type Field struct {
-	Name        string
-	Type        string
+	// Field name
+	Name string
+	// Field type
+	Type string
+	// Field comment from typeModel
 	CommentType string
-	CommentDb   string
+	// Field comment from dbModel
+	CommentDb string
+	// Flag - field exist in typeModel
 	IsTypeField bool
-	IsDbField   bool
+	// Flag - field exist in dbModel
+	IsDbField bool
+	// Path for parent model in composition
 	SourceModel string
+
+	// Model name for create field
+	ModelName string
+	// Flag for creating func
+	IsPointer bool
+	// Flag for creating func
+	IsArray bool
+
 	validator
 }
 

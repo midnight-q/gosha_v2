@@ -1,24 +1,15 @@
 package filesystem
 
 import (
-	"bytes"
 	"fmt"
 	"gosha_v2/services/utils"
-	"io/fs"
-	"io/ioutil"
 
 	"github.com/dave/dst"
-	"github.com/dave/dst/decorator"
 )
 
 func UpdatePasswordSalt(currentPath, newSalt string) error {
 	fileName := currentPath + "/settings/user.go"
-	b, err := ioutil.ReadFile(fileName)
-	if err != nil {
-		return err
-	}
-
-	file, err := decorator.Parse(b)
+	file, err := readFile(fileName)
 	if err != nil {
 		return err
 	}
@@ -60,15 +51,5 @@ func UpdatePasswordSalt(currentPath, newSalt string) error {
 		return fmt.Errorf("not found PASSWORD_SALT")
 	}
 
-	buf := bytes.NewBuffer([]byte{})
-	err = decorator.Fprint(buf, file)
-	if err != nil {
-		return err
-	}
-
-	err = ioutil.WriteFile(fileName, buf.Bytes(), fs.ModePerm)
-	if err != nil {
-		return err
-	}
-	return nil
+	return saveFile(file, fileName)
 }

@@ -68,6 +68,8 @@ func mergeModels(typeModels, dbModels []filesystem.Model) (res []types.Model, er
 			CommentType:    typeModel.Comment,
 			CommentDb:      dbModel.Comment,
 			IsServiceModel: typeModel.IsServiceModel,
+			TypePath:       typeModel.Path,
+			DbPath:         dbModel.Path,
 		}
 
 		model.Fields = mergeFields(typeModel.Fields, dbModel.Fields)

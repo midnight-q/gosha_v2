@@ -12,6 +12,9 @@ func GetName(name string) []*dst.Ident {
 }
 
 func GetComment(text string) dst.FieldDecorations {
+	if len(text) < 1 {
+		return dst.FieldDecorations{}
+	}
 	commentList := []string{}
 	for _, s := range strings.Split(text, "\n") {
 		if len(s) > 0 {

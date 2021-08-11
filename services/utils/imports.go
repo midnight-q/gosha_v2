@@ -6,6 +6,16 @@ import (
 	"github.com/dave/dst"
 )
 
+func AddImportForTypeIfNeeded(typeName string, file *dst.File) {
+	switch typeName {
+	case "uuid":
+		AddImportIfNotExist(file, GetUuidImport())
+	case "time":
+		AddImportIfNotExist(file, GetTimeImport())
+	}
+	return
+}
+
 func GetUuidImport() *dst.ImportSpec {
 	return &dst.ImportSpec{
 		Path: &dst.BasicLit{
@@ -15,7 +25,16 @@ func GetUuidImport() *dst.ImportSpec {
 	}
 }
 
-func AddImportIfNotExist(file *dst.File, importSpec *dst.ImportSpec, name string) {
+func GetTimeImport() *dst.ImportSpec {
+	return &dst.ImportSpec{
+		Path: &dst.BasicLit{
+			Kind:  token.STRING,
+			Value: WrapString("time"),
+		},
+	}
+}
+
+func AddImportIfNotExist(file *dst.File, importSpec *dst.ImportSpec) {
 	if CheckImport(importSpec.Path.Value, file) {
 		return
 	}
@@ -36,7 +55,7 @@ func AddImportIfNotExist(file *dst.File, importSpec *dst.ImportSpec, name string
 	if !isAdded {
 		file.Decls = append([]dst.Decl{&dst.GenDecl{
 			Tok:   token.IMPORT,
-			Specs: []dst.Spec{GetUuidImport()},
+			Specs: []dst.Spec{importSpec},
 		}}, file.Decls...)
 	}
 }

@@ -1,7 +1,6 @@
 package filesystem
 
 import (
-	"bytes"
 	"fmt"
 	"gosha_v2/errors"
 	"gosha_v2/services/utils"
@@ -10,7 +9,6 @@ import (
 	"io/ioutil"
 
 	"github.com/dave/dst"
-	"github.com/dave/dst/decorator"
 )
 
 func UpdateDbConnection(currentPath string, dbTypeId int) error {
@@ -25,12 +23,8 @@ func UpdateDbConnection(currentPath string, dbTypeId int) error {
 	dbPass := utils.GeneratePassword()
 	dbPort := "35432"
 	fileName := currentPath + "/settings/db.go"
-	b, err := ioutil.ReadFile(fileName)
-	if err != nil {
-		return err
-	}
 
-	file, err := decorator.Parse(b)
+	file, err := readFile(fileName)
 	if err != nil {
 		return err
 	}
@@ -119,14 +113,7 @@ func UpdateDbConnection(currentPath string, dbTypeId int) error {
 		return err
 	}
 
-	buf := bytes.NewBuffer([]byte{})
-	err = decorator.Fprint(buf, file)
-	if err != nil {
-		fmt.Println(err)
-		return err
-	}
-
-	err = ioutil.WriteFile(fileName, buf.Bytes(), fs.ModePerm)
+	err = saveFile(file, fileName)
 	if err != nil {
 		return err
 	}

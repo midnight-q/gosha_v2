@@ -3,10 +3,8 @@ package filesystem
 import (
 	"gosha_v2/common"
 	"gosha_v2/types"
-	"os"
 
 	"github.com/dave/dst"
-	"github.com/dave/dst/decorator"
 )
 
 func CheckRoutesAvailability(path string, models []types.Model) (res []types.Model, err error) {
@@ -14,13 +12,7 @@ func CheckRoutesAvailability(path string, models []types.Model) (res []types.Mod
 
 	filePath := path + "/router/router.go"
 
-	b, err := os.ReadFile(filePath)
-
-	if err != nil {
-		return nil, err
-	}
-
-	file, err := decorator.Parse(b)
+	file, err := readFile(filePath)
 	if err != nil {
 		return nil, err
 	}

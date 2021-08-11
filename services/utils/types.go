@@ -2,6 +2,7 @@ package utils
 
 import (
 	"fmt"
+	"gosha_v2/errors"
 
 	"github.com/dave/dst"
 )
@@ -16,6 +17,10 @@ func GetStringType() *dst.Ident {
 
 func GetFloat64Type() *dst.Ident {
 	return &dst.Ident{Name: "float64"}
+}
+
+func GetByteType() *dst.Ident {
+	return &dst.Ident{Name: "byte"}
 }
 
 func GetUuidType() *dst.SelectorExpr {
@@ -33,6 +38,38 @@ func GetArrayType(t dst.Expr) *dst.ArrayType {
 	return &dst.ArrayType{
 		Elt: t,
 	}
+}
+
+func GetPointerType(t dst.Expr) *dst.StarExpr {
+	return &dst.StarExpr{
+		X: t,
+	}
+}
+
+func GetType(name string, isArray bool, isPointer bool) (dst.Expr, error) {
+	var t dst.Expr
+	switch name {
+	case "int":
+		t = GetIntType()
+	case "float64":
+		t = GetFloat64Type()
+	case "string":
+		t = GetStringType()
+	case "byte":
+		t = GetByteType()
+	case "uuid":
+		t = GetUuidType()
+	default:
+		// TODO: implement model types
+		return nil, errors.New("Unknown type: " + name)
+	}
+	if isArray {
+		t = GetArrayType(t)
+	}
+	if isPointer {
+		t = GetPointerType(t)
+	}
+	return t, nil
 }
 
 func ParseType(in dst.Expr) string {

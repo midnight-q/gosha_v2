@@ -28,6 +28,8 @@ type Model struct {
 	CommentType string
 	CommentDb   string
 	Filter      *Model
+	TypePath    string
+	DbPath      string
 	HttpRoutes  struct {
 		Find           string
 		Create         string

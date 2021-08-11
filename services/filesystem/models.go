@@ -11,7 +11,6 @@ import (
 	"strings"
 
 	"github.com/dave/dst"
-	"github.com/dave/dst/decorator"
 )
 
 type Field struct {
@@ -42,58 +41,58 @@ func LoadDbModels(path string) (res []Model, err error) {
 
 	for _, entry := range entries {
 		filePath := dirPath + "/" + entry.Name()
-		b, err := os.ReadFile(filePath)
+
+		file, err := readFile(filePath)
 		if err != nil {
-			return nil, err
+			continue
 		}
-
-		file, err := decorator.Parse(b)
-
 		for _, decl := range file.Decls {
 			modelDecl, isOk := decl.(*dst.GenDecl)
 			if !isOk {
 				continue
 			}
 
-			if modelDecl.Tok == token.TYPE {
-				typeSpec := modelDecl.Specs[0].(*dst.TypeSpec)
-				structType := typeSpec.Type.(*dst.StructType)
+			if modelDecl.Tok != token.TYPE {
+				continue
+			}
+			typeSpec := modelDecl.Specs[0].(*dst.TypeSpec)
+			structType := typeSpec.Type.(*dst.StructType)
 
-				model := Model{
-					Name:     typeSpec.Name.Name,
-					Path:     filePath,
-					Comment:  utils.ParseComment(modelDecl.Decorations().Start.All()),
-					IsFilter: false,
-					Fields:   []Field{},
-				}
+			model := Model{
+				Name:     typeSpec.Name.Name,
+				Path:     filePath,
+				Comment:  utils.ParseComment(modelDecl.Decorations().Start.All()),
+				IsFilter: false,
+				Fields:   []Field{},
+			}
 
-				if len(model.Name) < 1 {
+			if len(model.Name) < 1 {
+				continue
+			}
+
+			if common.CheckInArray(model.Name, settings.ServiceModelNames) {
+				model.IsServiceModel = true
+			}
+
+			for _, field := range structType.Fields.List {
+				if len(field.Names) < 1 {
+					model.CompositionModels = append(model.CompositionModels, utils.ParseType(field.Type))
 					continue
 				}
-
-				if common.CheckInArray(model.Name, settings.ServiceModelNames) {
-					model.IsServiceModel = true
+				if field.Names[0].Name[:1] == strings.ToLower(field.Names[0].Name[:1]) {
+					continue
 				}
-
-				for _, field := range structType.Fields.List {
-					if len(field.Names) < 1 {
-						model.CompositionModels = append(model.CompositionModels, utils.ParseType(field.Type))
-						continue
-					}
-					if field.Names[0].Name[:1] == strings.ToLower(field.Names[0].Name[:1]) {
-						continue
-					}
-					model.Fields = append(model.Fields, Field{
-						Name:    field.Names[0].Name,
-						Type:    utils.ParseType(field.Type),
-						Comment: utils.ParseComment(field.Decorations().Start.All()),
-					})
-				}
-
-				rawRes = append(rawRes, model)
+				model.Fields = append(model.Fields, Field{
+					Name:    field.Names[0].Name,
+					Type:    utils.ParseType(field.Type),
+					Comment: utils.ParseComment(field.Decorations().Start.All()),
+				})
 			}
+
+			rawRes = append(rawRes, model)
 		}
 	}
+
 	return LoadCompositionFields(rawRes)
 }
 
@@ -108,13 +107,11 @@ func LoadTypeModels(path string) (res []Model, err error) {
 
 	for _, entry := range entries {
 		filePath := dirPath + "/" + entry.Name()
-		b, err := os.ReadFile(filePath)
+
+		file, err := readFile(filePath)
 		if err != nil {
-			return nil, err
+			continue
 		}
-
-		file, err := decorator.Parse(b)
-
 		for _, decl := range file.Decls {
 			modelDecl, isOk := decl.(*dst.GenDecl)
 			if !isOk {

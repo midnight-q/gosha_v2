@@ -1,26 +1,18 @@
 package filesystem
 
 import (
-	"bytes"
 	"fmt"
 	"gosha_v2/services/utils"
 	"gosha_v2/types"
-	"io/fs"
-	"io/ioutil"
 
 	"github.com/dave/dst"
-	"github.com/dave/dst/decorator"
 )
 
 func UpdateUserFixtures(currentPath, newSalt string, app types.Application) error {
 
 	fileName := currentPath + "/bootstrap/fixtures/user.go"
-	b, err := ioutil.ReadFile(fileName)
-	if err != nil {
-		return err
-	}
 
-	file, err := decorator.Parse(b)
+	file, err := readFile(fileName)
 	if err != nil {
 		return err
 	}
@@ -97,13 +89,7 @@ MainLoop:
 		return fmt.Errorf("not found password field")
 	}
 
-	buf := bytes.NewBuffer([]byte{})
-	err = decorator.Fprint(buf, file)
-	if err != nil {
-		return err
-	}
-
-	err = ioutil.WriteFile(fileName, buf.Bytes(), fs.ModePerm)
+	err = saveFile(file, fileName)
 	if err != nil {
 		return err
 	}

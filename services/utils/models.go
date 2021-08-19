@@ -3,6 +3,7 @@ package utils
 import (
 	"gosha_v2/errors"
 	"gosha_v2/types"
+	"regexp"
 	"strings"
 )
 
@@ -46,4 +47,13 @@ func GetModel(name string, models []types.Model) (res types.Model, IsFilter bool
 	}
 
 	return types.Model{}, false, errors.New("Not found model with name: " + name)
+}
+
+func GetFileNameFromModelName(name string) string {
+	var matchFirstCap = regexp.MustCompile("(.)([A-Z][a-z]+)")
+	var matchAllCap = regexp.MustCompile("([a-z0-9])([A-Z])")
+
+	snake := matchFirstCap.ReplaceAllString(name, "${1}_${2}")
+	snake = matchAllCap.ReplaceAllString(snake, "${1}_${2}")
+	return strings.ToLower(snake)
 }

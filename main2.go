@@ -41,7 +41,7 @@ func ososososososo() {
 			}
 
 			structType.Fields.List = append(structType.Fields.List, &dst.Field{
-				Names: utils.GetName("TestField"),
+				Names: utils.GetNames("TestField"),
 				Type:  utils.GetStringType(),
 				Tag: &dst.BasicLit{
 					Kind:  token.STRING,

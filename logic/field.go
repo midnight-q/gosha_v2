@@ -25,6 +25,11 @@ func FieldCreate(filter types.FieldFilter) (data types.Field, err error) {
 		return types.Field{}, err
 	}
 
+	currentPath, err := filter.GetPwd()
+	if err != nil {
+		return types.Field{}, err
+	}
+
 	fieldType, err := utils.GetType(fieldModel.Type, fieldModel.IsArray, fieldModel.IsPointer)
 	if err != nil {
 		return types.Field{}, err
@@ -40,6 +45,8 @@ func FieldCreate(filter types.FieldFilter) (data types.Field, err error) {
 	if err != nil {
 		return types.Field{}, err
 	}
+
+	//TODO: Check model is exist
 	if !isFilter {
 		if !model.IsDbModel && fieldModel.IsDbField {
 			err = errors.New("Cant create dbField because dbModel not exist")
@@ -63,8 +70,12 @@ func FieldCreate(filter types.FieldFilter) (data types.Field, err error) {
 			}
 		}
 		if fieldModel.IsDbField && fieldModel.IsTypeField {
-			//create assigner
+			err = filesystem.AddFieldInAssigner(fieldModel, currentPath)
+			if err != nil {
+				return types.Field{}, err
+			}
 		}
+
 	} else {
 		if fieldModel.IsDbField {
 			err = errors.New("Cant create dbField in filter")

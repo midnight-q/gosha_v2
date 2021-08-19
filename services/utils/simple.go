@@ -7,8 +7,11 @@ import (
 	"github.com/dave/dst"
 )
 
-func GetName(name string) []*dst.Ident {
+func GetNames(name string) []*dst.Ident {
 	return []*dst.Ident{{Name: name}}
+}
+func GetName(name string) *dst.Ident {
+	return &dst.Ident{Name: name}
 }
 
 func GetComment(text string) dst.FieldDecorations {
@@ -25,10 +28,21 @@ func GetComment(text string) dst.FieldDecorations {
 		NodeDecs: dst.NodeDecs{
 			Before: dst.NewLine,
 			Start:  commentList,
+			After:  dst.NewLine,
 		},
 	}
 }
 
 func WrapString(s string) string {
 	return fmt.Sprintf(`"%s"`, s)
+}
+
+func GetNewLineDecorations() dst.KeyValueExprDecorations {
+
+	return dst.KeyValueExprDecorations{
+		NodeDecs: dst.NodeDecs{
+			Before: dst.NewLine,
+			After:  dst.NewLine,
+		},
+	}
 }

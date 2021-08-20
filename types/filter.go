@@ -304,7 +304,9 @@ func (filter *AbstractFilter) GetPwd() (string, error) {
 	if wd[len(wd)-1] != '/' {
 		wd = wd + "/"
 	}
-	wd = "C:\\Users\\Алексей\\go\\src\\gosha_test\\"
+	//wd = "C:\\Users\\Алексей\\go\\src\\gosha_test\\"
+	//wd = "/home/alex/Projects/gosha-test/"
+
 	return wd, nil
 }
 

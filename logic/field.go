@@ -47,7 +47,23 @@ func FieldCreate(filter types.FieldFilter) (data types.Field, err error) {
 	}
 
 	//TODO: Check model is exist
-	if !isFilter {
+	if isFilter {
+		if fieldModel.IsDbField {
+			err = errors.New("Cant create dbField in filter")
+			return types.Field{}, err
+		}
+
+		err = filesystem.AddFieldInModel(fieldModel.Name, fieldModel.CommentType, fieldModel.ModelName, model.TypePath, fieldModel.Type, fieldType)
+		if err != nil {
+			return types.Field{}, err
+		}
+
+		err = filesystem.AddParserInFilter(fieldModel, model.TypePath)
+		if err != nil {
+			return types.Field{}, err
+		}
+		// Create parser in GetFilter depends on type
+	} else {
 		if !model.IsDbModel && fieldModel.IsDbField {
 			err = errors.New("Cant create dbField because dbModel not exist")
 			return types.Field{}, err
@@ -75,19 +91,6 @@ func FieldCreate(filter types.FieldFilter) (data types.Field, err error) {
 				return types.Field{}, err
 			}
 		}
-
-	} else {
-		if fieldModel.IsDbField {
-			err = errors.New("Cant create dbField in filter")
-			return types.Field{}, err
-		}
-
-		err = filesystem.AddFieldInModel(fieldModel.Name, fieldModel.CommentType, fieldModel.ModelName, model.TypePath, fieldModel.Type, fieldType)
-		if err != nil {
-			return types.Field{}, err
-		}
-
-		// Create parser in GetFilter depends on type
 	}
 
 	return

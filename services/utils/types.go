@@ -2,7 +2,9 @@ package utils
 
 import (
 	"fmt"
+	"go/token"
 	"gosha_v2/errors"
+	"gosha_v2/types"
 
 	"github.com/dave/dst"
 )
@@ -110,4 +112,45 @@ func ParseType(in dst.Expr) string {
 		return "unknown"
 	}
 	return ""
+}
+
+func GetParserForType(model types.Field) (*dst.AssignStmt, error) {
+	var t *dst.AssignStmt
+	switch model.Type {
+	case "int":
+		t = GetIntParser(model)
+	//case "float64":
+	//case "string":
+	//case "byte":
+	//case "uuid":
+	default:
+		// TODO: implement model types
+		return nil, errors.New("Unknown type: " + model.Type)
+	}
+
+	return t, nil
+}
+
+func GetIntParser(model types.Field) *dst.AssignStmt {
+	return &dst.AssignStmt{
+		Lhs: []dst.Expr{&dst.SelectorExpr{X: GetName("filter"), Sel: GetName(model.Name)}},
+		Tok: token.ASSIGN,
+		Rhs: []dst.Expr{&dst.CallExpr{
+			Fun: &dst.SelectorExpr{
+				X:   GetName("strconv"),
+				Sel: GetName("Itoa"),
+			},
+			Args: []dst.Expr{&dst.CallExpr{
+				Fun: &dst.SelectorExpr{
+					X:   GetName("request"),
+					Sel: GetName("FormValue"),
+				},
+				Args: []dst.Expr{&dst.BasicLit{
+					Kind:  token.STRING,
+					Value: WrapString(model.Name),
+				}},
+			}},
+		},
+		},
+	}
 }

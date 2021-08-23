@@ -6,12 +6,14 @@ import (
 	"github.com/dave/dst"
 )
 
-func AddImportForTypeIfNeeded(typeName string, file *dst.File) {
+func AddImportIfNeeded(typeName string, file *dst.File) {
 	switch typeName {
 	case "uuid":
 		AddImportIfNotExist(file, GetUuidImport())
 	case "time":
 		AddImportIfNotExist(file, GetTimeImport())
+	case "strconv":
+		AddImportIfNotExist(file, GetStrconvImport())
 	}
 	return
 }
@@ -30,6 +32,15 @@ func GetTimeImport() *dst.ImportSpec {
 		Path: &dst.BasicLit{
 			Kind:  token.STRING,
 			Value: WrapString("time"),
+		},
+	}
+}
+
+func GetStrconvImport() *dst.ImportSpec {
+	return &dst.ImportSpec{
+		Path: &dst.BasicLit{
+			Kind:  token.STRING,
+			Value: WrapString("strconv"),
 		},
 	}
 }

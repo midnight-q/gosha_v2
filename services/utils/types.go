@@ -119,9 +119,11 @@ func GetParserForType(model types.Field) (*dst.AssignStmt, error) {
 	switch model.Type {
 	case "int":
 		t = GetIntParser(model)
-	//case "float64":
-	//case "string":
-	//case "byte":
+	case "float64":
+		t = GetFloat64Parser(model)
+	case "string":
+		t = GetStringParser(model)
+
 	//case "uuid":
 	default:
 		// TODO: implement model types
@@ -149,6 +151,48 @@ func GetIntParser(model types.Field) *dst.AssignStmt {
 					Kind:  token.STRING,
 					Value: WrapString(model.Name),
 				}},
+			}},
+		},
+		},
+	}
+}
+
+func GetFloat64Parser(model types.Field) *dst.AssignStmt {
+	return &dst.AssignStmt{
+		Lhs: []dst.Expr{&dst.SelectorExpr{X: GetName("filter"), Sel: GetName(model.Name)}, GetBlankIdentifier()},
+		Tok: token.ASSIGN,
+		Rhs: []dst.Expr{&dst.CallExpr{
+			Fun: &dst.SelectorExpr{
+				X:   GetName("strconv"),
+				Sel: GetName("ParseFloat"),
+			},
+			Args: []dst.Expr{&dst.CallExpr{
+				Fun: &dst.SelectorExpr{
+					X:   GetName("request"),
+					Sel: GetName("FormValue"),
+				},
+				Args: []dst.Expr{&dst.BasicLit{
+					Kind:  token.STRING,
+					Value: WrapString(model.Name),
+				}, GetIntValue(64)},
+			}},
+		},
+		},
+	}
+}
+
+func GetStringParser(model types.Field) *dst.AssignStmt {
+	return &dst.AssignStmt{
+		Lhs: []dst.Expr{&dst.SelectorExpr{X: GetName("filter"), Sel: GetName(model.Name)}},
+		Tok: token.ASSIGN,
+		Rhs: []dst.Expr{&dst.CallExpr{
+			Fun: &dst.SelectorExpr{
+				X:   GetName("request"),
+				Sel: GetName("FormValue"),
+			},
+			Args: []dst.Expr{&dst.BasicLit{
+				Kind:  token.STRING,
+				Value: WrapString(model.Name),
 			}},
 		},
 		},

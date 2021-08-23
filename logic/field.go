@@ -30,6 +30,8 @@ func FieldCreate(filter types.FieldFilter) (data types.Field, err error) {
 		return types.Field{}, err
 	}
 
+	appName := filesystem.FindAppName(currentPath)
+
 	fieldType, err := utils.GetType(fieldModel.Type, fieldModel.IsArray, fieldModel.IsPointer)
 	if err != nil {
 		return types.Field{}, err
@@ -58,11 +60,10 @@ func FieldCreate(filter types.FieldFilter) (data types.Field, err error) {
 			return types.Field{}, err
 		}
 
-		err = filesystem.AddParserInFilter(fieldModel, model.TypePath)
+		err = filesystem.AddParserInFilter(fieldModel, model.TypePath, appName)
 		if err != nil {
 			return types.Field{}, err
 		}
-		// Create parser in GetFilter depends on type
 	} else {
 		if !model.IsDbModel && fieldModel.IsDbField {
 			err = errors.New("Cant create dbField because dbModel not exist")

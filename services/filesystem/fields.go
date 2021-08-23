@@ -17,7 +17,7 @@ func AddFieldInModel(fieldName, fieldComment, modelName, fileName, typeName stri
 		return err
 	}
 
-	utils.AddImportForTypeIfNeeded(typeName, file)
+	utils.AddImportIfNeeded(typeName, file)
 
 	for _, decl := range file.Decls {
 		modelDecl, isOk := decl.(*dst.GenDecl)
@@ -72,11 +72,14 @@ func addFieldInList(fields []*dst.Field, name string, fieldType dst.Expr, commen
 	return fields
 }
 
-func AddParserInFilter(model types.Field, path string) error {
+func AddParserInFilter(model types.Field, path string, appName string) error {
 	file, err := readFile(path)
 	if err != nil {
 		return err
 	}
+
+	utils.AddImportIfNeeded(appName+"/common", file)
+
 	for _, decl := range file.Decls {
 		funcDecl, isOk := decl.(*dst.FuncDecl)
 		if !isOk {

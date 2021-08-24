@@ -5,6 +5,8 @@ import (
 	"go/token"
 	"gosha_v2/errors"
 	"gosha_v2/services/utils"
+	"gosha_v2/types"
+	"strings"
 
 	"github.com/dave/dst"
 )
@@ -15,7 +17,9 @@ func AddFieldInModel(fieldName, fieldComment, modelName, fileName, typeName stri
 		return err
 	}
 
-	utils.AddImportForTypeIfNeeded(typeName, file)
+	if typeName == "uuid" || typeName == "time" {
+		utils.AddImportIfNeeded(typeName, file)
+	}
 
 	for _, decl := range file.Decls {
 		modelDecl, isOk := decl.(*dst.GenDecl)
@@ -68,4 +72,58 @@ func addFieldInList(fields []*dst.Field, name string, fieldType dst.Expr, commen
 	}
 
 	return fields
+}
+
+func AddParserInFilter(model types.Field, path string, appName string) error {
+	file, err := readFile(path)
+	if err != nil {
+		return err
+	}
+
+	utils.AddImportIfNeeded(appName+"/common", file)
+
+	for _, decl := range file.Decls {
+		funcDecl, isOk := decl.(*dst.FuncDecl)
+		if !isOk {
+			continue
+		}
+		if !strings.HasPrefix(funcDecl.Name.Name, "Get") || !strings.HasSuffix(funcDecl.Name.Name, "Filter") {
+			continue
+		}
+
+		err = addParserInFunc(funcDecl, model)
+		if err != nil {
+			return err
+		}
+	}
+
+	return saveFile(file, path)
+}
+
+func addParserInFunc(funcDecl *dst.FuncDecl, model types.Field) error {
+	parserExpr, err := utils.GetParserForType(model)
+	if err != nil {
+		return err
+	}
+
+	index := 0
+	for i, stmt := range funcDecl.Body.List {
+		_, isOk := stmt.(*dst.SwitchStmt)
+		if isOk {
+			index = i
+			break
+		}
+		_, isOk = stmt.(*dst.ReturnStmt)
+		if isOk {
+			index = i
+			break
+		}
+	}
+
+	funcDecl.Body.List = append(funcDecl.Body.List, &dst.AssignStmt{})
+	copy(funcDecl.Body.List[index+1:], funcDecl.Body.List[index:])
+
+	funcDecl.Body.List[index] = parserExpr
+
+	return nil
 }

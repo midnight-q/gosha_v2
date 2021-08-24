@@ -57,3 +57,20 @@ func GetFileNameFromModelName(name string) string {
 	snake = matchAllCap.ReplaceAllString(snake, "${1}_${2}")
 	return strings.ToLower(snake)
 }
+
+func IsFieldExistInModel(fieldName string, model types.Model, isFilter bool) bool {
+	if isFilter {
+		for _, field := range model.Filter.Fields {
+			if field.Name == fieldName {
+				return true
+			}
+		}
+	} else {
+		for _, field := range model.Fields {
+			if field.Name == fieldName {
+				return true
+			}
+		}
+	}
+	return false
+}

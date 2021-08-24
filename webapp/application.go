@@ -93,7 +93,6 @@ func ApplicationCreate(w http.ResponseWriter, httpRequest *http.Request) {
 	}
 
 	data, err := logic.ApplicationCreate(requestDto)
-
 	if err != nil {
 		ErrResponse(w, err, http.StatusBadRequest, requestDto)
 		return

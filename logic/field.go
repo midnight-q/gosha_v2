@@ -30,6 +30,8 @@ func FieldCreate(filter types.FieldFilter) (data types.Field, err error) {
 		return types.Field{}, err
 	}
 
+	appName := filesystem.FindAppName(currentPath)
+
 	fieldType, err := utils.GetType(fieldModel.Type, fieldModel.IsArray, fieldModel.IsPointer)
 	if err != nil {
 		return types.Field{}, err
@@ -46,8 +48,32 @@ func FieldCreate(filter types.FieldFilter) (data types.Field, err error) {
 		return types.Field{}, err
 	}
 
-	//TODO: Check model is exist
-	if !isFilter {
+	if utils.IsFieldExistInModel(fieldModel.Name, model, isFilter) {
+		return types.Field{}, errors.New("Field already exist in model")
+	}
+
+	if isFilter {
+		if fieldModel.IsDbField {
+			err = errors.New("Cant create dbField in filter")
+			return types.Field{}, err
+		}
+
+		if fieldModel.IsPointer && fieldModel.IsArray {
+			err = errors.New("Filter field must be array OR pointer. Not both at the same time")
+			return types.Field{}, err
+		}
+
+		err = filesystem.AddFieldInModel(fieldModel.Name, fieldModel.CommentType, fieldModel.ModelName, model.TypePath, fieldModel.Type, fieldType)
+		if err != nil {
+			return types.Field{}, err
+		}
+
+		err = filesystem.AddParserInFilter(fieldModel, model.TypePath, appName)
+		if err != nil {
+			return types.Field{}, err
+		}
+
+	} else {
 		if !model.IsDbModel && fieldModel.IsDbField {
 			err = errors.New("Cant create dbField because dbModel not exist")
 			return types.Field{}, err
@@ -75,19 +101,6 @@ func FieldCreate(filter types.FieldFilter) (data types.Field, err error) {
 				return types.Field{}, err
 			}
 		}
-
-	} else {
-		if fieldModel.IsDbField {
-			err = errors.New("Cant create dbField in filter")
-			return types.Field{}, err
-		}
-
-		err = filesystem.AddFieldInModel(fieldModel.Name, fieldModel.CommentType, fieldModel.ModelName, model.TypePath, fieldModel.Type, fieldType)
-		if err != nil {
-			return types.Field{}, err
-		}
-
-		// Create parser in GetFilter depends on type
 	}
 
 	return

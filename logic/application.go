@@ -16,7 +16,7 @@ func ApplicationFind(filter types.ApplicationFilter) (result []types.Application
 	}
 	name := filesystem.FindAppName(currentPath)
 	if len(name) < 1 {
-		return nil, 0, errors.New("Not found")
+		return nil, 0, errors.NewErrorWithCode("Not found app", errors.ErrorCodeNotFound, "")
 	}
 
 	result = append(result, types.Application{
@@ -33,7 +33,7 @@ func ApplicationMultiCreate(_ types.ApplicationFilter) (data []types.Application
 
 func ApplicationCreate(filter types.ApplicationFilter) (data types.Application, err error) {
 	existApps, _, err := ApplicationFind(filter)
-	if err != nil {
+	if !errors.IsNotFound(err) {
 		return types.Application{}, err
 	}
 	if len(existApps) > 0 {
@@ -48,7 +48,7 @@ func ApplicationCreate(filter types.ApplicationFilter) (data types.Application, 
 
 	currentPath, err := filter.GetPwd()
 	if err != nil {
-		err = errors.NewErrorWithCode(err.Error(), errors.ErrorCodeNotFound, "")
+		err = errors.NewErrorWithCode(err.Error(), errors.ErrorCodeNotFound, "currentPath")
 		return types.Application{}, err
 	}
 

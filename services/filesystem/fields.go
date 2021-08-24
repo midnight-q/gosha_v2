@@ -17,7 +17,9 @@ func AddFieldInModel(fieldName, fieldComment, modelName, fileName, typeName stri
 		return err
 	}
 
-	utils.AddImportIfNeeded(typeName, file)
+	if typeName == "uuid" || typeName == "time" {
+		utils.AddImportIfNeeded(typeName, file)
+	}
 
 	for _, decl := range file.Decls {
 		modelDecl, isOk := decl.(*dst.GenDecl)

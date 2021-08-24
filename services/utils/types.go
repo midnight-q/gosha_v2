@@ -25,6 +25,10 @@ func GetByteType() *dst.Ident {
 	return &dst.Ident{Name: "byte"}
 }
 
+func GetBoolType() *dst.Ident {
+	return &dst.Ident{Name: "bool"}
+}
+
 func GetUuidType() *dst.SelectorExpr {
 	return &dst.SelectorExpr{
 		X: &dst.Ident{
@@ -32,6 +36,17 @@ func GetUuidType() *dst.SelectorExpr {
 		},
 		Sel: &dst.Ident{
 			Name: "UUID",
+		},
+	}
+}
+
+func GetTimeType() *dst.SelectorExpr {
+	return &dst.SelectorExpr{
+		X: &dst.Ident{
+			Name: "time",
+		},
+		Sel: &dst.Ident{
+			Name: "Time",
 		},
 	}
 }
@@ -61,8 +76,12 @@ func GetType(name string, isArray bool, isPointer bool) (dst.Expr, error) {
 		t = GetByteType()
 	case "uuid":
 		t = GetUuidType()
+	case "time":
+		t = GetTimeType()
+	case "bool":
+		t = GetBoolType()
 	default:
-		// TODO: implement model types
+		//TODO: implement model types
 		return nil, errors.New("Unknown type: " + name)
 	}
 	if isArray {
@@ -115,86 +134,80 @@ func ParseType(in dst.Expr) string {
 }
 
 func GetParserForType(model types.Field) (*dst.AssignStmt, error) {
-	var t *dst.AssignStmt
 	switch model.Type {
 	case "int":
-		t = GetIntParser(model)
-	case "float64":
-		t = GetFloat64Parser(model)
-	case "string":
-		t = GetStringParser(model)
+		if model.IsArray {
+			return GetParser(model.Name, "ParseIntArrayFromRequest"), nil
+		}
+		if model.IsPointer {
+			return GetParser(model.Name, "ParseIntPointerFromRequest"), nil
+		}
+		return GetParser(model.Name, "ParseIntFromRequest"), nil
 
-	//case "uuid":
+	case "float64":
+		if model.IsArray {
+			return GetParser(model.Name, "ParseFloatArrayFromRequest"), nil
+		}
+		if model.IsPointer {
+			return GetParser(model.Name, "ParseFloatPointerFromRequest"), nil
+		}
+		return GetParser(model.Name, "ParseFloatFromRequest"), nil
+
+	case "bool":
+		if model.IsArray {
+			return GetParser(model.Name, "ParseBoolArrayFromRequest"), nil
+		}
+		if model.IsPointer {
+			return GetParser(model.Name, "ParseBoolPointerFromRequest"), nil
+		}
+		return GetParser(model.Name, "ParseBoolFromRequest"), nil
+
+	case "string":
+		if model.IsArray {
+			return GetParser(model.Name, "ParseStringArrayFromRequest"), nil
+		}
+		if model.IsPointer {
+			return GetParser(model.Name, "ParseStringPointerFromRequest"), nil
+		}
+		return GetParser(model.Name, "ParseStringFromRequest"), nil
+
+	case "uuid":
+		if model.IsArray {
+			return GetParser(model.Name, "ParseUuidArrayFromRequest"), nil
+		}
+		if model.IsPointer {
+			return GetParser(model.Name, "ParseUuidPointerFromRequest"), nil
+		}
+		return GetParser(model.Name, "ParseUuidFromRequest"), nil
+
+	case "time":
+		if model.IsArray {
+			return GetParser(model.Name, "ParseTimeArrayFromRequest"), nil
+		}
+		if model.IsPointer {
+			return GetParser(model.Name, "ParseTimePointerFromRequest"), nil
+		}
+		return GetParser(model.Name, "ParseTimeFromRequest"), nil
+
 	default:
 		// TODO: implement model types
 		return nil, errors.New("Unknown type: " + model.Type)
 	}
-
-	return t, nil
 }
 
-func GetIntParser(model types.Field) *dst.AssignStmt {
+func GetParser(fieldName, parserName string) *dst.AssignStmt {
 	return &dst.AssignStmt{
-		Lhs: []dst.Expr{&dst.SelectorExpr{X: GetName("filter"), Sel: GetName(model.Name)}},
+		Lhs: []dst.Expr{&dst.SelectorExpr{X: GetName("filter"), Sel: GetName(fieldName)}},
 		Tok: token.ASSIGN,
 		Rhs: []dst.Expr{&dst.CallExpr{
 			Fun: &dst.SelectorExpr{
-				X:   GetName("strconv"),
-				Sel: GetName("Itoa"),
+				X:   GetName("common"),
+				Sel: GetName(parserName),
 			},
-			Args: []dst.Expr{&dst.CallExpr{
-				Fun: &dst.SelectorExpr{
-					X:   GetName("request"),
-					Sel: GetName("FormValue"),
-				},
-				Args: []dst.Expr{&dst.BasicLit{
-					Kind:  token.STRING,
-					Value: WrapString(model.Name),
-				}},
-			}},
-		},
-		},
-	}
-}
-
-func GetFloat64Parser(model types.Field) *dst.AssignStmt {
-	return &dst.AssignStmt{
-		Lhs: []dst.Expr{&dst.SelectorExpr{X: GetName("filter"), Sel: GetName(model.Name)}, GetBlankIdentifier()},
-		Tok: token.ASSIGN,
-		Rhs: []dst.Expr{&dst.CallExpr{
-			Fun: &dst.SelectorExpr{
-				X:   GetName("strconv"),
-				Sel: GetName("ParseFloat"),
+			Args: []dst.Expr{
+				GetName("request"),
+				GetName(WrapString(fieldName)),
 			},
-			Args: []dst.Expr{&dst.CallExpr{
-				Fun: &dst.SelectorExpr{
-					X:   GetName("request"),
-					Sel: GetName("FormValue"),
-				},
-				Args: []dst.Expr{&dst.BasicLit{
-					Kind:  token.STRING,
-					Value: WrapString(model.Name),
-				}, GetIntValue(64)},
-			}},
-		},
-		},
-	}
-}
-
-func GetStringParser(model types.Field) *dst.AssignStmt {
-	return &dst.AssignStmt{
-		Lhs: []dst.Expr{&dst.SelectorExpr{X: GetName("filter"), Sel: GetName(model.Name)}},
-		Tok: token.ASSIGN,
-		Rhs: []dst.Expr{&dst.CallExpr{
-			Fun: &dst.SelectorExpr{
-				X:   GetName("request"),
-				Sel: GetName("FormValue"),
-			},
-			Args: []dst.Expr{&dst.BasicLit{
-				Kind:  token.STRING,
-				Value: WrapString(model.Name),
-			}},
-		},
-		},
+		}},
 	}
 }

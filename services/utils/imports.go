@@ -2,47 +2,31 @@ package utils
 
 import (
 	"go/token"
+	"gosha_v2/settings"
 
 	"github.com/dave/dst"
 )
 
-func AddImportIfNeeded(typeName string, file *dst.File) {
-	switch typeName {
-	case "uuid":
-		AddImportIfNotExist(file, GetUuidImport())
-	case "time":
-		AddImportIfNotExist(file, GetTimeImport())
-	case "strconv":
-		AddImportIfNotExist(file, GetStrconvImport())
-	}
-	return
+func AddImportIfNeeded(name string, file *dst.File) {
+	AddImportIfNotExist(file, GetImport(name))
 }
 
-func GetUuidImport() *dst.ImportSpec {
+func GetImport(name string) *dst.ImportSpec {
+	name = prepareImportName(name)
 	return &dst.ImportSpec{
 		Path: &dst.BasicLit{
 			Kind:  token.STRING,
-			Value: WrapString("github.com/google/uuid"),
+			Value: WrapString(name),
 		},
 	}
 }
 
-func GetTimeImport() *dst.ImportSpec {
-	return &dst.ImportSpec{
-		Path: &dst.BasicLit{
-			Kind:  token.STRING,
-			Value: WrapString("time"),
-		},
+func prepareImportName(name string) string {
+	importPath, isExist := settings.ImportMap[name]
+	if isExist {
+		return importPath
 	}
-}
-
-func GetStrconvImport() *dst.ImportSpec {
-	return &dst.ImportSpec{
-		Path: &dst.BasicLit{
-			Kind:  token.STRING,
-			Value: WrapString("strconv"),
-		},
-	}
+	return name
 }
 
 func AddImportIfNotExist(file *dst.File, importSpec *dst.ImportSpec) {

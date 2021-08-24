@@ -3,6 +3,7 @@ package utils
 import (
 	"fmt"
 	"go/token"
+	"strconv"
 	"strings"
 
 	"github.com/dave/dst"
@@ -58,6 +59,6 @@ func GetBlankIdentifier() *dst.Ident {
 func GetIntValue(in int) *dst.BasicLit {
 	return &dst.BasicLit{
 		Kind:  token.INT,
-		Value: fmt.Sprintf("%d", in),
+		Value: strconv.Itoa(in),
 	}
 }

@@ -83,7 +83,7 @@ func ParseTimePointerFromRequest(req *http.Request, name string) *time.Time {
 
 func ParseStringArrayFromRequest(req *http.Request, name string) (res []string) {
 	if req.Form == nil {
-		req.ParseForm()
+		_ = req.ParseForm()
 	}
 	for _, s := range req.Form[name] {
 		res = append(res, s)

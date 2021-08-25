@@ -37,6 +37,9 @@ func Router() http.Handler {
 	router.HandleFunc(settings.FieldRoute+"/list", webapp.FieldMultiUpdate).Methods("PUT")
 	router.HandleFunc(settings.FieldRoute+"/{id}", webapp.FieldUpdate).Methods("PUT")
 
+	//[ FieldType ]
+	router.HandleFunc(settings.FieldTypeRoute, webapp.FieldTypeFind).Methods("GET")
+
 	//[ Application ]
 	router.HandleFunc(settings.ApplicationRoute, webapp.ApplicationFind).Methods("GET")
 	router.HandleFunc(settings.ApplicationRoute, webapp.ApplicationCreate).Methods("POST")

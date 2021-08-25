@@ -2,6 +2,8 @@ package utils
 
 import (
 	"fmt"
+	"go/token"
+	"strconv"
 	"strings"
 
 	"github.com/dave/dst"
@@ -10,6 +12,7 @@ import (
 func GetNames(name string) []*dst.Ident {
 	return []*dst.Ident{{Name: name}}
 }
+
 func GetName(name string) *dst.Ident {
 	return &dst.Ident{Name: name}
 }
@@ -44,5 +47,18 @@ func GetNewLineDecorations() dst.KeyValueExprDecorations {
 			Before: dst.NewLine,
 			After:  dst.NewLine,
 		},
+	}
+}
+
+func GetBlankIdentifier() *dst.Ident {
+	return &dst.Ident{
+		Name: "_",
+	}
+}
+
+func GetIntValue(in int) *dst.BasicLit {
+	return &dst.BasicLit{
+		Kind:  token.INT,
+		Value: strconv.Itoa(in),
 	}
 }

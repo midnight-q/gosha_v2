@@ -28,4 +28,6 @@ const ModelRoute = "/api/v1/model"
 
 const FieldRoute = "/api/v1/field"
 
+const FieldTypeRoute = "/api/v1/fieldType"
+
 const ApplicationRoute = "/api/v1/application"

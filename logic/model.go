@@ -1,6 +1,8 @@
 package logic
 
 import (
+	"gosha_v2/errors"
+
 	"github.com/elliotchance/orderedmap"
 
 	"gosha_v2/services/filesystem"
@@ -150,6 +152,44 @@ func ModelMultiCreate(filter types.ModelFilter) (data []types.Model, err error) 
 }
 
 func ModelCreate(filter types.ModelFilter) (data types.Model, err error) {
+	newModel := filter.GetModelModel()
+	models, _, err := ModelFind(filter)
+	if err != nil {
+		return
+	}
+	for _, model := range models {
+		if model.Name == newModel.Name {
+			err = errors.New("Model already exist")
+			return
+		}
+	}
+
+	if !newModel.IsTypeModel && newModel.IsDbModel {
+		err = errors.New("Creating only db models is not allow")
+		return
+	}
+
+	if newModel.IsTypeModel {
+		// create typeModel
+	}
+	if newModel.IsDbModel {
+		//Create dbModel
+	}
+
+	// create logic
+
+	if newModel.IsTypeModel && newModel.IsDbModel {
+		// create assigner
+	}
+
+	// add fields
+
+	// create webapp
+
+	// create route in settings
+
+	// create router
+
 	return
 }
 

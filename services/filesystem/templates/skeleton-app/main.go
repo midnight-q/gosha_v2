@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"skeleton-app/bootstrap"
+	"skeleton-app/flags"
 	"skeleton-app/router"
 	"skeleton-app/settings"
 	"skeleton-app/wsserver"
@@ -14,7 +15,7 @@ func main() {
 	// делаем автомиграцию
 	bootstrap.FillDBTestData()
 
-	if settings.IsDev() {
+	if *flags.IsDev {
 		fmt.Println("Running in DEV mode")
 	} else {
 		fmt.Println("Running in PROD mode")
@@ -26,13 +27,13 @@ func main() {
 
 func runWsServer() {
 
-	fmt.Println("Websocket сервер запущен :" + settings.GetWssPort())
+	fmt.Println("Websocket сервер запущен :" + settings.WssPort)
 	wsserver.SetMessageHandler("", router.HandleWss)
-	wsserver.Run("", settings.GetWssPort())
+	panic(wsserver.Run("", settings.WssPort))
 }
 
 func runHttpServer() {
 
 	fmt.Println("API сервер запущен :" + settings.ServerPort)
-	http.ListenAndServe("0.0.0.0:"+settings.ServerPort, router.Router())
+	panic(http.ListenAndServe("0.0.0.0:"+settings.ServerPort, router.Router()))
 }

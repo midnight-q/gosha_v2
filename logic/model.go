@@ -170,10 +170,10 @@ func ModelCreate(filter types.ModelFilter) (data types.Model, err error) {
 	}
 
 	if newModel.IsTypeModel {
-		// create typeModel
+		// Create typeModel
 	}
 	if newModel.IsDbModel {
-		//Create dbModel
+		// Create dbModel
 	}
 
 	// create logic

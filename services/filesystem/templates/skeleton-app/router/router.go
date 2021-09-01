@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"skeleton-app/settings"
 	"skeleton-app/webapp"
+	"time"
 
 	"github.com/gorilla/mux"
 	"github.com/rs/cors"
@@ -163,7 +164,7 @@ func homePage(w http.ResponseWriter, r *http.Request) {
 	}
 
 	json.NewEncoder(w).Encode(Response{
-		Version: "0.0.1",
-		Date:    "2021.08.03 17:12:31",
+		Version: settings.AppVersion,
+		Date:    time.Now().String(),
 	})
 }

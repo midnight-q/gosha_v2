@@ -49,7 +49,7 @@ func FieldCreate(filter types.FieldFilter) (data types.Field, err error) {
 	}
 
 	if utils.IsFieldExistInModel(fieldModel.Name, model, isFilter) {
-		return types.Field{}, errors.New("Field already exist in model")
+		return types.Field{}, errors.New("Field already exist in model: " + fieldModel.Name)
 	}
 
 	if isFilter {

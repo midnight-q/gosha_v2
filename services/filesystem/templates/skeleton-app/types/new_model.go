@@ -6,9 +6,7 @@ import (
 )
 
 type NewModel struct {
-	Id   int
-	Name int
-	Code string
+	Id int
 
 	validator
 }

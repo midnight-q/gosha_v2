@@ -2,6 +2,7 @@ package filesystem
 
 import (
 	"fmt"
+	"gosha_v2/services/utils"
 	"gosha_v2/settings"
 	"io"
 	"io/fs"
@@ -10,7 +11,7 @@ import (
 )
 
 func CopySkeletonApp(workDir string) (err error) {
-	dirs, files, err := getDirAndFileLists(settings.SkeletonAppPath, templateFS)
+	dirs, files, err := getDirAndFileLists(settings.SkeletonAppPath, templateFS, true)
 	if err != nil {
 		return err
 	}
@@ -70,7 +71,7 @@ func copyFile(src string, dst string) error {
 	return err
 }
 
-func getDirAndFileLists(path string, fs fs.ReadDirFS) (dirsRes []string, filesRes []string, err error) {
+func getDirAndFileLists(path string, fs fs.ReadDirFS, isIgnoreNewModel bool) (dirsRes []string, filesRes []string, err error) {
 
 	var entries []os.DirEntry
 	if fs == nil {
@@ -85,13 +86,16 @@ func getDirAndFileLists(path string, fs fs.ReadDirFS) (dirsRes []string, filesRe
 	for _, entry := range entries {
 		if entry.IsDir() {
 			dirsRes = append(dirsRes, path+"/"+entry.Name())
-			dirs, files, err := getDirAndFileLists(path+"/"+entry.Name(), fs)
+			dirs, files, err := getDirAndFileLists(path+"/"+entry.Name(), fs, isIgnoreNewModel)
 			if err != nil {
 				return nil, nil, err
 			}
 			dirsRes = append(dirsRes, dirs...)
 			filesRes = append(filesRes, files...)
 		} else {
+			if isIgnoreNewModel && strings.Contains(entry.Name(), "new_model") {
+				continue
+			}
 			filesRes = append(filesRes, path+"/"+entry.Name())
 		}
 	}
@@ -100,4 +104,17 @@ func getDirAndFileLists(path string, fs fs.ReadDirFS) (dirsRes []string, filesRe
 
 func getNewFileName(path, workDir string) string {
 	return workDir + strings.TrimPrefix(path, settings.SkeletonAppPath)
+}
+
+func CopyNewModelFile(currentPath, dir, newName, appName string) (err error) {
+	source, err := templateFS.ReadFile(settings.SkeletonAppPath + dir + settings.NewModelFileName)
+	if err != nil {
+		return err
+	}
+	text := string(source)
+	text = strings.Replace(text, settings.NewModelName, newName, -1)
+
+	text = strings.Replace(text, settings.SkeletonAppName, appName, -1)
+
+	return os.WriteFile(currentPath+dir+utils.GetFileNameFromModelName(newName)+".go", []byte(text), fs.ModePerm)
 }

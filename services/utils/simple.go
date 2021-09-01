@@ -40,13 +40,11 @@ func WrapString(s string) string {
 	return fmt.Sprintf(`"%s"`, s)
 }
 
-func GetNewLineDecorations() dst.KeyValueExprDecorations {
+func GetNewLineDecorations() dst.NodeDecs {
 
-	return dst.KeyValueExprDecorations{
-		NodeDecs: dst.NodeDecs{
-			Before: dst.NewLine,
-			After:  dst.NewLine,
-		},
+	return dst.NodeDecs{
+		Before: dst.NewLine,
+		After:  dst.NewLine,
 	}
 }
 

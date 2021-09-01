@@ -364,14 +364,14 @@ func AssignNewModelDbFromType(typesNewModel types.NewModel) dbmodels.NewModel {
 	}
 }
 
-func AssignNewModelSliceTypeFromDb(dbNewModels []dbmodels.NewModel) (res []types.NewModel) {
+func AssignNewModelTypeFromDbList(dbNewModels []dbmodels.NewModel) (res []types.NewModel) {
 	for _, model := range dbNewModels {
 		res = append(res, AssignNewModelTypeFromDb(model))
 	}
 	return res
 }
 
-func AssignNewModelSliceDbFromType(typesNewModels []types.NewModel) (res []dbmodels.NewModel) {
+func AssignNewModelDbFromTypeList(typesNewModels []types.NewModel) (res []dbmodels.NewModel) {
 	for _, model := range typesNewModels {
 		res = append(res, AssignNewModelDbFromType(model))
 	}

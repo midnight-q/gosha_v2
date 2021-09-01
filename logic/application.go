@@ -33,7 +33,7 @@ func ApplicationMultiCreate(_ types.ApplicationFilter) (data []types.Application
 
 func ApplicationCreate(filter types.ApplicationFilter) (data types.Application, err error) {
 	existApps, _, err := ApplicationFind(filter)
-	if !errors.IsNotFound(err) {
+	if err != nil && !errors.IsNotFound(err) {
 		return types.Application{}, err
 	}
 	if len(existApps) > 0 {

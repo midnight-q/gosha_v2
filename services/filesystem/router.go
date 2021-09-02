@@ -1,7 +1,9 @@
 package filesystem
 
 import (
+	"go/token"
 	"gosha_v2/common"
+	"gosha_v2/services/utils"
 	"gosha_v2/types"
 
 	"github.com/dave/dst"
@@ -78,4 +80,58 @@ func CheckRoutesAvailability(path string, models []types.Model) (res []types.Mod
 	}
 
 	return
+}
+
+func AddRouteInSettings(currentPath string, modelName string) (err error) {
+	route := utils.GenerateRouteForModel(modelName)
+	constName := modelName + "Route"
+	filePath := currentPath + "/settings/routes.go"
+
+	file, err := readFile(filePath)
+	if err != nil {
+		return err
+	}
+	index := 0
+	for i, decl := range file.Decls {
+		genDecl, isOk := decl.(*dst.GenDecl)
+		if !isOk {
+			continue
+		}
+		if genDecl.Tok != token.VAR {
+			continue
+		}
+		if len(genDecl.Specs) < 1 {
+			continue
+		}
+
+		valueSpec, isOk := genDecl.Specs[0].(*dst.ValueSpec)
+		if !isOk {
+			continue
+		}
+		if len(valueSpec.Names) < 1 {
+			continue
+		}
+		if valueSpec.Names[0].Name != "RoutesArray" {
+			continue
+		}
+		if len(valueSpec.Values) < 1 {
+			continue
+		}
+
+		compositLit, isOk := valueSpec.Values[0].(*dst.CompositeLit)
+		if !isOk {
+			continue
+		}
+		newIdent := utils.GetName(constName)
+		newIdent.Decs.After = dst.NewLine
+		compositLit.Elts = append(compositLit.Elts, newIdent)
+		index = i
+	}
+	newConst := utils.GetConst(constName, route)
+
+	file.Decls = append(file.Decls, &dst.GenDecl{})
+	copy(file.Decls[index+1:], file.Decls[index:])
+	file.Decls[index] = newConst
+
+	return saveFile(file, filePath)
 }

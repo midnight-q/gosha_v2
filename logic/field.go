@@ -38,6 +38,7 @@ func FieldCreate(filter types.FieldFilter) (data types.Field, err error) {
 	}
 
 	fModel := types.ModelFilter{}
+	fModel.IsShowServiceModels = true
 	models, _, err := ModelFind(fModel)
 	if err != nil {
 		return types.Field{}, err

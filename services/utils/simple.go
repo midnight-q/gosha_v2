@@ -60,3 +60,30 @@ func GetIntValue(in int) *dst.BasicLit {
 		Value: strconv.Itoa(in),
 	}
 }
+
+func GetStringValue(in string) *dst.BasicLit {
+	return &dst.BasicLit{
+		Kind:  token.STRING,
+		Value: WrapString(in),
+	}
+}
+
+func GetConst(name, value string) *dst.GenDecl {
+
+	return &dst.GenDecl{
+		Tok:    token.CONST,
+		Lparen: false,
+		Specs: []dst.Spec{
+			&dst.ValueSpec{
+				Names: GetNames(name),
+				Values: []dst.Expr{
+					GetStringValue(value),
+				},
+			},
+		},
+		Rparen: false,
+		Decs: dst.GenDeclDecorations{
+			NodeDecs: GetNewLineDecorations(),
+		},
+	}
+}

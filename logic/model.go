@@ -162,6 +162,7 @@ func ModelCreate(filter types.ModelFilter) (data types.Model, err error) {
 	if err != nil {
 		return types.Model{}, err
 	}
+	filter.IsShowServiceModels = true
 	models, _, err := ModelFind(filter)
 	if err != nil {
 		return
@@ -230,7 +231,7 @@ func ModelCreate(filter types.ModelFilter) (data types.Model, err error) {
 	}
 
 	// register routes in router
-	err = filesystem.RegisterNewRoute(currentDir, newModel)
+	//err = filesystem.RegisterNewRoute(currentDir, newModel)
 
 	return
 }

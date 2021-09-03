@@ -74,3 +74,7 @@ func IsFieldExistInModel(fieldName string, model types.Model, isFilter bool) boo
 	}
 	return false
 }
+
+func GetFilePath(currentPath, dir, modelName string) string {
+	return currentPath + dir + GetFileNameFromModelName(modelName) + ".go"
+}

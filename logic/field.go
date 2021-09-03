@@ -97,14 +97,12 @@ func FieldCreate(filter types.FieldFilter) (data types.Field, err error) {
 			}
 		}
 		if fieldModel.IsDbField && fieldModel.IsTypeField {
-			// TODO: Add field in Update
 			err = filesystem.AddFieldInAssigner(fieldModel, currentPath)
 			if err != nil {
 				return types.Field{}, err
 			}
 		}
 	}
-
 	return
 }
 

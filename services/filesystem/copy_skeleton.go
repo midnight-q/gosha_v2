@@ -116,5 +116,5 @@ func CopyNewModelFile(currentPath, dir, newName, appName string) (err error) {
 
 	text = strings.Replace(text, settings.SkeletonAppName, appName, -1)
 
-	return os.WriteFile(currentPath+dir+utils.GetFileNameFromModelName(newName)+".go", []byte(text), fs.ModePerm)
+	return os.WriteFile(utils.GetFilePath(currentPath, dir, newName), []byte(text), fs.ModePerm)
 }

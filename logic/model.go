@@ -231,7 +231,7 @@ func ModelCreate(filter types.ModelFilter) (data types.Model, err error) {
 	}
 
 	// register routes in router
-	//err = filesystem.RegisterNewRoute(currentDir, newModel)
+	err = filesystem.RegisterNewRoute(currentDir, newModel)
 
 	return
 }

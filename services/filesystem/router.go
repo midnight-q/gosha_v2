@@ -1,6 +1,7 @@
 package filesystem
 
 import (
+	"fmt"
 	"go/token"
 	"gosha_v2/common"
 	"gosha_v2/services/utils"
@@ -134,4 +135,45 @@ func AddRouteInSettings(currentPath string, modelName string) (err error) {
 	file.Decls[index] = newConst
 
 	return saveFile(file, filePath)
+}
+
+func RegisterNewRoute(currentPath string, model types.Model) (err error) {
+	filePath := currentPath + "/router/router.go"
+
+	file, err := readFile(filePath)
+
+	index := 0
+	for _, decl := range file.Decls {
+		funcDecl, isOk := decl.(*dst.FuncDecl)
+		if !isOk {
+			continue
+		}
+		if funcDecl.Name.Name != "Router" {
+			continue
+		}
+		for i, stmt := range funcDecl.Body.List {
+			_, isAssign := stmt.(*dst.AssignStmt)
+			_, isReturn := stmt.(*dst.ReturnStmt)
+			if isAssign || isReturn {
+				index = i
+				break
+			}
+			exprStmt, isOk := stmt.(*dst.ExprStmt)
+			if !isOk {
+				continue
+			}
+			callExpr, isOk := exprStmt.X.(*dst.CallExpr)
+			if !isOk {
+				continue
+			}
+			selectorExpr, isOk := callExpr.Fun.(*dst.SelectorExpr)
+			if !isOk {
+				continue
+			}
+			utils.DebugPrintf(selectorExpr.X)
+			break
+		}
+	}
+	fmt.Println(index)
+	return nil
 }

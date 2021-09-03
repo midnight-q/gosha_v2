@@ -47,12 +47,14 @@ func Router() http.Handler {
 	router.HandleFunc(settings.ApplicationRoute+"/list", webapp.ApplicationMultiUpdate).Methods("PUT")
 	router.HandleFunc(settings.ApplicationRoute+"/{id}", webapp.ApplicationUpdate).Methods("PUT")
 
-	handler := cors.New(cors.Options{
+	return applyCors(router)
+}
+
+func applyCors(router *mux.Router) http.Handler {
+	return cors.New(cors.Options{
 		AllowedMethods: []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowedHeaders: []string{"token", "content-type"},
 	}).Handler(router)
-
-	return handler
 }
 
 func homePage(w http.ResponseWriter, _ *http.Request) {

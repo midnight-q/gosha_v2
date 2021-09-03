@@ -17,9 +17,9 @@ func GetName(name string) *dst.Ident {
 	return &dst.Ident{Name: name}
 }
 
-func GetComment(text string) dst.FieldDecorations {
+func GetComment(text string) dst.NodeDecs {
 	if len(text) < 1 {
-		return dst.FieldDecorations{}
+		return dst.NodeDecs{}
 	}
 	commentList := []string{}
 	for _, s := range strings.Split(text, "\n") {
@@ -27,12 +27,9 @@ func GetComment(text string) dst.FieldDecorations {
 			commentList = append(commentList, fmt.Sprintf("// %s", s))
 		}
 	}
-	return dst.FieldDecorations{
-		NodeDecs: dst.NodeDecs{
-			Before: dst.NewLine,
-			Start:  commentList,
-			After:  dst.NewLine,
-		},
+	return dst.NodeDecs{
+		Before: dst.NewLine,
+		Start:  commentList,
 	}
 }
 
@@ -41,10 +38,8 @@ func WrapString(s string) string {
 }
 
 func GetNewLineDecorations() dst.NodeDecs {
-
 	return dst.NodeDecs{
 		Before: dst.NewLine,
-		After:  dst.NewLine,
 	}
 }
 

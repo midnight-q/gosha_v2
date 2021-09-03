@@ -68,7 +68,9 @@ func addFieldInList(fields []*dst.Field, name string, fieldType dst.Expr, commen
 	fields[index] = &dst.Field{
 		Names: utils.GetNames(name),
 		Type:  fieldType,
-		Decs:  utils.GetComment(comment),
+		Decs: dst.FieldDecorations{
+			NodeDecs: utils.GetComment(comment),
+		},
 	}
 
 	return fields

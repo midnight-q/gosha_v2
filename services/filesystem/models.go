@@ -212,3 +212,35 @@ func FindModel(name string, models []Model) (Model, bool) {
 	}
 	return Model{}, false
 }
+
+func AddCommentToModel(currentDir string, dir string, modelName string, comment string) error {
+	if len(comment) < 1 {
+		return nil
+	}
+	filePath := utils.GetFilePath(currentDir, dir, modelName)
+	file, err := readFile(filePath)
+	if err != nil {
+		return err
+	}
+
+	for _, decl := range file.Decls {
+		modelDecl, isOk := decl.(*dst.GenDecl)
+		if !isOk {
+			continue
+		}
+
+		if modelDecl.Tok != token.TYPE {
+			continue
+		}
+		typeSpec, isOk := modelDecl.Specs[0].(*dst.TypeSpec)
+		if !isOk {
+			continue
+		}
+		if typeSpec.Name.Name != modelName {
+			continue
+		}
+		modelDecl.Decs.NodeDecs = utils.GetComment(comment)
+	}
+
+	return saveFile(file, filePath)
+}

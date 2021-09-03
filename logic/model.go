@@ -184,9 +184,17 @@ func ModelCreate(filter types.ModelFilter) (data types.Model, err error) {
 		if err != nil {
 			return types.Model{}, err
 		}
+		err = filesystem.AddCommentToModel(currentDir, "/types/", newModel.Name, newModel.CommentType)
+		if err != nil {
+			return types.Model{}, err
+		}
 	}
 	if newModel.IsDbModel {
 		err = filesystem.CopyNewModelFile(currentDir, "/dbmodels/", newModel.Name, appName)
+		if err != nil {
+			return types.Model{}, err
+		}
+		err = filesystem.AddCommentToModel(currentDir, "/dbmodels/", newModel.Name, newModel.CommentDb)
 		if err != nil {
 			return types.Model{}, err
 		}

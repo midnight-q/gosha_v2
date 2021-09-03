@@ -112,7 +112,7 @@ func setRoleAccess(roleId int, route string, access types.Access) error {
 
 	strArr := strings.Split(route, "/")
 
-	if len(strArr) > 2 {
+	if len(strArr) > 3 {
 		dbModel := dbmodels.Resource{
 			Name:   strArr[3],
 			Code:   route,

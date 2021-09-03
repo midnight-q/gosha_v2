@@ -27,6 +27,10 @@ func AddFieldInAssigner(model types.Field, currentPath string) (err error) {
 			continue
 		}
 
+		if strings.HasSuffix(funcName, "List") {
+			continue
+		}
+
 		inputModelName, err := getInputModelName(funcDecl)
 		if err != nil {
 			return err
@@ -86,7 +90,9 @@ func addFieldInCompositeLit(compositeLit *dst.CompositeLit, model types.Field, i
 			X:   utils.GetName(inputModelName),
 			Sel: utils.GetName(model.Name),
 		},
-		Decs: utils.GetNewLineDecorations(),
+		Decs: dst.KeyValueExprDecorations{
+			NodeDecs: utils.GetNewLineDecorations(),
+		},
 	})
 	return nil
 }

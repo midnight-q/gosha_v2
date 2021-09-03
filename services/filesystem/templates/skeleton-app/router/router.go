@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"skeleton-app/settings"
 	"skeleton-app/webapp"
+	"time"
 
 	"github.com/gorilla/mux"
 	"github.com/rs/cors"
@@ -148,12 +149,14 @@ func Router() http.Handler {
 	router.HandleFunc(settings.LanguageRoute, webapp.LanguageFindOrCreate).Methods("PUT")
 	router.HandleFunc(settings.LanguageRoute, webapp.LanguageUpdateOrCreate).Methods("PATCH")
 
-	handler := cors.New(cors.Options{
+	return applyCors(router)
+}
+
+func applyCors(router *mux.Router) http.Handler {
+	return cors.New(cors.Options{
 		AllowedMethods: []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowedHeaders: []string{"token", "content-type"},
 	}).Handler(router)
-
-	return handler
 }
 
 func homePage(w http.ResponseWriter, r *http.Request) {
@@ -163,7 +166,7 @@ func homePage(w http.ResponseWriter, r *http.Request) {
 	}
 
 	json.NewEncoder(w).Encode(Response{
-		Version: "0.0.1",
-		Date:    "2021.08.03 17:12:31",
+		Version: settings.AppVersion,
+		Date:    time.Now().String(),
 	})
 }

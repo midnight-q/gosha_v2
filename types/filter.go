@@ -310,6 +310,10 @@ func (filter *AbstractFilter) GetPwd() (string, error) {
 	return wd, nil
 }
 
+func (filter *AbstractFilter) SetPwd(dir string) {
+
+}
+
 func isGroupFunctionType(functionType string) bool {
 	switch functionType {
 	case settings.FunctionTypeMultiCreate, settings.FunctionTypeMultiUpdate, settings.FunctionTypeMultiDelete, settings.FunctionTypeMultiFindOrCreate:

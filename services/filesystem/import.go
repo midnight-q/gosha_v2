@@ -12,7 +12,7 @@ import (
 func FindAndReplaceImports(currentPath string) error {
 	newAppName := utils.GetNameForNewApp(currentPath)
 
-	_, files, err := getDirAndFileLists(currentPath, nil)
+	_, files, err := getDirAndFileLists(currentPath, nil, false)
 	if err != nil {
 		return err
 	}

@@ -37,11 +37,10 @@ type UserResponse struct {
 }
 
 type UserConnection struct {
-	Con            net.Conn
-	WsToken        string
-	HttpToken      string
-	AdminSessionId string
-	UpdatedAt      time.Time
+	Con       net.Conn
+	WsToken   string
+	HttpToken string
+	UpdatedAt time.Time
 }
 
 func Run(host, port string) (err error) {
@@ -54,7 +53,6 @@ func Run(host, port string) (err error) {
 func setHandlers() {
 	SetMessageHandler("SetToken", SetTokenHandler)
 	SetMessageHandler("hello", HelloHandler)
-	//SetMessageHandler("Event", EventHandler)
 }
 
 func wssHandler(w http.ResponseWriter, r *http.Request) {
@@ -68,7 +66,12 @@ func wssHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	cons := GetConnections()
-	cons.Store(code, &UserConnection{conn, code.String(), "", "", time.Now()})
+	cons.Store(code, &UserConnection{
+		Con:       conn,
+		WsToken:   code.String(),
+		HttpToken: "",
+		UpdatedAt: time.Now(),
+	})
 
 	go runWssReader(cons, code)
 
@@ -80,24 +83,24 @@ func runWssReader(cons *sync.Map, code uuid.UUID) {
 
 	for {
 
-		if v, ok := cons.Load(code); ok == true {
+		if v, isOk := cons.Load(code); isOk {
 
-			c := v.(*UserConnection)
+			c, isOK := v.(*UserConnection)
+			if !isOK {
+				return
+			}
 
 			msg, op, err := wsutil.ReadClientData(c.Con)
 
 			if err != nil {
-				// handle error
 				return
 			}
 
-			if len(string(msg)) > 0 {
+			if len(msg) > 0 {
 
 				cons.Store(code, c)
-
 				message, err := ParseMessage(msg)
 				if err != nil {
-					// handle error
 					continue
 				}
 
@@ -107,13 +110,10 @@ func runWssReader(cons *sync.Map, code uuid.UUID) {
 
 				bAnswer, err := json.Marshal(answer)
 				if err != nil {
-					// handle error
 					continue
 				}
 				err = wsutil.WriteServerMessage(c.Con, op, bAnswer)
-
 				if err != nil {
-					// handle error
 					return
 				}
 			}
@@ -137,11 +137,12 @@ func SendToUserByToken(token string, msg []byte) (err error) {
 
 	cons.Range(func(code interface{}, _ interface{}) bool {
 		if v, ok := cons.Load(code); ok == true {
-			op := ws.OpCode(ws.OpText)
-
-			if c, ok := v.(*UserConnection); ok == true {
+			if c, isOk := v.(*UserConnection); isOk {
 				if c.HttpToken == token {
-					wsutil.WriteServerMessage(c.Con, op, msg)
+					err = wsutil.WriteServerMessage(c.Con, ws.OpText, msg)
+					if err != nil {
+						return false
+					}
 					sent = true
 				}
 			}
@@ -165,8 +166,8 @@ func closeConnection(code uuid.UUID) {
 
 	if ok {
 
-		if ucon, ok := c.(UserConnection); ok == true {
-			ucon.Con.Close()
+		if userConnection, isOk := c.(UserConnection); isOk {
+			userConnection.Con.Close()
 			cons.Delete(code)
 		}
 	}

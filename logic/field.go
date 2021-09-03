@@ -38,6 +38,7 @@ func FieldCreate(filter types.FieldFilter) (data types.Field, err error) {
 	}
 
 	fModel := types.ModelFilter{}
+	fModel.IsShowServiceModels = true
 	models, _, err := ModelFind(fModel)
 	if err != nil {
 		return types.Field{}, err
@@ -49,7 +50,7 @@ func FieldCreate(filter types.FieldFilter) (data types.Field, err error) {
 	}
 
 	if utils.IsFieldExistInModel(fieldModel.Name, model, isFilter) {
-		return types.Field{}, errors.New("Field already exist in model")
+		return types.Field{}, errors.New("Field already exist in model: " + fieldModel.Name)
 	}
 
 	if isFilter {
@@ -96,6 +97,7 @@ func FieldCreate(filter types.FieldFilter) (data types.Field, err error) {
 			}
 		}
 		if fieldModel.IsDbField && fieldModel.IsTypeField {
+			// TODO: Add field in Update
 			err = filesystem.AddFieldInAssigner(fieldModel, currentPath)
 			if err != nil {
 				return types.Field{}, err

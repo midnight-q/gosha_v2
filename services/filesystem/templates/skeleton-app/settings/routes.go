@@ -2,13 +2,13 @@ package settings
 
 const HomePageRoute = "/api"
 
-// routes as app resource
+// HttpRouteResourceType - route resource type
 const HttpRouteResourceType ConfigId = 1
 
-// web socket resource type
+// WsResourceType - web socket resource type
 const WsResourceType ConfigId = 2
 
-// html template resource type
+// HtmlResourceType - html template resource type
 const HtmlResourceType ConfigId = 3
 
 const UserRoute = "/api/v1/user"
@@ -34,7 +34,6 @@ const RegionRoute = "/api/v1/region"
 const LanguageRoute = "/api/v1/language"
 
 var RoutesArray = []string{
-
 	UserRoute,
 	RoleRoute,
 	RoleResourceRoute,

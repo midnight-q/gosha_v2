@@ -8,6 +8,8 @@ const (
 
 	SkeletonGoModFilename = "go.raw.mod"
 	GoModFilename         = "go.mod"
+	NewModelName          = "NewModel"
+	NewModelFileName      = "new_model.go"
 )
 
 const (

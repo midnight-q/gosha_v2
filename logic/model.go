@@ -1,6 +1,8 @@
 package logic
 
 import (
+	"gosha_v2/errors"
+
 	"github.com/elliotchance/orderedmap"
 
 	"gosha_v2/services/filesystem"
@@ -150,7 +152,107 @@ func ModelMultiCreate(filter types.ModelFilter) (data []types.Model, err error) 
 }
 
 func ModelCreate(filter types.ModelFilter) (data types.Model, err error) {
+	newModel := filter.GetModelModel()
+	currentDir, err := filter.GetPwd()
+	if err != nil {
+		return types.Model{}, err
+	}
+
+	appName, err := getAppName(currentDir)
+	if err != nil {
+		return types.Model{}, err
+	}
+	filter.IsShowServiceModels = true
+	models, _, err := ModelFind(filter)
+	if err != nil {
+		return
+	}
+	for _, model := range models {
+		if model.Name == newModel.Name {
+			err = errors.New("Model already exist")
+			return
+		}
+	}
+
+	if !newModel.IsTypeModel && newModel.IsDbModel {
+		err = errors.New("Creating only db models is not allow")
+		return
+	}
+
+	if newModel.IsTypeModel {
+		err = filesystem.CopyNewModelFile(currentDir, "/types/", newModel.Name, appName)
+		if err != nil {
+			return types.Model{}, err
+		}
+	}
+	if newModel.IsDbModel {
+		err = filesystem.CopyNewModelFile(currentDir, "/dbmodels/", newModel.Name, appName)
+		if err != nil {
+			return types.Model{}, err
+		}
+	}
+
+	// create logic
+	err = filesystem.CopyNewModelFile(currentDir, "/logic/", newModel.Name, appName)
+	if err != nil {
+		return types.Model{}, err
+	}
+
+	if newModel.IsTypeModel && !newModel.IsDbModel {
+		// If model is virtual - remove logic body and assigners
+		err = filesystem.ClearLogic(currentDir, newModel.Name)
+		if err != nil {
+			return types.Model{}, err
+		}
+	}
+
+	// add fields
+	for _, field := range newModel.Fields {
+		fField := types.FieldFilter{}
+		fField.SetPwd(currentDir)
+		field.ModelName = newModel.Name
+		fField.SetFieldModel(field)
+		_, err = FieldCreate(fField)
+		if err != nil {
+			return types.Model{}, err
+		}
+	}
+
+	// create webapp
+	err = filesystem.CopyNewModelFile(currentDir, "/webapp/", newModel.Name, appName)
+	if err != nil {
+		return types.Model{}, err
+	}
+
+	// create route in settings
+	err = filesystem.AddRouteInSettings(currentDir, newModel.Name)
+	if err != nil {
+		return types.Model{}, err
+	}
+
+	// register routes in router
+	err = filesystem.RegisterNewRoute(currentDir, newModel)
+
 	return
+}
+
+func getAppName(currentDir string) (name string, err error) {
+	fApplication := types.ApplicationFilter{}
+	fApplication.CurrentPage = 1
+	fApplication.PerPage = 1
+	fApplication.SetPwd(currentDir)
+
+	apps, _, err := ApplicationFind(fApplication)
+	if err != nil {
+		return "", err
+	}
+
+	if len(apps) < 1 {
+		err = errors.NewErrorWithCode("Not found app", errors.ErrorCodeNotFound, "")
+		return "", err
+	}
+
+	return apps[0].Name, nil
 }
 
 func ModelRead(filter types.ModelFilter) (data types.Model, err error) {

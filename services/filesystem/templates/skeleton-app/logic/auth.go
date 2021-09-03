@@ -37,7 +37,7 @@ func AuthCreate(filter types.AuthFilter, query *gorm.DB) (data types.Auth, err e
 
 		if hashErr == nil {
 
-			token := common.RandomString(32)
+			token := common.NewToken()
 			dbAuth.Token = token
 
 			core.Db.Model(dbmodels.Auth{}).Where(dbmodels.Auth{Token: token}).First(&dbAuth)
@@ -131,7 +131,7 @@ func AssignAuthTypeFromDb(dbAuth dbmodels.Auth) types.Auth {
 }
 
 func AssignAuthDbFromType(typeModel types.Auth) dbmodels.Auth {
-	token := common.RandomString(32)
+	token := common.NewToken()
 
 	return dbmodels.Auth{
 		Token:    token,

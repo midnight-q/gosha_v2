@@ -31,3 +31,5 @@ const FieldRoute = "/api/v1/field"
 const FieldTypeRoute = "/api/v1/fieldType"
 
 const ApplicationRoute = "/api/v1/application"
+
+const SdkRoute = "/api/v1/sdk"

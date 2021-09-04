@@ -5,6 +5,7 @@ import (
 	"go/token"
 	"gosha_v2/errors"
 	"gosha_v2/types"
+	"strings"
 
 	"github.com/dave/dst"
 )
@@ -131,6 +132,25 @@ func ParseType(in dst.Expr) string {
 		return "unknown"
 	}
 	return ""
+}
+
+func IsTypeArray(typeStr string) bool {
+	return strings.Contains(typeStr, "[]")
+}
+func IsTypePointer(typeStr string) bool {
+	return strings.Contains(typeStr, "*")
+}
+func ClearType(typeStr string) string {
+	typeStr = strings.Replace(typeStr, "[]", "", -1)
+	typeStr = strings.Replace(typeStr, "*", "", -1)
+	if typeStr == "time.Time" {
+		return "time"
+	}
+	if typeStr == "uuid.Uuid" {
+		return "uuid"
+	}
+
+	return typeStr
 }
 
 func GetParserForType(model types.Field) (*dst.AssignStmt, error) {

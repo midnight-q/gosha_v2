@@ -47,6 +47,10 @@ func Router() http.Handler {
 	router.HandleFunc(settings.ApplicationRoute+"/list", webapp.ApplicationMultiUpdate).Methods("PUT")
 	router.HandleFunc(settings.ApplicationRoute+"/{id}", webapp.ApplicationUpdate).Methods("PUT")
 
+	//[ Sdk ]
+	router.HandleFunc(settings.SdkRoute, webapp.SdkFind).Methods("GET")
+	router.HandleFunc(settings.SdkRoute, webapp.SdkCreate).Methods("POST")
+
 	return applyCors(router)
 }
 

@@ -1,8 +1,11 @@
 package filesystem
 
 import (
+	"fmt"
 	"gosha_v2/errors"
+	"gosha_v2/services/filesystem/sdk"
 	"gosha_v2/types"
+	"io/ioutil"
 	"os"
 )
 
@@ -17,10 +20,67 @@ func GenerateJsTypesSdk(currentPath, namespace string, models []types.Model) (er
 	apiSSRFile := folder + "/apiSSR.js"
 	commonFile := folder + "/common.js"
 
-	_ = os.RemoveAll(folder)
-	_ = os.MkdirAll(folder, 0755)
-	_ = os.MkdirAll(folderStore, 0755)
-	_ = os.MkdirAll(folderData, 0755)
+	_, err = os.Stat(folder)
+	if err != nil {
+		if os.IsNotExist(err) {
+			_ = os.RemoveAll(folder)
+			err = nil
+		} else {
+			return err
+		}
+	}
+
+	err = os.MkdirAll(folder, 0755)
+	if err != nil {
+		return err
+	}
+	err = os.MkdirAll(folderStore, 0755)
+	if err != nil {
+		return err
+	}
+	err = os.MkdirAll(folderData, 0755)
+	if err != nil {
+		return err
+	}
+
+	err = ioutil.WriteFile(fileModel, sdk.GetModelsFile(models), 0644)
+	if err != nil {
+		return err
+	}
+
+	err = ioutil.WriteFile(apiFile, sdk.GetSkeletonTemplateFile(templateFS, "/jstypes/api.js"), 0644)
+	if err != nil {
+		return err
+	}
+
+	err = ioutil.WriteFile(apiCSRFile, sdk.GetSkeletonTemplateFile(templateFS, "/jstypes/apiCSR.js"), 0644)
+	if err != nil {
+		return err
+	}
+
+	err = ioutil.WriteFile(apiSSRFile, sdk.GetSkeletonTemplateFile(templateFS, "/jstypes/apiSSR.js"), 0644)
+	if err != nil {
+		return err
+	}
+
+	err = ioutil.WriteFile(commonFile, sdk.GetSkeletonTemplateFile(templateFS, "/jstypes/common.js"), 0644)
+	if err != nil {
+		return err
+	}
+
+	for _, d := range sdk.GetStores(templateFS, models) {
+		err = ioutil.WriteFile(fmt.Sprintf("%s/%s.js", folderStore, d.Name), []byte(d.Content), 0644)
+		if err != nil {
+			return err
+		}
+	}
+
+	for _, d := range sdk.GetData(templateFS, models) {
+		err = ioutil.WriteFile(fmt.Sprintf("%s/%sData.js", folderData, d.Name), []byte(d.Content), 0644)
+		if err != nil {
+			return err
+		}
+	}
 
 	return
 }

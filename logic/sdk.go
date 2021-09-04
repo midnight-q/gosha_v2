@@ -5,11 +5,6 @@ import (
 	"gosha_v2/types"
 )
 
-func SdkFind(filter types.SdkFilter) (result []types.Sdk, totalRecords int, err error) {
-
-	return
-}
-
 func SdkCreate(filter types.SdkFilter) (data types.Sdk, err error) {
 	currentPath, err := filter.GetPwd()
 	if err != nil {

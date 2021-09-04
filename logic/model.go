@@ -90,6 +90,8 @@ func mergeModels(typeModels, dbModels []filesystem.Model) (res []types.Model, er
 					CommentType: field.Comment,
 					IsTypeField: true,
 					SourceModel: field.SourceModel,
+					IsArray:     field.IsArray,
+					IsPointer:   field.IsPointer,
 				})
 			}
 		}
@@ -108,6 +110,8 @@ func mergeFields(typeField []filesystem.Field, dbField []filesystem.Field) (res 
 			CommentType: field.Comment,
 			IsTypeField: true,
 			SourceModel: field.SourceModel,
+			IsArray:     field.IsArray,
+			IsPointer:   field.IsPointer,
 		})
 	}
 
@@ -120,6 +124,8 @@ func mergeFields(typeField []filesystem.Field, dbField []filesystem.Field) (res 
 				IsDbField:   true,
 				CommentDb:   dbField.Comment,
 				SourceModel: dbField.SourceModel,
+				IsArray:     dbField.IsArray,
+				IsPointer:   dbField.IsPointer,
 			})
 		} else {
 			field := rawField.(types.Field)

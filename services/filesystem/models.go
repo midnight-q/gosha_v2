@@ -18,6 +18,8 @@ type Field struct {
 	Type        string
 	Comment     string
 	SourceModel string
+	IsArray     bool
+	IsPointer   bool
 }
 
 type Model struct {
@@ -79,14 +81,24 @@ func LoadDbModels(path string) (res []Model, err error) {
 					model.CompositionModels = append(model.CompositionModels, utils.ParseType(field.Type))
 					continue
 				}
-				if field.Names[0].Name[:1] == strings.ToLower(field.Names[0].Name[:1]) {
+				rawTypeStr := utils.ParseType(field.Type)
+				typeStr := utils.ClearType(rawTypeStr)
+				f := Field{
+					Name:      field.Names[0].Name,
+					Type:      typeStr,
+					Comment:   utils.ParseComment(field.Decorations().Start.All()),
+					IsArray:   utils.IsTypeArray(rawTypeStr),
+					IsPointer: utils.IsTypePointer(rawTypeStr),
+				}
+				if len(f.Name) < 1 {
 					continue
 				}
-				model.Fields = append(model.Fields, Field{
-					Name:    field.Names[0].Name,
-					Type:    utils.ParseType(field.Type),
-					Comment: utils.ParseComment(field.Decorations().Start.All()),
-				})
+
+				if f.Name[:1] == strings.ToLower(f.Name[:1]) {
+					continue
+				}
+				model.Fields = append(model.Fields, f)
+
 			}
 
 			rawRes = append(rawRes, model)
@@ -143,13 +155,14 @@ func LoadTypeModels(path string) (res []Model, err error) {
 						model.CompositionModels = append(model.CompositionModels, utils.ParseType(field.Type))
 						continue
 					}
-					if field.Names[0].Name[:1] == strings.ToLower(field.Names[0].Name[:1]) {
-						continue
-					}
+					rawTypeStr := utils.ParseType(field.Type)
+					typeStr := utils.ClearType(rawTypeStr)
 					f := Field{
-						Name:    field.Names[0].Name,
-						Type:    utils.ParseType(field.Type),
-						Comment: utils.ParseComment(field.Decorations().Start.All()),
+						Name:      field.Names[0].Name,
+						Type:      typeStr,
+						Comment:   utils.ParseComment(field.Decorations().Start.All()),
+						IsArray:   utils.IsTypeArray(rawTypeStr),
+						IsPointer: utils.IsTypePointer(rawTypeStr),
 					}
 					if len(f.Name) < 1 {
 						continue

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:gosha_app/app/create_app.dart';
+import 'package:gosha_app/app/models_list.dart';
 import 'package:gosha_app/controller/app_controller.dart';
 
 class BodyScreen extends StatelessWidget {
@@ -21,7 +22,7 @@ class BodyScreen extends StatelessWidget {
       }
 
       return Center(
-        child: Text("TODO: Models list"),
+        child: ModelList(),
       );
     });
   }

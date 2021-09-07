@@ -5,7 +5,6 @@ import (
 	"gosha_v2/settings"
 	"net/http"
 	"net/url"
-	"os"
 	"strconv"
 	"strings"
 
@@ -154,6 +153,7 @@ type AbstractFilter struct {
 	request        *http.Request
 	rawRequestBody []byte
 
+	CurrentPath string
 	GoshaSearchFilter
 	GoshaOrderFilter
 	GoshaFilterIds
@@ -220,6 +220,8 @@ func GetAbstractFilter(request *http.Request, requestBody []byte, functionType s
 
 	filter.SetToken(request)
 	filter.SetIp(request)
+
+	filter.SetPwd(request.FormValue("Pwd"))
 
 	vars := mux.Vars(request)
 	id, _ := strconv.Atoi(vars["id"])
@@ -291,27 +293,20 @@ func (filter *AbstractFilter) GetCurrentUserAgent() string {
 }
 
 func (filter *AbstractFilter) GetPwd() (string, error) {
-	wd, err := os.Getwd()
-	if err != nil {
+	if len(filter.CurrentPath) < 1 {
+		err := errors.New("filter.CurrentPath len is 0")
 		return "", err
 	}
 
-	if len(wd) < 1 {
-		err = errors.New("wd len is 0")
-		return "", err
+	if filter.CurrentPath[len(filter.CurrentPath)-1] != '/' {
+		filter.CurrentPath = filter.CurrentPath + "/"
 	}
 
-	if wd[len(wd)-1] != '/' {
-		wd = wd + "/"
-	}
-	wd = "C:\\Users\\Алексей\\go\\src\\gosha_test\\"
-	//wd = "/home/alex/Projects/gosha-test/"
-
-	return wd, nil
+	return filter.CurrentPath, nil
 }
 
 func (filter *AbstractFilter) SetPwd(dir string) {
-
+	filter.CurrentPath = dir
 }
 
 func isGroupFunctionType(functionType string) bool {

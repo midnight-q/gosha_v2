@@ -1,24 +1,28 @@
-
-
 import 'package:flutter/material.dart';
-import 'package:gosha_app/sdk/application.dart';
+import 'package:get/get.dart';
+import 'package:gosha_app/app/create_app.dart';
+import 'package:gosha_app/controller/app_controller.dart';
 
 class BodyScreen extends StatelessWidget {
-  const BodyScreen(this.path, this.app, {Key? key}) : super(key: key);
+  BodyScreen({Key? key}) : super(key: key);
 
-  final Application app;
-  final String path;
+  AppController controller = Get.find();
 
   @override
   Widget build(BuildContext context) {
-    if (this.app.isAppExist()) {
+    return Obx(() {
+      if (!this.controller.isPathSelected.value) {
+        return Center(
+          child: Text("Select project directory"),
+        );
+      }
+      if (!this.controller.isAppExist.value) {
+        return CreateAppScreen();
+      }
+
       return Center(
         child: Text("TODO: Models list"),
       );
-    }
-
-    return Center(
-      child: Text("Create app"),
-    );
+    });
   }
 }

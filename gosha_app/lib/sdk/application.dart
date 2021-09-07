@@ -29,10 +29,19 @@ class Application {
   }
 
   bool isAppExist() {
-    if (this.name.length > 0 ) {
+    if (this.name.length > 0) {
       return true;
     }
     return false;
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = Map<String, dynamic>();
+    data["Name"] = name;
+    data["Email"] = email;
+    data["Password"] = password;
+    data["DatabaseType"] = databaseType;
+    return data;
   }
 }
 
@@ -58,6 +67,18 @@ class ApplicationFindResponse {
   }
 }
 
+class ApplicationCreateResponse {
+  Application theModel = Application.empty();
+
+  ApplicationCreateResponse({
+    required this.theModel,
+  });
+
+  ApplicationCreateResponse.fromJson(Map<String, dynamic> json) {
+    theModel = Application.fromJson(json["Model"]);
+  }
+}
+
 Future<ApplicationFindResponse> applicationFind(String path) async {
   final response = await http.get(Uri.parse(
       'http://127.0.0.1:4343/api/v1/application?IsDebug=1&PerPage=1&CurrentPage=1&Pwd=$path'));
@@ -80,5 +101,16 @@ Future<Application> getCurrentApp(String path) async {
     return Future.value(res.theList[0]);
   } catch (_) {
     return Future.value(Application.empty());
+  }
+}
+
+Future<ApplicationCreateResponse> createApplication(Application app, String path) async {
+  final response = await http.post(
+      Uri.parse('http://127.0.0.1:4343/api/v1/application?IsDebug=1&Pwd=$path'),
+      body: jsonEncode(app.toJson()));
+  if (response.statusCode == 201) {
+    return ApplicationCreateResponse.fromJson(jsonDecode(response.body));
+  } else {
+    throw Exception('Failed to load Applications ${response.statusCode}');
   }
 }

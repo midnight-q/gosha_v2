@@ -88,7 +88,13 @@ func ApplicationCreate(filter types.ApplicationFilter) (data types.Application, 
 		return types.Application{}, err
 	}
 
-	return
+	existApps, _, err = ApplicationFind(filter)
+	if len(existApps) < 1 {
+		err = errors.New("App not create")
+		return
+	}
+
+	return existApps[0], nil
 }
 
 func ApplicationRead(_ types.ApplicationFilter) (data types.Application, err error) {

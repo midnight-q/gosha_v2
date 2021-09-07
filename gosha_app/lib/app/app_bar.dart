@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:gosha_app/controller/app_controller.dart';
 
 class GoshaAppBar extends StatelessWidget implements PreferredSizeWidget {
-  GoshaAppBar({Key? key, required this.title, required this.onPressed, required this.name }) : super(key: key);
+  GoshaAppBar({Key? key, required this.title}) : super(key: key);
 
-  final VoidCallback  onPressed;
   final String title;
-  final String name;
 
   final preferredSize = AppBar().preferredSize;
+
+  AppController controller = Get.find();
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -15,16 +19,17 @@ class GoshaAppBar extends StatelessWidget implements PreferredSizeWidget {
       title: Text(title),
       actions: [
         TextButton(
-            onPressed: onPressed,
+            onPressed: controller.getNewPath,
             child: Padding(
               padding: EdgeInsets.only(right: 20),
-              child: Text(
-                name.length > 0 ? name : "Click to select app",
-                style: TextStyle(color: Colors.white, fontSize: 16),
+              child: Obx(
+                () => Text(
+                  controller.getActionText(),
+                  style: TextStyle(color: Colors.white, fontSize: 16),
+                ),
               ),
             ))
       ],
     );
   }
-
 }

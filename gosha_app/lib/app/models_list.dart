@@ -1,31 +1,28 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:gosha_app/app/model_card.dart';
+import 'package:waterfall_flow/waterfall_flow.dart';
 import 'package:get/get.dart';
 import 'package:gosha_app/controller/app_controller.dart';
-import 'package:gosha_app/controller/model_controller.dart';
 
 class ModelList extends StatelessWidget {
   ModelList({Key? key}) : super(key: key);
 
-  ModelController modelC = Get.put(ModelController());
-  AppController applicationC = Get.find();
+  AppController controller = Get.find();
 
   @override
   Widget build(BuildContext context) {
     return Obx(() {
-      modelC.loadModels(applicationC.currentPath.value);
-      return Padding(
-        padding: EdgeInsets.all(4),
-        child: StaggeredGridView.countBuilder(
-          crossAxisCount: 4,
-          itemBuilder: (BuildContext context, int index) {
-            return Text("${modelC.models[index].Name}");
-          },
-          staggeredTileBuilder: (int index) {
-            return StaggeredTile.count(1, 1);
-          },
-          itemCount: modelC.models.length,
+      return WaterfallFlow.builder(
+        padding: EdgeInsets.all(5.0),
+        itemCount: controller.models.length,
+        gridDelegate: SliverWaterfallFlowDelegateWithMaxCrossAxisExtent(
+          maxCrossAxisExtent: 480,
+          crossAxisSpacing: 5.0,
+          mainAxisSpacing: 5.0,
         ),
+        itemBuilder: (BuildContext context, int index) {
+          return ModelCard(index: index);
+        },
       );
     });
   }

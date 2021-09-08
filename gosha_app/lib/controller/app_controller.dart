@@ -2,12 +2,18 @@ import 'package:file_picker/file_picker.dart';
 import 'package:get/get_state_manager/src/simple/get_controllers.dart';
 import 'package:get/get.dart';
 import 'package:gosha_app/sdk/application.dart';
+import 'package:gosha_app/sdk/model.dart';
 
 class AppController extends GetxController {
   var currentPath = "".obs;
   var isPathSelected = false.obs;
   var isAppExist = false.obs;
   var currentApp = Application.empty().obs;
+
+  var isShowFilters = false.obs;
+  var isShowServiceModel = false.obs;
+  var searchQuery = "".obs;
+  var models = List<Model>.empty().obs;
 
   void getNewPath() async {
     String? path = await FilePicker.platform
@@ -27,6 +33,10 @@ class AppController extends GetxController {
   void setApp(Application app) {
     this.currentApp.value = app;
     this.isAppExist.value = app.isAppExist();
+
+    if (this.isAppExist.value) {
+      this.loadModels(this.currentPath.value);
+    }
   }
 
   String getActionText() {
@@ -49,5 +59,10 @@ class AppController extends GetxController {
     var res = await createApplication(app, this.currentPath.value);
     
     this.setApp(res.theModel);
+  }
+
+  void loadModels(String path) async{
+    var res = await modelFind(path);
+    this.models.value = res.theList;
   }
 }

@@ -106,15 +106,35 @@ func getNewFileName(path, workDir string) string {
 	return workDir + strings.TrimPrefix(path, settings.SkeletonAppPath)
 }
 
-func CopyNewModelFile(currentPath, dir, newName, appName string) (err error) {
-	source, err := templateFS.ReadFile(settings.SkeletonAppPath + dir + settings.NewModelFileName)
+func CopyNewModelFile(currentPath, dir, newName, appName string, withSoftDelete bool) (err error) {
+	modelData := GetBaseModelData(withSoftDelete)
+
+	source, err := templateFS.ReadFile(settings.SkeletonAppPath + dir + modelData.FileName)
 	if err != nil {
 		return err
 	}
 	text := string(source)
-	text = strings.Replace(text, settings.NewModelName, newName, -1)
+	text = strings.Replace(text, modelData.ModelName, newName, -1)
 
 	text = strings.Replace(text, settings.SkeletonAppName, appName, -1)
 
 	return os.WriteFile(utils.GetFilePath(currentPath, dir, newName), []byte(text), fs.ModePerm)
+}
+
+type ModelData struct {
+	FileName  string
+	ModelName string
+}
+
+func GetBaseModelData(withSoftDelete bool) (res ModelData) {
+	if withSoftDelete {
+		return ModelData{
+			FileName:  settings.NewModelWithSoftDeleteFileName,
+			ModelName: settings.NewModelWithSoftDeleteName,
+		}
+	}
+	return ModelData{
+		FileName:  settings.NewModelFileName,
+		ModelName: settings.NewModelName,
+	}
 }

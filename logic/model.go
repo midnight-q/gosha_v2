@@ -186,7 +186,7 @@ func ModelCreate(filter types.ModelFilter) (data types.Model, err error) {
 	}
 
 	if newModel.IsTypeModel {
-		err = filesystem.CopyNewModelFile(currentDir, "/types/", newModel.Name, appName)
+		err = filesystem.CopyNewModelFile(currentDir, "/types/", newModel.Name, appName, newModel.IsSoftDeleteEnable)
 		if err != nil {
 			return types.Model{}, err
 		}
@@ -196,7 +196,7 @@ func ModelCreate(filter types.ModelFilter) (data types.Model, err error) {
 		}
 	}
 	if newModel.IsDbModel {
-		err = filesystem.CopyNewModelFile(currentDir, "/dbmodels/", newModel.Name, appName)
+		err = filesystem.CopyNewModelFile(currentDir, "/dbmodels/", newModel.Name, appName, newModel.IsSoftDeleteEnable)
 		if err != nil {
 			return types.Model{}, err
 		}
@@ -207,7 +207,7 @@ func ModelCreate(filter types.ModelFilter) (data types.Model, err error) {
 	}
 
 	// create logic
-	err = filesystem.CopyNewModelFile(currentDir, "/logic/", newModel.Name, appName)
+	err = filesystem.CopyNewModelFile(currentDir, "/logic/", newModel.Name, appName, newModel.IsSoftDeleteEnable)
 	if err != nil {
 		return types.Model{}, err
 	}
@@ -233,7 +233,7 @@ func ModelCreate(filter types.ModelFilter) (data types.Model, err error) {
 	}
 
 	// create webapp
-	err = filesystem.CopyNewModelFile(currentDir, "/webapp/", newModel.Name, appName)
+	err = filesystem.CopyNewModelFile(currentDir, "/webapp/", newModel.Name, appName, newModel.IsSoftDeleteEnable)
 	if err != nil {
 		return types.Model{}, err
 	}

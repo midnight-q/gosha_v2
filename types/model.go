@@ -55,8 +55,8 @@ type Model struct {
 		FindOrCreate   bool
 		UpdateOrCreate bool
 	}
-	IsServiceModel bool
-
+	IsServiceModel     bool
+	IsSoftDeleteEnable bool
 	validator
 }
 

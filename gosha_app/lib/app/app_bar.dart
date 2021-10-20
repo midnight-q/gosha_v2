@@ -9,9 +9,7 @@ class GoshaAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   final preferredSize = AppBar().preferredSize;
 
-  AppController controller = Get.find();
-
-
+  final AppController controller = Get.find();
 
   @override
   Widget build(BuildContext context) {

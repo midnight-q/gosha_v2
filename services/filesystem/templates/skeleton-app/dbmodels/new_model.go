@@ -2,8 +2,6 @@ package dbmodels
 
 import (
 	"time"
-
-	"gorm.io/gorm"
 )
 
 type NewModel struct {
@@ -11,8 +9,6 @@ type NewModel struct {
 
 	CreatedAt time.Time
 	UpdatedAt time.Time
-	DeletedAt gorm.DeletedAt `sql:"index" json:"-"`
-
 	validator
 }
 
